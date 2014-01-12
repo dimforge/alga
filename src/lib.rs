@@ -19,45 +19,99 @@
 
 //! Fundamental algebraic structures
 //!
-//! # Definitions
-//!
-//! Throughout this module, we use the following definitions:
-//!
-//! ## Semigroup
-//!
-//! A set `S` with a binary operation `•` that satisfies:
-//!
-//! * Closure: For all `a, b ∈ S`, `a • b ∈ S`
-//! * Associativity: For all `a, b, c ∈ S`, `(a • b) • c = a • (b • c)`
-//!
-//! ## Monoid
-//!
-//! A semigroup `S` that satisfies:
-//!
-//! * Identity element: For each `a ∈ S` there exists an element `e ∈ S`, such
-//!   that `e • a = a • e = a` 
-//!
-//! ## Group
-//!
-//! A monoid `G` that satisfies:
-//!
-//! * Inverse element: For each `a ∈ S` there exists an element `b ∈ G`, such
-//!   that `a • b = b • a = e`, where `e` is the identity element.
-//!
-//! ## Abelian Group (Commutative Group)
-//!
-//! A group `A` that satisfies:
-//!
-//! * Commutativity: For all `a, b ∈ S`, `a • b = b • a`
-//!
 //! # Inspirations
 //!
 //! * [Numeric Prelude](http://www.haskell.org/haskellwiki/Numeric_Prelude) (Haskell)
 //! * [Agda's Algebra module](http://www.cse.chalmers.se/~nad/listings/lib-0.7/Algebra.html) (Agda)
+//! * [Idris' Algebra module](https://github.com/idris-lang/Idris-dev/blob/master/libs/prelude/Prelude/Algebra.idr) (Idris)
 //! * [non/spire](https://github.com/non/spire) (Scala)
 //!
 
-/// A semigroup whose binary operation is identified with addition.
+/// Sets equipped with an associative binary operation `•`.
+///
+/// # Laws
+///
+/// ~~~
+/// Associativity of •:
+///     forall a b c,              (a • b) • c = a • (b • c)
+/// ~~~
+pub trait Semigroup {
+    /// The binary operation `•`.
+    fn op(a: &Self, b: &Self) -> Self;
+}
+
+/// A semigroup's binary operation.
+#[inline]
+pub fn op<T: Semigroup>(a: &T, b: &T) -> T {
+    Semigroup::op(a, b)
+}
+
+/// Sets equipped with an associative binary operation and a corresponding
+/// identity element.
+///
+/// # Laws
+///
+/// ~~~
+/// Associativity of •:
+///     forall a b c,               (a • b) • c = a • (b • c)
+/// Identity for •:
+///     forall a,                   a • identity = a
+///     forall a,                   identity • a = a
+/// ~~~
+pub trait Monoid
+    : Semigroup {
+    /// The identity element for `•`.
+    fn identity() -> Self;
+}
+
+/// The identity element of a monoid's binary operation.
+#[inline]
+pub fn identity<T: Monoid>() -> T {
+    Monoid::identity()
+}
+
+/// Sets equipped with an associative binary operation, a corresponding
+/// identity element, and an inverse.
+///
+/// # Laws
+///
+/// ~~~
+/// Associativity of •:
+///     forall a b c,               (a • b) • c = a • (b • c)
+/// Identity for •:
+///     forall a,                   a • identity = a
+///     forall a,                   identity • a = a
+/// Inverse for •:
+///     forall a,                   a • inverse(a) = identity
+///     forall a,                   inverse(a) • a = identity
+/// ~~~
+pub trait Group
+    : Monoid {
+    fn inverse(&self) -> Self;
+}
+
+/// Sets equipped with an associative and commutative binary operation, a
+/// corresponding identity element, and an inverse.
+///
+/// # Laws
+///
+/// ~~~
+/// Associativity of •:
+///     forall a b c,               (a • b) • c = a • (b • c)
+/// Commutativity of •:
+///     forall a b,                 a • b = b • a
+/// Identity for •:
+///     forall a,                   a • identity = a
+///     forall a,                   identity • a = a
+/// Inverse for •:
+///     forall a,                   a • inverse(a) = identity
+///     forall a,                   inverse(a) • a = identity
+/// ~~~
+pub trait AbelianGroup
+    : Group {
+}
+
+/// Sets that are a semigroup under addition.
 pub trait AdditiveSemiGroup
     : Add<Self, Self> {
 }
@@ -75,7 +129,7 @@ impl AdditiveSemiGroup for int  {}
 impl AdditiveSemiGroup for f32  {}
 impl AdditiveSemiGroup for f64  {}
 
-/// An additive semigroup with an identity element, `0`.
+/// Sets that are a monoid under addition.
 pub trait AdditiveMonoid
     : AdditiveSemiGroup {
     /// The additive identity, `0`.
@@ -101,7 +155,7 @@ impl AdditiveMonoid for int  { #[inline] fn zero() -> int  { 0   } }
 impl AdditiveMonoid for f32  { #[inline] fn zero() -> f32  { 0.0 } }
 impl AdditiveMonoid for f64  { #[inline] fn zero() -> f64  { 0.0 } }
 
-/// An additive monoid with an inverse element.
+/// Sets that are a group under addition.
 pub trait AdditiveGroup
     : AdditiveMonoid
     + Sub<Self, Self>
@@ -121,7 +175,7 @@ impl AdditiveGroup for int  {}
 impl AdditiveGroup for f32  {}
 impl AdditiveGroup for f64  {}
 
-/// An additive group whose addition operation is commutative.
+/// Sets that are an abelian group under addition.
 pub trait AdditiveAbelianGroup
     : AdditiveGroup {
 }
@@ -139,7 +193,7 @@ impl AdditiveAbelianGroup for int  {}
 impl AdditiveAbelianGroup for f32  {}
 impl AdditiveAbelianGroup for f64  {}
 
-/// A semigroup whose binary operation is identified with multiplication.
+/// A/// Sets that are a semigroup under addition.
 pub trait MultiplicativeSemiGroup
     : Mul<Self, Self> {
 }
@@ -157,7 +211,7 @@ impl MultiplicativeSemiGroup for int  {}
 impl MultiplicativeSemiGroup for f32  {}
 impl MultiplicativeSemiGroup for f64  {}
 
-/// A multiplicative semigroup with an identity element, `1`.
+/// Sets that are a monoid under addition.
 pub trait MultiplicativeMonoid
     : MultiplicativeSemiGroup {
     fn one() -> Self;
@@ -182,7 +236,7 @@ impl MultiplicativeMonoid for int  { #[inline] fn one() -> int  { 1   } }
 impl MultiplicativeMonoid for f32  { #[inline] fn one() -> f32  { 1.0 } }
 impl MultiplicativeMonoid for f64  { #[inline] fn one() -> f64  { 1.0 } }
 
-/// A multiplicative monoid with an division and a reciprocal.
+/// Sets that are a group under addition.
 pub trait MultiplicativeGroup
     : MultiplicativeMonoid
     + Div<Self, Self> {
@@ -193,7 +247,7 @@ pub trait MultiplicativeGroup
 impl MultiplicativeGroup for f32  {}
 impl MultiplicativeGroup for f64  {}
 
-/// A multiplicative group whose multiplication operation is commutative.
+/// Sets that are an abelian group under addition.
 pub trait MultiplicativeAbelianGroup
     : MultiplicativeGroup {
 }
@@ -201,11 +255,31 @@ pub trait MultiplicativeAbelianGroup
 impl MultiplicativeAbelianGroup for f32  {}
 impl MultiplicativeAbelianGroup for f64  {}
 
-/// An algebraic structure that:
+/// Sets that are an abelian group under addition, a monoid under
+/// multiplication, and where multiplication distributes over addition.
 ///
-/// * is a commutative group under addition
-/// * is a monoid under multiplication
-/// * distributes over addition, ie. `a * (b + c) = a * b + a * c`
+/// # Laws
+///
+/// ~~~
+/// Associativity of +:
+///     forall a b c,               (a + b) + c = a + (b + c)
+/// Commutativity of +:
+///     forall a b,                 a + b = b + a
+/// Identity for +:
+///     forall a,                   a + 0 = a
+///     forall a,                   0 + a = a
+/// Inverse for +:
+///     forall a,                   a + -a = 0
+///     forall a,                   -a + a = 0
+/// Associativity of *:
+///     forall a b c,               (a * b) * c = a * (b * c)
+/// Identity for *:
+///     forall a,                   a * 1 = a
+///     forall a,                   1 * a = a
+/// Distributivity of * and +:
+///     forall a b c,               a * (b + c) = (a * b) + (a * c)
+///     forall a b c,               (a + b) * c = (a * c) + (b * c)
+/// ~~~
 ///
 /// # Examples
 ///
@@ -229,7 +303,32 @@ impl Ring for int  {}
 impl Ring for f32  {}
 impl Ring for f64  {}
 
-/// A ring whose multiplication operation is commutative.
+/// A ring whose multiplication operation is also commutative.
+///
+/// # Laws
+///
+/// ~~~
+/// Associativity of +:
+///     forall a b c,               (a + b) + c = a + (b + c)
+/// Commutativity of +:
+///     forall a b,                 a + b = b + a
+/// Identity for +:
+///     forall a,                   a + 0 = a
+///     forall a,                   0 + a = a
+/// Inverse for +:
+///     forall a,                   a + -a = 0
+///     forall a,                   -a + a = 0
+/// Associativity of *:
+///     forall a b c,               (a * b) * c = a * (b * c)
+/// Commutativity of *:
+///     forall a b,                 a * b = b * a
+/// Identity for *:
+///     forall a,                   a * 1 = a
+///     forall a,                   1 * a = a
+/// Distributivity of * and +:
+///     forall a b c,               a * (b + c) = (a * b) + (a * c)
+///     forall a b c,               (a + b) * c = (a * c) + (b * c)
+/// ~~~
 ///
 /// # Examples
 ///
@@ -255,6 +354,34 @@ impl CommutativeRing for f64  {}
 /// A commutative ring that also has a multiplicative inverse operation for
 /// every non-zero element.
 ///
+/// # Laws
+///
+/// ~~~
+/// Associativity of +:
+///     forall a b c,               (a + b) + c = a + (b + c)
+/// Commutativity of +:
+///     forall a b,                 a + b = b + a
+/// Identity for +:
+///     forall a,                   a + 0 = a
+///     forall a,                   0 + a = a
+/// Inverse for +:
+///     forall a,                   a + -a = 0
+///     forall a,                   -a + a = 0
+/// Associativity of *:
+///     forall a b c,               (a * b) * c = a * (b * c)
+/// Commutativity of *:
+///     forall a b,                 a * b = b * a
+/// Identity for *:
+///     forall a,                   a * 1 = a
+///     forall a,                   1 * a = a
+/// Inverse for *:
+///     forall a,                   a * a⁻¹ = 1
+///     forall a,                   a⁻¹ * a = 1
+/// Distributivity of * and +:
+///     forall a b c,               a * (b + c) = (a * b) + (a * c)
+///     forall a b c,               (a + b) * c = (a * c) + (b * c)
+/// ~~~
+///
 /// # Examples
 ///
 /// Complex numbers, rationals, reals.
@@ -275,3 +402,18 @@ trait Real
 
 impl Real for f32  {}
 impl Real for f64  {}
+
+trait Integral
+    : Ord
+    + CommutativeRing {}
+
+impl Integral for u8   {}
+impl Integral for u16  {}
+impl Integral for u32  {}
+impl Integral for u64  {}
+impl Integral for uint {}
+impl Integral for i8   {}
+impl Integral for i16  {}
+impl Integral for i32  {}
+impl Integral for i64  {}
+impl Integral for int  {}
