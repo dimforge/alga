@@ -193,7 +193,7 @@ impl AdditiveAbelianGroup for int  {}
 impl AdditiveAbelianGroup for f32  {}
 impl AdditiveAbelianGroup for f64  {}
 
-/// A/// Sets that are a semigroup under addition.
+/// Sets that are a semigroup under multiplication.
 pub trait MultiplicativeSemiGroup
     : Mul<Self, Self> {
 }
@@ -211,7 +211,7 @@ impl MultiplicativeSemiGroup for int  {}
 impl MultiplicativeSemiGroup for f32  {}
 impl MultiplicativeSemiGroup for f64  {}
 
-/// Sets that are a monoid under addition.
+/// Sets that are a monoid under multiplication.
 pub trait MultiplicativeMonoid
     : MultiplicativeSemiGroup {
     fn one() -> Self;
@@ -236,7 +236,7 @@ impl MultiplicativeMonoid for int  { #[inline] fn one() -> int  { 1   } }
 impl MultiplicativeMonoid for f32  { #[inline] fn one() -> f32  { 1.0 } }
 impl MultiplicativeMonoid for f64  { #[inline] fn one() -> f64  { 1.0 } }
 
-/// Sets that are a group under addition.
+/// Sets that are a group under multiplication.
 pub trait MultiplicativeGroup
     : MultiplicativeMonoid
     + Div<Self, Self> {
@@ -247,7 +247,7 @@ pub trait MultiplicativeGroup
 impl MultiplicativeGroup for f32  {}
 impl MultiplicativeGroup for f64  {}
 
-/// Sets that are an abelian group under addition.
+/// Sets that are an abelian group under multiplication.
 pub trait MultiplicativeAbelianGroup
     : MultiplicativeGroup {
 }
