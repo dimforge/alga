@@ -392,25 +392,186 @@ pub trait Field
 impl Field for f32 {}
 impl Field for f64 {}
 
+/// Ring with a notion of an absolute value
+///
+/// # Laws
+///
+/// ~~~
+/// forall a where a ≠ 0        abs((signum(a)) = 1
+/// forall a                    abs(a) * signum(a) = a
+/// ~~~
+pub trait Absolute
+    : CommutativeRing {
+    fn abs(&self) -> Self;
+    fn signum(&self) -> Self;
+}
+
+trait Integral
+    : Eq + Ord
+    + CommutativeRing {
+    /// Truncated integer division satisfying:
+    ///
+    /// ~~~
+    /// t_div(a, b) = trunc(a / b)
+    /// ~~~
+    ///
+    /// This is the form of division adopted by the ISO C99 standard for the `/`
+    /// operator, and is usually more efficient than `f_div` due to better
+    /// support on processors.
+    fn t_div(a: &Self, b: &Self) -> Self;
+
+    /// The integer remainder after truncated division satisfying:
+    ///
+    /// ~~~
+    /// t_mod(a, b) = a - (b * t_div(a, b))
+    /// ~~~
+    ///
+    /// This is the form of modulus adopted by the ISO C99 standard for the `%`
+    /// operator, and is usually more efficient than `f_mod` due to better
+    /// support on processors.
+    fn t_mod(a: &Self, b: &Self) -> Self;
+
+    /// Calculates `t_div` and `t_mod` simultaneously.
+    fn t_div_mod(a: &Self, b: &Self) -> (Self, Self);
+
+    /// Floored integer division satisfying:
+    ///
+    /// ~~~
+    /// f_div(a, b) = ⌊a / b⌋
+    /// ~~~
+    fn f_div(a: &Self, b: &Self) -> Self;
+
+    /// The integer remainder after floored division satisfying:
+    ///
+    /// ~~~
+    /// f_mod(a, b) = a - (b * f_div(a, b))
+    /// ~~~
+    fn f_mod(a: &Self, b: &Self) -> Self;
+
+    /// Calculates `f_div` and `f_mod` simultaneously.
+    fn f_div_mod(a: &Self, b: &Self) -> (Self, Self);
+
+    /// Greatest Common Divisor
+    fn gcd(&self) -> Self;
+
+    /// Lowest Common Multiple
+    fn lcm(&self) -> Self;
+}
+
+#[inline]
+pub fn t_div<T: Integral>(a: &T, b: &T) -> T {
+    Integral::t_div(a, b)
+}
+
+#[inline]
+pub fn t_mod<T: Integral>(a: &T, b: &T) -> T {
+    Integral::t_mod(a, b)
+}
+
+#[inline]
+pub fn t_div_mod<T: Integral>(a: &T, b: &T) -> (T, T) {
+    Integral::t_div_mod(a, b)
+}
+
+#[inline]
+pub fn f_div<T: Integral>(a: &T, b: &T) -> T {
+    Integral::f_div(a, b)
+}
+
+#[inline]
+pub fn f_mod<T: Integral>(a: &T, b: &T) -> T {
+    Integral::f_mod(a, b)
+}
+
+#[inline]
+pub fn f_div_mod<T: Integral>(a: &T, b: &T) -> (T, T) {
+    Integral::f_div_mod(a, b)
+}
+
+/// Functions that can be defined as the root of a polynomial equation.
+pub trait Algebraic {
+    /// Square root
+    fn sqrt(&self) -> Self;
+    /// Cube root
+    fn cbrt(&self) -> Self;
+    /// Root-n
+    fn root(&self, n: i64) -> Self;
+    /// Calculate the length of the hypotenuse of a right-angle triangle given
+    /// the lengths of the other two sides, `x` and `y`.
+    ///
+    /// ~~~
+    /// hypot(x, y) = √(x² + y²)
+    /// ~~~
+    fn hypot(x: &Self, y: &Self) -> Self;
+}
+
+/// Functions that relate the angles of a triangle to the lengths of its sides.
+pub trait Trigonometric
+    : Algebraic {
+    /// The sine of a number in radians.
+    fn sin(&self) -> Self;
+    /// The cosine of a number in radians.
+    fn cos(&self) -> Self;
+    /// The tangent of a number in radians.
+    fn tan(&self) -> Self;
+    /// The arcsine of a number.
+    fn asin(&self) -> Self;
+    /// The arccosine of a number.
+    fn acos(&self) -> Self;
+    /// The arctangent of a number.
+    fn atan(&self) -> Self;
+    /// The four quadrant arctangent of a number, `y`, and another number `x`.
+    fn atan2(x: &Self, y: &Self) -> Self;
+    /// Simultaneously computes the sine and cosine of the number.
+    fn sin_cos(&self) -> (Self, Self);
+}
+
+/// Functions that cannot be expressed in terms of a finite sequence of the
+/// algebraic operations of addition, multiplication, and root extraction.
+pub trait Transcendental
+    : Trigonometric {
+    /// The ratio of a circle's circumference to its diameter.
+    ///
+    /// ~~~
+    /// π = C / d
+    /// ~~~
+    fn pi() -> Self;
+
+    /// Exponential functions
+
+    /// Returns `e^(self)`, (the exponential function).
+    fn exp(&self) -> Self;
+    /// Returns 2 raised to the power of the number, `2^(self)`.
+    fn exp2(&self) -> Self;
+    /// Returns the natural logarithm of the number.
+    fn ln(&self) -> Self;
+    /// Returns the logarithm of the number with respect to an arbitrary base.
+    fn log(&self, base: &Self) -> Self;
+    /// Returns the base 2 logarithm of the number.
+    fn log2(&self) -> Self;
+    /// Returns the base 10 logarithm of the number.
+    fn log10(&self) -> Self;
+
+    // Hyperbolic functions
+
+    /// Hyperbolic sine function.
+    fn sinh(&self) -> Self;
+    /// Hyperbolic cosine function.
+    fn cosh(&self) -> Self;
+    /// Hyperbolic tangent function.
+    fn tanh(&self) -> Self;
+    /// Inverse hyperbolic sine function.
+    fn asinh(&self) -> Self;
+    /// Inverse hyperbolic cosine function.
+    fn acosh(&self) -> Self;
+    /// Inverse hyperbolic tangent function.
+    fn atanh(&self) -> Self;
+}
+
 trait Real
-    : Ord
+    : Eq + Ord
     + Field {
 }
 
 impl Real for f32  {}
 impl Real for f64  {}
-
-trait Integral
-    : Ord
-    + CommutativeRing {}
-
-impl Integral for u8   {}
-impl Integral for u16  {}
-impl Integral for u32  {}
-impl Integral for u64  {}
-impl Integral for uint {}
-impl Integral for i8   {}
-impl Integral for i16  {}
-impl Integral for i32  {}
-impl Integral for i64  {}
-impl Integral for int  {}
