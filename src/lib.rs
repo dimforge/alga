@@ -111,7 +111,7 @@ pub trait AbelianGroup
     : Group {
 }
 
-/// Sets that are a semigroup under addition.
+/// Sets that form a semigroup under addition.
 pub trait AdditiveSemiGroup
     : Add<Self, Self> {
 }
@@ -129,7 +129,7 @@ impl AdditiveSemiGroup for int  {}
 impl AdditiveSemiGroup for f32  {}
 impl AdditiveSemiGroup for f64  {}
 
-/// Sets that are a monoid under addition.
+/// Sets that form a monoid under addition.
 pub trait AdditiveMonoid
     : AdditiveSemiGroup {
     /// The additive identity, `0`.
@@ -155,7 +155,7 @@ impl AdditiveMonoid for int  { #[inline] fn zero() -> int  { 0   } }
 impl AdditiveMonoid for f32  { #[inline] fn zero() -> f32  { 0.0 } }
 impl AdditiveMonoid for f64  { #[inline] fn zero() -> f64  { 0.0 } }
 
-/// Sets that are a group under addition.
+/// Sets that form a group under addition.
 pub trait AdditiveGroup
     : AdditiveMonoid
     + Sub<Self, Self>
@@ -175,7 +175,7 @@ impl AdditiveGroup for int  {}
 impl AdditiveGroup for f32  {}
 impl AdditiveGroup for f64  {}
 
-/// Sets that are an abelian group under addition.
+/// Sets that form an abelian group under addition.
 pub trait AdditiveAbelianGroup
     : AdditiveGroup {
 }
@@ -193,7 +193,7 @@ impl AdditiveAbelianGroup for int  {}
 impl AdditiveAbelianGroup for f32  {}
 impl AdditiveAbelianGroup for f64  {}
 
-/// Sets that are a semigroup under multiplication.
+/// Sets that form a semigroup under multiplication.
 pub trait MultiplicativeSemiGroup
     : Mul<Self, Self> {
 }
@@ -211,7 +211,7 @@ impl MultiplicativeSemiGroup for int  {}
 impl MultiplicativeSemiGroup for f32  {}
 impl MultiplicativeSemiGroup for f64  {}
 
-/// Sets that are a monoid under multiplication.
+/// Sets that form a monoid under multiplication.
 pub trait MultiplicativeMonoid
     : MultiplicativeSemiGroup {
     fn one() -> Self;
@@ -236,7 +236,7 @@ impl MultiplicativeMonoid for int  { #[inline] fn one() -> int  { 1   } }
 impl MultiplicativeMonoid for f32  { #[inline] fn one() -> f32  { 1.0 } }
 impl MultiplicativeMonoid for f64  { #[inline] fn one() -> f64  { 1.0 } }
 
-/// Sets that are a group under multiplication.
+/// Sets that form a group under multiplication.
 pub trait MultiplicativeGroup
     : MultiplicativeMonoid
     + Div<Self, Self> {
@@ -247,7 +247,7 @@ pub trait MultiplicativeGroup
 impl MultiplicativeGroup for f32  {}
 impl MultiplicativeGroup for f64  {}
 
-/// Sets that are an abelian group under multiplication.
+/// Sets that form an abelian group under multiplication.
 pub trait MultiplicativeAbelianGroup
     : MultiplicativeGroup {
 }
@@ -255,7 +255,7 @@ pub trait MultiplicativeAbelianGroup
 impl MultiplicativeAbelianGroup for f32  {}
 impl MultiplicativeAbelianGroup for f64  {}
 
-/// Sets that are an abelian group under addition, a monoid under
+/// Sets that form an abelian group under addition, a monoid under
 /// multiplication, and where multiplication distributes over addition.
 ///
 /// # Laws
@@ -284,7 +284,6 @@ impl MultiplicativeAbelianGroup for f64  {}
 /// # Examples
 ///
 /// Integers, matrices, quaternions.
-///
 pub trait Ring
     : AdditiveAbelianGroup
     + MultiplicativeMonoid {
@@ -333,7 +332,6 @@ impl Ring for f64  {}
 /// # Examples
 ///
 /// Complex numbers, reals, rationals, integers.
-///
 pub trait CommutativeRing
     : Ring {
 }
@@ -385,7 +383,6 @@ impl CommutativeRing for f64  {}
 /// # Examples
 ///
 /// Complex numbers, rationals, reals.
-///
 pub trait Field
     : CommutativeRing
     + MultiplicativeAbelianGroup
