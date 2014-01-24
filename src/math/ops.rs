@@ -18,7 +18,7 @@
 /// Sets equipped with an associative addition operator.
 ///
 /// ~~~
-/// (a + b) + c = a + (b + c)               forall a, b, c ∈ Self
+/// (a + b) + c = a + (b + c)               ∀ a, b, c ∈ Self
 /// ~~~
 pub trait AssociativeAdd
     : Add<Self, Self> {}
@@ -39,7 +39,7 @@ impl AssociativeAdd for f64  {}
 /// Sets equipped with a commutative addition operator.
 ///
 /// ~~~
-/// a + b = b + a                           forall a, b, c ∈ Self
+/// a + b = b + a                           ∀ a, b, c ∈ Self
 /// ~~~
 pub trait CommutativeAdd
     : Add<Self, Self> {}
@@ -60,7 +60,7 @@ impl CommutativeAdd for f64  {}
 /// Sets equipped with an associative multiplication operator.
 ///
 /// ~~~
-/// (a * b) * c = a * (b * c)               forall a, b, c ∈ Self
+/// (a * b) * c = a * (b * c)               ∀ a, b, c ∈ Self
 /// ~~~
 pub trait AssociativeMul
     : Mul<Self, Self> {}
@@ -81,7 +81,7 @@ impl AssociativeMul for f64  {}
 /// Sets equipped with a commutative multiplication operator.
 ///
 /// ~~~
-/// a * b = b * a                           forall a, b, c ∈ Self
+/// a * b = b * a                           ∀ a, b, c ∈ Self
 /// ~~~
 pub trait CommutativeMul
     : Mul<Self, Self> {}
@@ -103,8 +103,8 @@ impl CommutativeMul for f64  {}
 /// multiplication distributes over addition.
 ///
 /// ~~~
-/// a * (b + c) = (a * b) + (a * c)         forall a, b, c ∈ Self
-/// (a + b) * c = (a * c) + (b * c)         forall a, b, c ∈ Self
+/// a * (b + c) = (a * b) + (a * c)         ∀ a, b, c ∈ Self
+/// (a + b) * c = (a * c) + (b * c)         ∀ a, b, c ∈ Self
 /// ~~~
 pub trait DistributiveMulAdd
     : Mul<Self, Self>

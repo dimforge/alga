@@ -37,7 +37,7 @@ use ops::DistributiveMulAdd;
 ///
 /// ~~~
 /// Closure
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                         ∀ a, b ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -52,9 +52,9 @@ impl<T: Add<T, T>> AdditiveMagma for T {}
 ///
 /// ~~~
 /// Closure
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -73,12 +73,12 @@ impl<T: AdditiveMagma + AssociativeAdd> AdditiveSemiGroup for T {}
 ///
 /// ~~~
 /// Closure
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// Identity
-///     a + 0 = a                           forall a ∈ Self
-///     0 + a = a                           forall a ∈ Self
+///     a + 0 = a                           ∀ a ∈ Self
+///     0 + a = a                           ∀ a ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -98,15 +98,15 @@ impl<T: AdditiveSemiGroup + Zero> AdditiveMonoid for T {}
 ///
 /// ~~~
 /// Closure
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// Identity
-///     a + 0 = a                           forall a ∈ Self
-///     0 + a = a                           forall a ∈ Self
+///     a + 0 = a                           ∀ a ∈ Self
+///     0 + a = a                           ∀ a ∈ Self
 /// Inverse
-///     a + -a = 0                          forall a ∈ Self
-///     -a + a = 0                          forall a ∈ Self
+///     a + -a = 0                          ∀ a ∈ Self
+///     -a + a = 0                          ∀ a ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -129,17 +129,17 @@ impl<T: AdditiveMonoid + Sub<T, T> + Neg<T>> AdditiveGroup for T {}
 ///
 /// ~~~
 /// Closure
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// Commutativity
-///     a + b = b + a                       forall a, b ∈ Self
+///     a + b = b + a                       ∀ a, b ∈ Self
 /// Identity
-///     a + 0 = a                           forall a ∈ Self
-///     0 + a = a                           forall a ∈ Self
+///     a + 0 = a                           ∀ a ∈ Self
+///     0 + a = a                           ∀ a ∈ Self
 /// Inverse
-///     a + -a = 0                          forall a ∈ Self
-///     -a + a = 0                          forall a ∈ Self
+///     a + -a = 0                          ∀ a ∈ Self
+///     -a + a = 0                          ∀ a ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -173,7 +173,7 @@ impl Recip for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
 ///
 /// ~~~
 /// Closure
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -188,9 +188,9 @@ impl<T: Mul<T, T>> MultiplicativeMagma for T {}
 ///
 /// ~~~
 /// Closure
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -209,12 +209,12 @@ impl<T: MultiplicativeMagma + AssociativeMul> MultiplicativeSemiGroup for T {}
 ///
 /// ~~~
 /// Closure
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// Identity
-///     a * 1 = a                           forall a ∈ Self
-///     1 * a = a                           forall a ∈ Self
+///     a * 1 = a                           ∀ a ∈ Self
+///     1 * a = a                           ∀ a ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -234,15 +234,15 @@ impl<T: MultiplicativeSemiGroup + One> MultiplicativeMonoid for T {}
 ///
 /// ~~~
 /// Closure
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// Identity
-///     a * 1 = a                           forall a ∈ Self
-///     1 * a = a                           forall a ∈ Self
+///     a * 1 = a                           ∀ a ∈ Self
+///     1 * a = a                           ∀ a ∈ Self
 /// Inverse
-///     a * a⁻¹ = 1                         forall a ∈ Self
-///     a⁻¹ * a = 1                         forall a ∈ Self
+///     a * a⁻¹ = 1                         ∀ a ∈ Self
+///     a⁻¹ * a = 1                         ∀ a ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -265,17 +265,17 @@ impl<T: MultiplicativeMonoid + Div<T, T> + Recip> MultiplicativeGroup for T {}
 ///
 /// ~~~
 /// Closure
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// Commutativity
-///     a * b = b * a                       forall a, b ∈ Self
+///     a * b = b * a                       ∀ a, b ∈ Self
 /// Identity
-///     a * 1 = a                           forall a ∈ Self
-///     1 * a = a                           forall a ∈ Self
+///     a * 1 = a                           ∀ a ∈ Self
+///     1 * a = a                           ∀ a ∈ Self
 /// Inverse
-///     a * a⁻¹ = 1                         forall a ∈ Self
-///     a⁻¹ * a = 1                         forall a ∈ Self
+///     a * a⁻¹ = 1                         ∀ a ∈ Self
+///     a⁻¹ * a = 1                         ∀ a ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -302,27 +302,27 @@ impl<T: MultiplicativeGroup + CommutativeMul> MultiplicativeAbelianGroup for T {
 ///
 /// ~~~
 /// Closure of +
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of +
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// Commutativity of +
-///     a + b = b + a                       forall a, b ∈ Self
+///     a + b = b + a                       ∀ a, b ∈ Self
 /// Identity of +
-///     a + 0 = a                           forall a ∈ Self
-///     0 + a = a                           forall a ∈ Self
+///     a + 0 = a                           ∀ a ∈ Self
+///     0 + a = a                           ∀ a ∈ Self
 /// Inverse of +
-///     a + -a = 0                          forall a ∈ Self
-///     -a + a = 0                          forall a ∈ Self
+///     a + -a = 0                          ∀ a ∈ Self
+///     -a + a = 0                          ∀ a ∈ Self
 /// Closure of *
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of *
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// Identity of *
-///     a * 1 = a                           forall a ∈ Self
-///     1 * a = a                           forall a ∈ Self
+///     a * 1 = a                           ∀ a ∈ Self
+///     1 * a = a                           ∀ a ∈ Self
 /// Distributivity of * over +
-///     a * (b + c) = (a * b) + (a * c)     forall a, b, c ∈ Self
-///     (a + b) * c = (a * c) + (b * c)     forall a, b, c ∈ Self
+///     a * (b + c) = (a * b) + (a * c)     ∀ a, b, c ∈ Self
+///     (a + b) * c = (a * c) + (b * c)     ∀ a, b, c ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -353,29 +353,29 @@ impl<T: AdditiveAbelianGroup + MultiplicativeMonoid + DistributiveMulAdd> Ring f
 ///
 /// ~~~
 /// Closure of +
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of +
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// Commutativity of +
-///     a + b = b + a                       forall a, b ∈ Self
+///     a + b = b + a                       ∀ a, b ∈ Self
 /// Identity of +
-///     a + 0 = a                           forall a ∈ Self
-///     0 + a = a                           forall a ∈ Self
+///     a + 0 = a                           ∀ a ∈ Self
+///     0 + a = a                           ∀ a ∈ Self
 /// Inverse of +
-///     a + -a = 0                          forall a ∈ Self
-///     -a + a = 0                          forall a ∈ Self
+///     a + -a = 0                          ∀ a ∈ Self
+///     -a + a = 0                          ∀ a ∈ Self
 /// Closure of *
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of *
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// Commutativity of *
-///     a * b = b * a                       forall a, b ∈ Self
+///     a * b = b * a                       ∀ a, b ∈ Self
 /// Identity of *
-///     a * 1 = a                           forall a ∈ Self
-///     1 * a = a                           forall a ∈ Self
+///     a * 1 = a                           ∀ a ∈ Self
+///     1 * a = a                           ∀ a ∈ Self
 /// Distributivity of * over +
-///     a * (b + c) = (a * b) + (a * c)     forall a, b, c ∈ Self
-///     (a + b) * c = (a * c) + (b * c)     forall a, b, c ∈ Self
+///     a * (b + c) = (a * b) + (a * c)     ∀ a, b, c ∈ Self
+///     (a + b) * c = (a * c) + (b * c)     ∀ a, b, c ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -407,32 +407,32 @@ impl<T: Ring + CommutativeMul> CommutativeRing for T {}
 ///
 /// ~~~
 /// Closure of +
-///     a + b ∈ Self                        forall a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of +
-///     (a + b) + c = a + (b + c)           forall a, b, c ∈ Self
+///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// Commutativity of +
-///     a + b = b + a                       forall a, b ∈ Self
+///     a + b = b + a                       ∀ a, b ∈ Self
 /// Identity of +
-///     a + 0 = a                           forall a ∈ Self
-///     0 + a = a                           forall a ∈ Self
+///     a + 0 = a                           ∀ a ∈ Self
+///     0 + a = a                           ∀ a ∈ Self
 /// Inverse of +
-///     a + -a = 0                          forall a ∈ Self
-///     -a + a = 0                          forall a ∈ Self
+///     a + -a = 0                          ∀ a ∈ Self
+///     -a + a = 0                          ∀ a ∈ Self
 /// Closure of *
-///     a * b ∈ Self                        forall a, b ∈ Self
+///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of *
-///     (a * b) * c = a * (b * c)           forall a, b, c ∈ Self
+///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// Commutativity of *
-///     a * b = b * a                       forall a, b ∈ Self
+///     a * b = b * a                       ∀ a, b ∈ Self
 /// Identity of *
-///     a * 1 = a                           forall a ∈ Self
-///     1 * a = a                           forall a ∈ Self
+///     a * 1 = a                           ∀ a ∈ Self
+///     1 * a = a                           ∀ a ∈ Self
 /// Inverse of *
-///     a * a⁻¹ = 1                         forall a ∈ Self where a ≠ 0
-///     a⁻¹ * a = 1                         forall a ∈ Self where a ≠ 0
+///     a * a⁻¹ = 1                         ∀ a ∈ Self where a ≠ 0
+///     a⁻¹ * a = 1                         ∀ a ∈ Self where a ≠ 0
 /// Distributivity of * over +
-///     a * (b + c) = (a * b) + (a * c)     forall a, b, c ∈ Self
-///     (a + b) * c = (a * c) + (b * c)     forall a, b, c ∈ Self
+///     a * (b + c) = (a * b) + (a * c)     ∀ a, b, c ∈ Self
+///     (a + b) * c = (a * c) + (b * c)     ∀ a, b, c ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -464,8 +464,8 @@ impl<T: CommutativeRing + MultiplicativeAbelianGroup> Field for T {}
 /// Ring with a notion of an absolute value, satisfying:
 ///
 /// ~~~
-/// abs((signum(a)) = 1                     forall a ∈ Self where a ≠ 0
-/// abs(a) * signum(a) = a                  forall a ∈ Self
+/// abs((signum(a)) = 1                     ∀ a ∈ Self where a ≠ 0
+/// abs(a) * signum(a) = a                  ∀ a ∈ Self
 /// ~~~
 pub trait Absolute
     : CommutativeRing {

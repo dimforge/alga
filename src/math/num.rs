@@ -30,7 +30,7 @@ trait Integral
     /// Truncated division satisfying:
     ///
     /// ~~~
-    /// t_div(a, b) = trunc(a / b)              forall a, b ∈ Self where b ≠ 0
+    /// t_div(a, b) = trunc(a / b)              ∀ a, b ∈ Self where b ≠ 0
     /// ~~~
     ///
     /// This is the form of division adopted by the ISO C99 standard for the `/`
@@ -41,7 +41,7 @@ trait Integral
     /// The remainder after truncated division satisfying:
     ///
     /// ~~~
-    /// t_mod(a, b) = a - (b * t_div(a, b))     forall a, b ∈ Self where b ≠ 0
+    /// t_mod(a, b) = a - (b * t_div(a, b))     ∀ a, b ∈ Self where b ≠ 0
     /// ~~~
     ///
     /// This is the form of modulus adopted by the ISO C99 standard for the `%`
@@ -55,14 +55,14 @@ trait Integral
     /// Floored division satisfying:
     ///
     /// ~~~
-    /// f_div(a, b) = ⌊a / b⌋                   forall a, b ∈ Self where b ≠ 0
+    /// f_div(a, b) = ⌊a / b⌋                   ∀ a, b ∈ Self where b ≠ 0
     /// ~~~
     fn f_div(a: &Self, b: &Self) -> Self;
 
     /// The remainder after floored division satisfying:
     ///
     /// ~~~
-    /// f_mod(a, b) = a - (b * f_div(a, b))     forall a, b where b ≠ 0
+    /// f_mod(a, b) = a - (b * f_div(a, b))     ∀ a, b where b ≠ 0
     /// ~~~
     fn f_mod(a: &Self, b: &Self) -> Self;
 
