@@ -18,5 +18,6 @@
 #[comment = "Traits for generic mathematics."];
 
 pub mod algebra;
+pub mod float;
 pub mod num;
 pub mod ops;
