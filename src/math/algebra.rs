@@ -584,3 +584,77 @@ pub trait Transcendental
     /// Inverse hyperbolic tangent function.
     fn atanh(&self) -> Self;
 }
+
+/// Sets that form a boolean algebra.
+pub trait Boolean
+    : Eq
+    + BitAnd<Self, Self>
+    + BitOr<Self, Self>
+    + BitXor<Self, Self>
+    + Not<Self> {
+    fn top() -> Self;
+    fn bottom() -> Self;
+    fn implies(p: &Self, q: &Self) -> Self { !*p | *q }
+}
+
+/// Bitwise operations for signed and unsigned integer types.
+pub trait Bitwise
+    : Boolean
+    + Shl<Self, Self>
+    + Shr<Self, Self>
+    + Eq {
+    fn bit(i: uint) -> Self;
+    fn set_bit(&self, i: uint) -> Self;
+    fn clear_bit(&self, i: uint) -> Self;
+    fn compl_bit(&self, i: uint) -> Self;
+    fn test_bit(&self, i: uint) -> bool;
+    fn is_signed(_: Option<Self>) -> bool;
+
+    /// Returns the number of bits set in the number.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use std::num::Bitwise;
+    ///
+    /// let n = 0b01010001u8;
+    /// assert_eq!(n.count_zeros(), 2);
+    /// ```
+    fn count_zeros(&self) -> Self { !self.count_ones() }
+
+    /// Returns the number of bits set in the number.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use std::num::Bitwise;
+    ///
+    /// let n = 0b01010001u8;
+    /// assert_eq!(n.count_ones(), 2);
+    /// ```
+    fn count_ones(&self) -> Self;
+
+    /// Returns the number of leading zeros in the number.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use std::num::Bitwise;
+    ///
+    /// let n = 0b0101000u16;
+    /// assert_eq!(n.leading_zeros(), 10);
+    /// ```
+    fn leading_zeros(&self) -> Self;
+
+    /// Returns the number of trailing zeros in the number.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use std::num::Bitwise;
+    ///
+    /// let n = 0b0101000u16;
+    /// assert_eq!(n.trailing_zeros(), 3);
+    /// ```
+    fn trailing_zeros(&self) -> Self;
+}
