@@ -14,15 +14,6 @@
 // limitations under the License.
 
 //! Fundamental algebraic structures
-//!
-//! # Inspirations
-//!
-//! * [Numeric Prelude](http://www.haskell.org/haskellwiki/Numeric_Prelude) (Haskell)
-//! * Edward A. Kmett's [algebra package](http://hackage.haskell.org/package/algebra-3.1) (Haskell)
-//! * [YAP: Yet Another Prelude](http://hackage.haskell.org/package/yap) (Haskell)
-//! * Agda's [Algebra module](http://www.cse.chalmers.se/~nad/listings/lib-0.7/Algebra.html) (Agda)
-//! * Idris' [Algebra module](https://github.com/idris-lang/Idris-dev/blob/master/libs/prelude/Prelude/Algebra.idr) (Idris)
-//! * [non/spire](https://github.com/non/spire) (Scala)
 
 pub use std::num::{Zero, One, zero, one};
 use ops::Recip;
@@ -34,11 +25,11 @@ use ops::DistributiveMulAdd;
 // Additive Algebraic Structures
 ////////////////////////////////////////////////////////////////////////////////
 
-/// A set that is equipped with an addition operator.
+/// A set that is closed over the addition operator.
 ///
 /// ~~~
 /// Closure
-///     a + b ∈ Self                         ∀ a, b ∈ Self
+///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// ~~~
 ///
 /// This trait is implemented globally for all types that satisfy:
@@ -162,7 +153,7 @@ impl<T: AdditiveGroup + CommutativeAdd> AdditiveAbelianGroup for T {}
 // Multiplicative Algebraic Structures
 ////////////////////////////////////////////////////////////////////////////////
 
-/// A set that is equipped with a multiplication operator.
+/// A set that is closed over the multiplication operator.
 ///
 /// ~~~
 /// Closure
