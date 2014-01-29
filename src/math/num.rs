@@ -69,11 +69,11 @@ trait Integral
     /// Calculates `f_div` and `f_mod` simultaneously.
     fn f_div_mod(a: &Self, b: &Self) -> (Self, Self);
 
-    /// Greatest Common Divisor
-    fn gcd(&self) -> Self;
+    /// Greatest Common Divisor (GCD)
+    fn gcd(a: &Self, b: &Self) -> Self;
 
-    /// Lowest Common Multiple
-    fn lcm(&self) -> Self;
+    /// Lowest Common Multiple (LCM)
+    fn lcm(a: &Self, b: &Self) -> Self;
 }
 
 #[inline]
