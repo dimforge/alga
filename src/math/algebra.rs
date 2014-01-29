@@ -25,6 +25,7 @@
 //! * [non/spire](https://github.com/non/spire) (Scala)
 
 pub use std::num::{Zero, One, zero, one};
+use ops::Recip;
 use ops::{AssociativeAdd, CommutativeAdd};
 use ops::{AssociativeMul, CommutativeMul};
 use ops::DistributiveMulAdd;
@@ -160,14 +161,6 @@ impl<T: AdditiveGroup + CommutativeAdd> AdditiveAbelianGroup for T {}
 ////////////////////////////////////////////////////////////////////////////////
 // Multiplicative Algebraic Structures
 ////////////////////////////////////////////////////////////////////////////////
-
-/// The multiplicative inverse operation
-pub trait Recip {
-    fn recip(&self) -> Self;
-}
-
-impl Recip for f32 { #[inline] fn recip(&self) -> f32 { 1.0 / *self } }
-impl Recip for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
 
 /// A set that is equipped with a multiplication operator.
 ///

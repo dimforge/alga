@@ -15,6 +15,14 @@
 
 //! Binary operators with specific properties
 
+/// The multiplicative inverse operation
+pub trait Recip {
+    fn recip(&self) -> Self;
+}
+
+impl Recip for f32 { #[inline] fn recip(&self) -> f32 { 1.0 / *self } }
+impl Recip for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
+
 /// Sets equipped with an associative addition operator.
 ///
 /// ~~~
