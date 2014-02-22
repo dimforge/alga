@@ -4,4 +4,8 @@ before_install:
 install:
   - sudo apt-get install rust-nightly
 script:
-  - make build
+  - make
+  - sudo make install
+  - sudo make uninstall
+  - make clean
+  - make doc
