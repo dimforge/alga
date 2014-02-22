@@ -17,6 +17,8 @@
 #[crate_id = "github.com/bjz/num-rs#math:0.1"];
 #[comment = "Traits for generic mathematics."];
 
+#[feature(macro_rules)];
+
 pub mod algebra;
 pub mod float;
 pub mod num;
