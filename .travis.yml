@@ -1,16 +1,17 @@
-env:
-  global:
-    - secure: eEAXQP0S4A9RQv4rQYGbGDgdQ2McwCGtjW4QA6oaWXxPnQLaaylRRmdKvNpgfVmWQr6gf2mcpJKar6Ys4OF7xBUTze2ObSCfBIqS4ovK72XMA4kOAonqeq7pxq/OXzKd4eN5BX2DyXxZ5nlPqr2HT7Wb/CjpazKyQ+fCsjKtyzY=
+# env:
+#   global:
+#     - secure: eEAXQP0S4A9RQv4rQYGbGDgdQ2McwCGtjW4QA6oaWXxPnQLaaylRRmdKvNpgfVmWQr6gf2mcpJKar6Ys4OF7xBUTze2ObSCfBIqS4ovK72XMA4kOAonqeq7pxq/OXzKd4eN5BX2DyXxZ5nlPqr2HT7Wb/CjpazKyQ+fCsjKtyzY=
 before_install:
   - yes | sudo add-apt-repository ppa:hansjorg/rust
   - sudo apt-get update
 install:
   - sudo apt-get install rust-nightly
 script:
-  - make
+#  - make
+  - make lib
   - sudo make install
   - sudo make uninstall
   - make clean
-  - make doc
-after_script:
-  - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
+#   - make doc
+# after_script:
+#   - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
