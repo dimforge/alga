@@ -577,75 +577,298 @@ pub trait Transcendental
 }
 
 /// Sets that form a boolean algebra.
-pub trait Boolean
-    : Eq
-    + BitAnd<Self, Self>
-    + BitOr<Self, Self>
-    + BitXor<Self, Self>
-    + Not<Self> {
-    fn top() -> Self;
+/// 
+/// These must contain exactly two elements, top and bottom: `{⊤, ⊥}`, and be
+/// equipped with three basic operators: `¬`, `∧`, and `∨`, the definitions of
+/// which are outlined below.
+pub trait Boolean: Eq {
+    /// The bottom value, `⊥`.
     fn bottom() -> Self;
-    fn implies(p: &Self, q: &Self) -> Self { !*p | *q }
+
+    /// The top value, `⊤`.
+    #[inline]
+    fn top() -> Self { not(&bottom()) }
+
+    /// The logical complement, `¬`.
+    ///
+    /// # Truth table
+    ///
+    /// ~~~ignore
+    ///   p        ¬p
+    /// +--------+--------+
+    /// | top    | bottom |
+    /// | bottom | top    |
+    /// +--------+--------+
+    /// ~~~
+    fn not(p: &Self) -> Self;
+
+    /// Logical conjunction, `∧`.
+    ///
+    /// # Truth table
+    ///
+    /// ~~~ignore
+    ///   p        q        p ∧ q
+    /// +-----------------+--------+
+    /// | top      top    | top    |
+    /// | top      bottom | bottom |
+    /// | bottom   top    | bottom |
+    /// | bottom   bottom | bottom |
+    /// +-----------------+--------+
+    /// ~~~
+    fn and(p: &Self, q: &Self) -> Self;
+
+    /// Logical disjunction, `∨`.
+    ///
+    /// # Truth table
+    ///
+    /// ~~~ignore
+    ///   p        q        p ∨ q
+    /// +-----------------+--------+
+    /// | top      top    | top    |
+    /// | top      bottom | top    |
+    /// | bottom   top    | top    |
+    /// | bottom   bottom | bottom |
+    /// +-----------------+--------+
+    /// ~~~
+    fn or(p: &Self, q: &Self) -> Self;
+
+    /// Exclusive disjunction, `⊕`, where:
+    ///
+    /// ~~~ignore
+    /// p ⊕ q = (p ∨ q) ∧ ¬(p ∧ q)
+    /// ~~~
+    ///
+    /// # Truth table
+    ///
+    /// ~~~ignore
+    ///   p        q        p ⊕ q
+    /// +-----------------+--------+
+    /// | top      top    | bottom |
+    /// | top      bottom | top    |
+    /// | bottom   top    | top    |
+    /// | bottom   bottom | bottom |
+    /// +-----------------+--------+
+    /// ~~~
+    #[inline]
+    fn xor(p: &Self, q: &Self) -> Self { and(&or(p, q), &not(&and(p, q))) }
+
+    /// Material implication, `→`, where:
+    ///
+    /// ~~~ignore
+    /// p → q = ¬p ∨ q
+    /// ~~~
+    ///
+    /// # Truth table
+    ///
+    /// ~~~ignore
+    ///   p        q        p → q
+    /// +-----------------+--------+
+    /// | top      top    | top    |
+    /// | top      bottom | bottom |
+    /// | bottom   top    | top    |
+    /// | bottom   bottom | top    |
+    /// +-----------------+--------+
+    /// ~~~
+    #[inline]
+    fn implies(p: &Self, q: &Self) -> Self { or(&not(p), q) }
+
+    /// Material biconditional, `≡`, where:
+    ///
+    /// ~~~ignore
+    /// p ≡ q = ¬(p ⊕ q)
+    /// ~~~
+    ///
+    /// # Truth table
+    ///
+    /// ~~~ignore
+    ///   p        q        p ≡ q
+    /// +-----------------+--------+
+    /// | top      top    | top    |
+    /// | top      bottom | bottom |
+    /// | bottom   top    | bottom |
+    /// | bottom   bottom | top    |
+    /// +-----------------+--------+
+    /// ~~~
+    #[inline]
+    fn iff(p: &Self, q: &Self) -> Self { not(&xor(p, q)) }
+
+    /// Converts a value to the corresponding `⊥` and `⊤` value from
+    /// another boolean algebra.
+    #[inline]
+    fn to_boolean<T: Boolean>(&self) -> T {
+        if *self == top() { top() } else { bottom() }
+    }
+
+    /// Converts the value either `zero` or `one` in a set that has those
+    /// elements defined.
+    ///
+    /// # Example
+    ///
+    /// ~~~
+    /// use num::Boolean;
+    ///
+    /// assert_eq!(true.to_bit::<u8>(), 1);
+    /// assert_eq!(false.to_bit::<u8>(), 0);
+    /// ~~~
+    #[inline]
+    fn to_bit<T: Zero + One>(&self) -> T {
+        if *self == top() { one() } else { zero() }
+    }
 }
 
-/// Bitwise operations for signed and unsigned integer types.
-pub trait Bitwise
-    : Boolean
-    + Shl<Self, Self>
-    + Shr<Self, Self>
-    + Eq {
-    fn bit(i: uint) -> Self;
-    fn set_bit(&self, i: uint) -> Self;
-    fn clear_bit(&self, i: uint) -> Self;
-    fn compl_bit(&self, i: uint) -> Self;
-    fn test_bit(&self, i: uint) -> bool;
-    fn is_signed(_: Option<Self>) -> bool;
+/// The truth value, `⊤`.
+#[inline] pub fn top<T: Boolean>() -> T { Boolean::top() }
+/// The false value, `⊥`.
+#[inline] pub fn bottom<T: Boolean>() -> T { Boolean::bottom() }
+/// The logical complement, `¬`.
+#[inline] pub fn not<T: Boolean>(p: &T) -> T { Boolean::not(p) }
+/// Logical conjunction, `∧`.
+#[inline] pub fn and<T: Boolean>(p: &T, q: &T) -> T { Boolean::and(p, q) }
+/// Logical disjunction, `∨`.
+#[inline] pub fn or<T: Boolean>(p: &T, q: &T) -> T { Boolean::or(p, q) }
+/// Exclusive disjunction, `⊕`.
+#[inline] pub fn xor<T: Boolean>(p: &T, q: &T) -> T { Boolean::xor(p, q) }
+/// Material implication, `→`.
+#[inline] pub fn implies<T: Boolean>(p: &T, q: &T) -> T { Boolean::implies(p, q) }
+/// Logical biconditional, `≡`.
+#[inline] pub fn iff<T: Boolean>(p: &T, q: &T) -> T { Boolean::iff(p, q) }
 
-    /// Returns the number of bits set in the number.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use std::num::Bitwise;
-    ///
-    /// let n = 0b01010001u8;
-    /// assert_eq!(n.count_zeros(), 2);
-    /// ```
-    fn count_zeros(&self) -> Self { !self.count_ones() }
+impl Boolean for bool {
+    #[inline] fn bottom() -> bool { false }
+    #[inline] fn top() -> bool { true }
+    #[inline] fn not(p: &bool) -> bool { !*p }
+    #[inline] fn and(p: &bool, q: &bool) -> bool { *p & *q }
+    #[inline] fn or(p: &bool, q: &bool) -> bool { *p | *q }
+    #[inline] fn xor(p: &bool, q: &bool) -> bool { *p ^ *q }
+    #[inline] fn iff(p: &bool, q: &bool) -> bool { *p == *q }
+}
 
-    /// Returns the number of bits set in the number.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use std::num::Bitwise;
-    ///
-    /// let n = 0b01010001u8;
-    /// assert_eq!(n.count_ones(), 2);
-    /// ```
-    fn count_ones(&self) -> Self;
+#[cfg(test)]
+mod test_boolean {
+    use super::{Boolean, top, bottom, not, and, or, xor, iff};
 
-    /// Returns the number of leading zeros in the number.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use std::num::Bitwise;
-    ///
-    /// let n = 0b0101000u16;
-    /// assert_eq!(n.leading_zeros(), 10);
-    /// ```
-    fn leading_zeros(&self) -> Self;
+    #[test]
+    fn test_values() {
+        assert_eq!(top::<bool>(), true);
+        assert_eq!(bottom::<bool>(), false);
+    }
 
-    /// Returns the number of trailing zeros in the number.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use std::num::Bitwise;
-    ///
-    /// let n = 0b0101000u16;
-    /// assert_eq!(n.trailing_zeros(), 3);
-    /// ```
-    fn trailing_zeros(&self) -> Self;
+    #[test]
+    fn test_not() {
+        assert_eq!(not(&true),  false);
+        assert_eq!(not(&false), true);
+    }
+
+    #[test]
+    fn test_and() {
+        assert_eq!(and(&true,  &true),  true);
+        assert_eq!(and(&true,  &false), false);
+        assert_eq!(and(&false, &true),  false);
+        assert_eq!(and(&false, &false), false);
+    }
+
+    #[test]
+    fn test_or() {
+        assert_eq!(or(&true,  &true),  true);
+        assert_eq!(or(&true,  &false), true);
+        assert_eq!(or(&false, &true),  true);
+        assert_eq!(or(&false, &false), false);
+    }
+
+    #[test]
+    fn test_xor() {
+        assert_eq!(xor(&true,  &true),  false);
+        assert_eq!(xor(&true,  &false), true);
+        assert_eq!(xor(&false, &true),  true);
+        assert_eq!(xor(&false, &false), false);
+    }
+
+    #[test]
+    fn test_iff() {
+        assert_eq!(iff(&true,  &true),  true);
+        assert_eq!(iff(&true,  &false), false);
+        assert_eq!(iff(&false, &true),  false);
+        assert_eq!(iff(&false, &false), true);
+    }
+
+    macro_rules! assert_demorgans_laws(
+        ($p:expr, $q: expr) => {{
+            let (p, q) = ($p, $q);
+            assert_eq!(not(&or(&p, &q)), and(&not(&p), &not(&q)));
+            assert_eq!(not(&and(&p, &q)), or(&not(&p), &not(&q)));
+        }}
+    )
+
+    #[test]
+    fn test_demorgans_laws() {
+        assert_demorgans_laws!(true,  true);
+        assert_demorgans_laws!(true,  false);
+        assert_demorgans_laws!(false, true);
+        assert_demorgans_laws!(false, false);
+    }
+
+    #[test]
+    fn test_to_boolean() {
+        assert_eq!(true.to_boolean::<bool>(),  true);
+        assert_eq!(false.to_boolean::<bool>(), false);
+    }
+
+    #[test]
+    fn test_to_bit() {
+        assert_eq!(true.to_bit::<u8>(),  1);
+        assert_eq!(false.to_bit::<u8>(), 0);
+    }
+
+    #[deriving(Eq)]
+    enum B { T, F }
+
+    impl Boolean for B {
+        fn bottom() -> B { F }
+        fn not(p: &B) -> B {
+            match *p {
+                T => F,
+                F => T,
+            }
+        }
+        fn and(p: &B, q: &B) -> B {
+            match (*p, *q) {
+                (T, T) => T,
+                (T, F) => F,
+                (F, T) => F,
+                (F, F) => F,
+            }
+        }
+        fn or(p: &B, q: &B) -> B {
+            match (*p, *q) {
+                (T, T) => T,
+                (T, F) => T,
+                (F, T) => T,
+                (F, F) => F,
+            }
+        }
+    }
+
+    #[test]
+    fn test_derived() {
+        assert_eq!(xor(&T, &T), F);
+        assert_eq!(xor(&T, &F), T);
+        assert_eq!(xor(&F, &T), T);
+        assert_eq!(xor(&F, &F), F);
+
+        assert_eq!(iff(&T, &T), T);
+        assert_eq!(iff(&T, &F), F);
+        assert_eq!(iff(&F, &T), F);
+        assert_eq!(iff(&F, &F), T);
+
+        assert_demorgans_laws!(T, T);
+        assert_demorgans_laws!(T, F);
+        assert_demorgans_laws!(F, T);
+        assert_demorgans_laws!(F, F);
+
+        assert_eq!(T.to_boolean::<bool>(), true);
+        assert_eq!(F.to_boolean::<bool>(), false);
+
+        assert_eq!(T.to_bit::<u8>(), 1);
+        assert_eq!(F.to_bit::<u8>(), 0);
+    }
 }
