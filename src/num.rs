@@ -107,7 +107,7 @@ pub fn f_div_mod<T: Integral>(a: &T, b: &T) -> (T, T) {
 }
 
 trait Real
-    : Eq + Ord
+    : PartialOrd
     + Field {
 }
 

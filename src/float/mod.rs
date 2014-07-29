@@ -40,7 +40,7 @@ pub enum FloatClass {
 }
 
 #[repr(u8)]
-#[deriving(Eq)]
+#[deriving(PartialEq, Eq)]
 pub enum Radix {
     Radix2  = 2,
     Radix10 = 10,
