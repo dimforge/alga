@@ -13,11 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[crate_type = "lib"];
-#[crate_id = "github.com/bjz/num-rs#math:0.1"];
-#[comment = "Traits for generic mathematics."];
+//! Traits for generic mathematics.
 
-#[feature(macro_rules)];
+#![crate_name = "math"]
+#![feature(macro_rules)]
 
 pub mod algebra;
 pub mod float;

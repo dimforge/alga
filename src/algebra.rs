@@ -819,7 +819,7 @@ mod test_boolean {
         assert_eq!(false.to_bit::<u8>(), 0);
     }
 
-    #[deriving(Eq)]
+    #[deriving(PartialEq, Eq, Show)]
     enum B { T, F }
 
     impl Boolean for B {
