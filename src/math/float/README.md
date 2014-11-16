@@ -1,0 +1,2 @@
+- [A machine-checked theory of floating point arithmetic](http://www.cl.cam.ac.uk/~jrh13/papers/fparith.pdf)
+- [On the definition of ulp(x)](http://ljk.imag.fr/membres/Carine.Lucas/TPScilab/JMMuller/ulp-toms.pdf)
