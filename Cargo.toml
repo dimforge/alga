@@ -3,5 +3,5 @@ name = "num"
 version = "0.1.0"
 authors = ["Brendan Zabarauskas"]
 
-[[lib]]
+[lib]
 name = "math"

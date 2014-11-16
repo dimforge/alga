@@ -15,6 +15,8 @@
 
 //! IEEE 754-2008 compliant floating-point arithmetic.
 
+use num::Integer;
+
 // TODO: setBinaryRoundingDirection
 // TODO: getBinaryRoundingDirection
 // TODO: setDecimalRoundingDirection
@@ -64,6 +66,7 @@ pub enum Radix {
 ///
 /// * Two infinities: `+∞` and `−∞`.
 /// * Two kinds of NaN: a quiet NaN (qNaN) and a signaling NaN (sNaN).
+#[allow(non_snake_case)]
 pub trait Ieee754<LogBFormat> {
     fn roundToIntegralTiesToEven(self) -> Self;
     fn roundToIntegralTiesToAway(self) -> Self;
@@ -94,19 +97,19 @@ pub trait Ieee754<LogBFormat> {
     fn division(x: Self, y: Self) -> Self;
     fn fusedMultiplyAdd(x: Self, y: Self, z: Self) -> Self;
     fn squareRoot(self) -> Self;
-    fn convertFromInt<I: Int>(x: I) -> Self;
+    fn convertFromInt<I: Integer>(x: I) -> Self;
 
-    fn convertToIntegerTiesToEven<I: Int>(self) -> I;
-    fn convertToIntegerTowardZero<I: Int>(self) -> I;
-    fn convertToIntegerTowardPositive<I: Int>(self) -> I;
-    fn convertToIntegerTowardNegative<I: Int>(self) -> I;
-    fn convertToIntegerTiesToAway<I: Int>(self) -> I;
+    fn convertToIntegerTiesToEven<I: Integer>(self) -> I;
+    fn convertToIntegerTowardZero<I: Integer>(self) -> I;
+    fn convertToIntegerTowardPositive<I: Integer>(self) -> I;
+    fn convertToIntegerTowardNegative<I: Integer>(self) -> I;
+    fn convertToIntegerTiesToAway<I: Integer>(self) -> I;
 
-    fn convertToIntegerExactTiesToEven<I: Int>(self) -> I;
-    fn convertToIntegerExactTowardZero<I: Int>(self) -> I;
-    fn convertToIntegerExactTowardPositive<I: Int>(self) -> I;
-    fn convertToIntegerExactTowardNegative<I: Int>(self) -> I;
-    fn convertToIntegerExactTiesToAway<I: Int>(self) -> I;
+    fn convertToIntegerExactTiesToEven<I: Integer>(self) -> I;
+    fn convertToIntegerExactTowardZero<I: Integer>(self) -> I;
+    fn convertToIntegerExactTowardPositive<I: Integer>(self) -> I;
+    fn convertToIntegerExactTowardNegative<I: Integer>(self) -> I;
+    fn convertToIntegerExactTiesToAway<I: Integer>(self) -> I;
 
     // TODO: convertFormat
     // TODO: convertFromDecimalCharacter
@@ -205,7 +208,7 @@ pub trait Ieee754<LogBFormat> {
     fn isNaN(self) -> bool;
     /// Returns `true` if and only if `self` is a signalling NaN.
     fn isSignaling(self) -> bool;
-    /// Returns `true` if and only if `self` is a finite number, infinity, or a 
+    /// Returns `true` if and only if `self` is a finite number, infinity, or a
     /// NaN that is canonical.
     fn isCanonical(self) -> bool;
     /// The radix of the format of `self`.

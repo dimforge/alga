@@ -26,7 +26,7 @@ use algebra::{Field, CommutativeRing};
 /// topic is discussed in greater depth in Daan Leijen's
 /// _[Division and Modulus for Computer Scientists]
 /// (http://legacy.cs.uu.nl/daan/download/papers/divmodnote-letter.pdf)_.
-trait Integer
+pub trait Integer
     : Eq + Ord
     + CommutativeRing {
     #[inline]
