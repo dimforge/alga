@@ -50,8 +50,6 @@ impl CommutativeAdd for i16  {}
 impl CommutativeAdd for i32  {}
 impl CommutativeAdd for i64  {}
 impl CommutativeAdd for int  {}
-impl CommutativeAdd for f32  {}
-impl CommutativeAdd for f64  {}
 
 /// Sets equipped with an associative multiplication operator.
 ///
@@ -79,8 +77,6 @@ impl AssociativeMul for i16  {}
 impl AssociativeMul for i32  {}
 impl AssociativeMul for i64  {}
 impl AssociativeMul for int  {}
-impl AssociativeMul for f32  {}
-impl AssociativeMul for f64  {}
 
 /// Sets equipped with a commutative multiplication operator.
 ///
@@ -108,8 +104,6 @@ impl CommutativeMul for i16  {}
 impl CommutativeMul for i32  {}
 impl CommutativeMul for i64  {}
 impl CommutativeMul for int  {}
-impl CommutativeMul for f32  {}
-impl CommutativeMul for f64  {}
 
 /// A set that is equipped with a multiplication and addition operator where
 /// multiplication distributes over addition.
@@ -141,8 +135,42 @@ impl DistributiveMulAdd for i16  {}
 impl DistributiveMulAdd for i32  {}
 impl DistributiveMulAdd for i64  {}
 impl DistributiveMulAdd for int  {}
-impl DistributiveMulAdd for f32  {}
-impl DistributiveMulAdd for f64  {}
+
+
+pub trait PartialAssociativeAdd
+    : Add<Self, Self>
+{}
+
+impl PartialAssociativeAdd for f32 {}
+impl PartialAssociativeAdd for f64 {}
+
+pub trait PartialCommutativeAdd
+    : Add<Self, Self> {}
+
+impl PartialCommutativeAdd for f32 {}
+impl PartialCommutativeAdd for f64 {}
+
+pub trait PartialAssociativeMul
+    : Mul<Self, Self>
+    + PartialEq
+{}
+
+impl PartialAssociativeMul for f32 {}
+impl PartialAssociativeMul for f64 {}
+
+pub trait PartialCommutativeMul
+    : Mul<Self, Self> {}
+
+impl PartialCommutativeMul for f32 {}
+impl PartialCommutativeMul for f64 {}
+
+pub trait PartialDistributiveMulAdd
+    : Mul<Self, Self>
+    + Add<Self, Self>
+{}
+
+impl PartialDistributiveMulAdd for f32 {}
+impl PartialDistributiveMulAdd for f64 {}
 
 #[cfg(test)]
 mod tests {
