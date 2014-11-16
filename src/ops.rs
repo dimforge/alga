@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Binary operators with specific properties
+//! Operators with specific properties
 
 /// The multiplicative inverse operation
 pub trait Recip {

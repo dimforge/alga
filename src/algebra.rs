@@ -15,7 +15,8 @@
 
 //! Fundamental algebraic structures
 
-pub use std::num::{Zero, One, zero, one};
+use ident;
+use ident::{AdditiveIdentity, MultiplicativeIdentity};
 use ops::Recip;
 use ops::{AssociativeAdd, CommutativeAdd};
 use ops::{AssociativeMul, CommutativeMul};
@@ -77,13 +78,13 @@ impl<T: AdditiveMagma + AssociativeAdd> AdditiveSemiGroup for T {}
 ///
 /// * `Add<Self, Self>`
 /// * `AssociativeAdd`
-/// * `Zero`
+/// * `AdditiveIdentity`
 pub trait AdditiveMonoid
     : AdditiveSemiGroup
-    + Zero {
+    + AdditiveIdentity {
 }
 
-impl<T: AdditiveSemiGroup + Zero> AdditiveMonoid for T {}
+impl<T: AdditiveSemiGroup + AdditiveIdentity> AdditiveMonoid for T {}
 
 /// A set that is equipped with an associative addition operator and a
 /// corresponding identity and inverse.
@@ -105,7 +106,7 @@ impl<T: AdditiveSemiGroup + Zero> AdditiveMonoid for T {}
 ///
 /// * `Add<Self, Self>`
 /// * `AssociativeAdd`
-/// * `Zero`
+/// * `AdditiveIdentity`
 /// * `Sub<Self, Self>`
 /// * `Neg<Self>`
 pub trait AdditiveGroup
@@ -139,7 +140,7 @@ impl<T: AdditiveMonoid + Sub<T, T> + Neg<T>> AdditiveGroup for T {}
 /// * `Add<Self, Self>`
 /// * `AssociativeAdd`
 /// * `CommutativeAdd`
-/// * `Zero`
+/// * `AdditiveIdentity`
 /// * `Sub<Self, Self>`
 /// * `Neg<Self>`
 pub trait AdditiveAbelianGroup
@@ -205,13 +206,13 @@ impl<T: MultiplicativeMagma + AssociativeMul> MultiplicativeSemiGroup for T {}
 ///
 /// * `Mul<Self, Self>`
 /// * `AssociativeMul`
-/// * `One`
+/// * `MultiplicativeIdentity`
 pub trait MultiplicativeMonoid
     : MultiplicativeSemiGroup
-    + One {
+    + MultiplicativeIdentity {
 }
 
-impl<T: MultiplicativeSemiGroup + One> MultiplicativeMonoid for T {}
+impl<T: MultiplicativeSemiGroup + MultiplicativeIdentity> MultiplicativeMonoid for T {}
 
 /// A set that is equipped with an associative multiplication operator and a
 /// corresponding identity and inverse.
@@ -233,7 +234,7 @@ impl<T: MultiplicativeSemiGroup + One> MultiplicativeMonoid for T {}
 ///
 /// * `Mul<Self, Self>`
 /// * `AssociativeMul`
-/// * `One`
+/// * `MultiplicativeIdentity`
 /// * `Div<Self, Self>`
 /// * `Recip`
 pub trait MultiplicativeGroup
@@ -267,7 +268,7 @@ impl<T: MultiplicativeMonoid + Div<T, T> + Recip> MultiplicativeGroup for T {}
 /// * `Mul<Self, Self>`
 /// * `AssociativeMul`
 /// * `CommutativeMul`
-/// * `One`
+/// * `MultiplicativeIdentity`
 /// * `Div<Self, Self>`
 /// * `Recip`
 pub trait MultiplicativeAbelianGroup
@@ -314,12 +315,12 @@ impl<T: MultiplicativeGroup + CommutativeMul> MultiplicativeAbelianGroup for T {
 /// * `Add<Self, Self>`
 /// * `AssociativeAdd`
 /// * `CommutativeAdd`
-/// * `Zero`
+/// * `AdditiveIdentity`
 /// * `Sub<Self, Self>`
 /// * `Neg<Self>`
 /// * `Mul<Self, Self>`
 /// * `AssociativeMul`
-/// * `One`
+/// * `MultiplicativeIdentity`
 /// * `DistributiveMulAdd`
 ///
 /// # Examples
@@ -367,13 +368,13 @@ impl<T: AdditiveAbelianGroup + MultiplicativeMonoid + DistributiveMulAdd> Ring f
 /// * `Add<Self, Self>`
 /// * `AssociativeAdd`
 /// * `CommutativeAdd`
-/// * `Zero`
+/// * `AdditiveIdentity`
 /// * `Sub<Self, Self>`
 /// * `Neg<Self>`
 /// * `Mul<Self, Self>`
 /// * `AssociativeMul`
 /// * `CommutativeMul`
-/// * `One`
+/// * `MultiplicativeIdentity`
 /// * `DistributiveMulAdd`
 ///
 /// # Examples
@@ -424,13 +425,13 @@ impl<T: Ring + CommutativeMul> CommutativeRing for T {}
 /// * `Add<Self, Self>`
 /// * `AssociativeAdd`
 /// * `CommutativeAdd`
-/// * `Zero`
+/// * `AdditiveIdentity`
 /// * `Sub<Self, Self>`
 /// * `Neg<Self>`
 /// * `Mul<Self, Self>`
 /// * `AssociativeMul`
 /// * `CommutativeMul`
-/// * `One`
+/// * `MultiplicativeIdentity`
 /// * `Div<Self, Self>`
 /// * `Recip`
 /// * `DistributiveMulAdd`
@@ -699,7 +700,7 @@ pub trait Boolean: Eq {
         if *self == top() { top() } else { bottom() }
     }
 
-    /// Converts the value either `zero` or `one` in a set that has those
+    /// Converts the value either `zero` or `unit` in a set that has those
     /// elements defined.
     ///
     /// # Example
@@ -711,8 +712,8 @@ pub trait Boolean: Eq {
     /// assert_eq!(false.to_bit::<u8>(), 0);
     /// ~~~
     #[inline]
-    fn to_bit<T: Zero + One>(&self) -> T {
-        if *self == top() { one() } else { zero() }
+    fn to_bit<T: AdditiveIdentity + MultiplicativeIdentity>(&self) -> T {
+        if *self == top() { ident::unit() } else { ident::zero() }
     }
 }
 

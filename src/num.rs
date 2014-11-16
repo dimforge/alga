@@ -13,9 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::num::{zero, one};
-
 use algebra::{Field, CommutativeRing};
+use ident;
 
 /// A number that can be written without a fractional or decimal component.
 ///
@@ -30,7 +29,7 @@ pub trait Integer
     : Eq + Ord
     + CommutativeRing {
     #[inline]
-    fn succ(&self) -> Self { *self + one() }
+    fn succ(&self) -> Self { *self + ident::unit() }
 
     /// Truncated division satisfying:
     ///
@@ -93,7 +92,7 @@ pub trait ModularInteger
     fn max_value() -> Self;
     fn congruent(x: &Self, y: &Self) -> bool;
     #[inline]
-    fn pred(&self) -> Self { *self - one() }
+    fn pred(&self) -> Self { *self - ident::unit() }
 }
 
 #[inline]
