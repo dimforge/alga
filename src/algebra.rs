@@ -14,6 +14,12 @@
 // limitations under the License.
 
 //! Fundamental algebraic structures
+//!
+//! ~~~notrust
+//!
+//! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
+//!
+/// ~~~
 
 use ident;
 use ident::{AdditiveIdentity, MultiplicativeIdentity};
@@ -32,10 +38,6 @@ use ops::DistributiveMulAdd;
 /// Closure
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
 pub trait AdditiveMagma
     : Add<Self, Self> {}
 
@@ -49,11 +51,6 @@ impl<T: Add<T, T>> AdditiveMagma for T {}
 /// Associativity
 ///     (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
 pub trait AdditiveSemiGroup
     : AdditiveMagma
     + AssociativeAdd {
@@ -73,12 +70,6 @@ impl<T: AdditiveMagma + AssociativeAdd> AdditiveSemiGroup for T {}
 ///     a + 0 = a                           ∀ a ∈ Self
 ///     0 + a = a                           ∀ a ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
-/// * `AdditiveIdentity`
 pub trait AdditiveMonoid
     : AdditiveSemiGroup
     + AdditiveIdentity {
@@ -101,14 +92,6 @@ impl<T: AdditiveSemiGroup + AdditiveIdentity> AdditiveMonoid for T {}
 ///     a + -a = 0                          ∀ a ∈ Self
 ///     -a + a = 0                          ∀ a ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
-/// * `AdditiveIdentity`
-/// * `Sub<Self, Self>`
-/// * `Neg<Self>`
 pub trait AdditiveGroup
     : AdditiveMonoid
     + Sub<Self, Self>
@@ -134,15 +117,6 @@ impl<T: AdditiveMonoid + Sub<T, T> + Neg<T>> AdditiveGroup for T {}
 ///     a + -a = 0                          ∀ a ∈ Self
 ///     -a + a = 0                          ∀ a ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
-/// * `CommutativeAdd`
-/// * `AdditiveIdentity`
-/// * `Sub<Self, Self>`
-/// * `Neg<Self>`
 pub trait AdditiveAbelianGroup
     : AdditiveGroup
     + CommutativeAdd {
@@ -160,10 +134,6 @@ impl<T: AdditiveGroup + CommutativeAdd> AdditiveAbelianGroup for T {}
 /// Closure
 ///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Mul<Self, Self>`
 pub trait MultiplicativeMagma
     : Mul<Self, Self> {}
 
@@ -177,11 +147,6 @@ impl<T: Mul<T, T>> MultiplicativeMagma for T {}
 /// Associativity
 ///     (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
 pub trait MultiplicativeSemiGroup
     : MultiplicativeMagma
     + AssociativeMul {
@@ -201,12 +166,6 @@ impl<T: MultiplicativeMagma + AssociativeMul> MultiplicativeSemiGroup for T {}
 ///     a * 1 = a                           ∀ a ∈ Self
 ///     1 * a = a                           ∀ a ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
-/// * `MultiplicativeIdentity`
 pub trait MultiplicativeMonoid
     : MultiplicativeSemiGroup
     + MultiplicativeIdentity {
@@ -229,14 +188,6 @@ impl<T: MultiplicativeSemiGroup + MultiplicativeIdentity> MultiplicativeMonoid f
 ///     a * a⁻¹ = 1                         ∀ a ∈ Self
 ///     a⁻¹ * a = 1                         ∀ a ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
-/// * `MultiplicativeIdentity`
-/// * `Div<Self, Self>`
-/// * `Recip`
 pub trait MultiplicativeGroup
     : MultiplicativeMonoid
     + Div<Self, Self>
@@ -262,15 +213,6 @@ impl<T: MultiplicativeMonoid + Div<T, T> + Recip> MultiplicativeGroup for T {}
 ///     a * a⁻¹ = 1                         ∀ a ∈ Self
 ///     a⁻¹ * a = 1                         ∀ a ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
-/// * `CommutativeMul`
-/// * `MultiplicativeIdentity`
-/// * `Div<Self, Self>`
-/// * `Recip`
 pub trait MultiplicativeAbelianGroup
     : MultiplicativeGroup
     + CommutativeMul {
@@ -309,19 +251,6 @@ impl<T: MultiplicativeGroup + CommutativeMul> MultiplicativeAbelianGroup for T {
 ///     a * (b + c) = (a * b) + (a * c)     ∀ a, b, c ∈ Self
 ///     (a + b) * c = (a * c) + (b * c)     ∀ a, b, c ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
-/// * `CommutativeAdd`
-/// * `AdditiveIdentity`
-/// * `Sub<Self, Self>`
-/// * `Neg<Self>`
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
-/// * `MultiplicativeIdentity`
-/// * `DistributiveMulAdd`
 ///
 /// # Examples
 ///
@@ -362,20 +291,6 @@ impl<T: AdditiveAbelianGroup + MultiplicativeMonoid + DistributiveMulAdd> Ring f
 ///     a * (b + c) = (a * b) + (a * c)     ∀ a, b, c ∈ Self
 ///     (a + b) * c = (a * c) + (b * c)     ∀ a, b, c ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
-/// * `CommutativeAdd`
-/// * `AdditiveIdentity`
-/// * `Sub<Self, Self>`
-/// * `Neg<Self>`
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
-/// * `CommutativeMul`
-/// * `MultiplicativeIdentity`
-/// * `DistributiveMulAdd`
 ///
 /// # Examples
 ///
@@ -419,22 +334,6 @@ impl<T: Ring + CommutativeMul> CommutativeRing for T {}
 ///     a * (b + c) = (a * b) + (a * c)     ∀ a, b, c ∈ Self
 ///     (a + b) * c = (a * c) + (b * c)     ∀ a, b, c ∈ Self
 /// ~~~
-///
-/// This trait is implemented globally for all types that satisfy:
-///
-/// * `Add<Self, Self>`
-/// * `AssociativeAdd`
-/// * `CommutativeAdd`
-/// * `AdditiveIdentity`
-/// * `Sub<Self, Self>`
-/// * `Neg<Self>`
-/// * `Mul<Self, Self>`
-/// * `AssociativeMul`
-/// * `CommutativeMul`
-/// * `MultiplicativeIdentity`
-/// * `Div<Self, Self>`
-/// * `Recip`
-/// * `DistributiveMulAdd`
 ///
 /// # Examples
 ///
