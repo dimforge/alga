@@ -23,33 +23,6 @@ pub trait Recip {
 impl Recip for f32 { #[inline] fn recip(&self) -> f32 { 1.0 / *self } }
 impl Recip for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
 
-/// Sets equipped with an associative addition operator.
-///
-/// ~~~notrust
-/// (a + b) + c = a + (b + c)               ∀ a, b, c ∈ Self
-/// ~~~
-pub trait AssociativeAdd
-    : Add<Self, Self> {}
-
-/// Ensures that the addition operator is associative for the given arguments.
-pub fn prop_add_is_associative<T>((a, b, c): (T, T, T)) -> bool where
-    T: AssociativeAdd + PartialEq,
-{
-    (a + b) + c == a + (b + c)
-}
-
-impl AssociativeAdd for u8   {}
-impl AssociativeAdd for u16  {}
-impl AssociativeAdd for u32  {}
-impl AssociativeAdd for u64  {}
-impl AssociativeAdd for uint {}
-impl AssociativeAdd for i8   {}
-impl AssociativeAdd for i16  {}
-impl AssociativeAdd for i32  {}
-impl AssociativeAdd for i64  {}
-impl AssociativeAdd for int  {}
-impl AssociativeAdd for f32  {}
-impl AssociativeAdd for f64  {}
 
 /// Sets equipped with a commutative addition operator.
 ///
@@ -57,7 +30,8 @@ impl AssociativeAdd for f64  {}
 /// a + b = b + a                           ∀ a, b, c ∈ Self
 /// ~~~
 pub trait CommutativeAdd
-    : Add<Self, Self> {}
+    : Add<Self, Self>
+{}
 
 /// Ensures that the addition operator is commutative for the given arguments.
 pub fn prop_add_is_commutative<T>((a, b): (T, T)) -> bool where
@@ -114,7 +88,8 @@ impl AssociativeMul for f64  {}
 /// a * b = b * a                           ∀ a, b, c ∈ Self
 /// ~~~
 pub trait CommutativeMul
-    : Mul<Self, Self> {}
+    : Mul<Self, Self>
+{}
 
 /// Ensures that the multiplication operator is commutative for the given arguments.
 pub fn prop_mul_is_commutative<T>((a, b): (T, T)) -> bool where
@@ -145,7 +120,8 @@ impl CommutativeMul for f64  {}
 /// ~~~
 pub trait DistributiveMulAdd
     : Mul<Self, Self>
-    + Add<Self, Self> {}
+    + Add<Self, Self>
+{}
 
 /// Ensures that multiplication distributes over addition for the given arguments.
 pub fn prop_mul_add_is_distributive<T>((a, b, c): (T, T, T)) -> bool where

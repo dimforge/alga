@@ -53,8 +53,8 @@ impl<T: Add<T, T>> AdditiveMagma for T {}
 /// ~~~
 pub trait AdditiveSemiGroup
     : AdditiveMagma
-    + AssociativeAdd {
-}
+    + AssociativeAdd
+{}
 
 impl<T: AdditiveMagma + AssociativeAdd> AdditiveSemiGroup for T {}
 
@@ -72,8 +72,8 @@ impl<T: AdditiveMagma + AssociativeAdd> AdditiveSemiGroup for T {}
 /// ~~~
 pub trait AdditiveMonoid
     : AdditiveSemiGroup
-    + AdditiveIdentity {
-}
+    + AdditiveIdentity
+{}
 
 impl<T: AdditiveSemiGroup + AdditiveIdentity> AdditiveMonoid for T {}
 
@@ -95,8 +95,8 @@ impl<T: AdditiveSemiGroup + AdditiveIdentity> AdditiveMonoid for T {}
 pub trait AdditiveGroup
     : AdditiveMonoid
     + Sub<Self, Self>
-    + Neg<Self> {
-}
+    + Neg<Self>
+{}
 
 impl<T: AdditiveMonoid + Sub<T, T> + Neg<T>> AdditiveGroup for T {}
 
@@ -119,8 +119,8 @@ impl<T: AdditiveMonoid + Sub<T, T> + Neg<T>> AdditiveGroup for T {}
 /// ~~~
 pub trait AdditiveAbelianGroup
     : AdditiveGroup
-    + CommutativeAdd {
-}
+    + CommutativeAdd
+{}
 
 impl<T: AdditiveGroup + CommutativeAdd> AdditiveAbelianGroup for T {}
 
@@ -149,8 +149,8 @@ impl<T: Mul<T, T>> MultiplicativeMagma for T {}
 /// ~~~
 pub trait MultiplicativeSemiGroup
     : MultiplicativeMagma
-    + AssociativeMul {
-}
+    + AssociativeMul
+{}
 
 impl<T: MultiplicativeMagma + AssociativeMul> MultiplicativeSemiGroup for T {}
 
@@ -168,8 +168,8 @@ impl<T: MultiplicativeMagma + AssociativeMul> MultiplicativeSemiGroup for T {}
 /// ~~~
 pub trait MultiplicativeMonoid
     : MultiplicativeSemiGroup
-    + MultiplicativeIdentity {
-}
+    + MultiplicativeIdentity
+{}
 
 impl<T: MultiplicativeSemiGroup + MultiplicativeIdentity> MultiplicativeMonoid for T {}
 
@@ -191,8 +191,8 @@ impl<T: MultiplicativeSemiGroup + MultiplicativeIdentity> MultiplicativeMonoid f
 pub trait MultiplicativeGroup
     : MultiplicativeMonoid
     + Div<Self, Self>
-    + Recip {
-}
+    + Recip
+{}
 
 impl<T: MultiplicativeMonoid + Div<T, T> + Recip> MultiplicativeGroup for T {}
 
@@ -215,8 +215,8 @@ impl<T: MultiplicativeMonoid + Div<T, T> + Recip> MultiplicativeGroup for T {}
 /// ~~~
 pub trait MultiplicativeAbelianGroup
     : MultiplicativeGroup
-    + CommutativeMul {
-}
+    + CommutativeMul
+{}
 
 impl<T: MultiplicativeGroup + CommutativeMul> MultiplicativeAbelianGroup for T {}
 
@@ -258,8 +258,8 @@ impl<T: MultiplicativeGroup + CommutativeMul> MultiplicativeAbelianGroup for T {
 pub trait Ring
     : AdditiveAbelianGroup
     + MultiplicativeMonoid
-    + DistributiveMulAdd {
-}
+    + DistributiveMulAdd
+{}
 
 impl<T: AdditiveAbelianGroup + MultiplicativeMonoid + DistributiveMulAdd> Ring for T {}
 
@@ -297,8 +297,8 @@ impl<T: AdditiveAbelianGroup + MultiplicativeMonoid + DistributiveMulAdd> Ring f
 /// Complex numbers, reals, rationals, integers.
 pub trait CommutativeRing
     : Ring
-    + CommutativeMul {
-}
+    + CommutativeMul
+{}
 
 impl<T: Ring + CommutativeMul> CommutativeRing for T {}
 
@@ -340,8 +340,8 @@ impl<T: Ring + CommutativeMul> CommutativeRing for T {}
 /// Complex numbers, rationals, reals.
 pub trait Field
     : CommutativeRing
-    + MultiplicativeAbelianGroup {
-}
+    + MultiplicativeAbelianGroup
+{}
 
 impl<T: CommutativeRing + MultiplicativeAbelianGroup> Field for T {}
 
