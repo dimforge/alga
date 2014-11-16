@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::num::{zero, one};
+
 use algebra::{Field, CommutativeRing};
 
 /// A number that can be written without a fractional or decimal component.
@@ -24,9 +26,12 @@ use algebra::{Field, CommutativeRing};
 /// topic is discussed in greater depth in Daan Leijen's
 /// _[Division and Modulus for Computer Scientists]
 /// (http://legacy.cs.uu.nl/daan/download/papers/divmodnote-letter.pdf)_.
-trait Integral
+trait Integer
     : Eq + Ord
     + CommutativeRing {
+    #[inline]
+    fn succ(&self) -> Self { *self + one() }
+
     /// Truncated division satisfying:
     ///
     /// ~~~
@@ -50,7 +55,10 @@ trait Integral
     fn t_mod(a: &Self, b: &Self) -> Self;
 
     /// Calculates `t_div` and `t_mod` simultaneously.
-    fn t_div_mod(a: &Self, b: &Self) -> (Self, Self);
+    #[inline]
+    fn t_div_mod(a: &Self, b: &Self) -> (Self, Self) {
+        (t_div(a, b), t_mod(a, b))
+    }
 
     /// Floored division satisfying:
     ///
@@ -67,7 +75,10 @@ trait Integral
     fn f_mod(a: &Self, b: &Self) -> Self;
 
     /// Calculates `f_div` and `f_mod` simultaneously.
-    fn f_div_mod(a: &Self, b: &Self) -> (Self, Self);
+    #[inline]
+    fn f_div_mod(a: &Self, b: &Self) -> (Self, Self) {
+        (f_div(a, b), f_mod(a, b))
+    }
 
     /// Greatest Common Divisor (GCD)
     fn gcd(a: &Self, b: &Self) -> Self;
@@ -76,34 +87,43 @@ trait Integral
     fn lcm(a: &Self, b: &Self) -> Self;
 }
 
-#[inline]
-pub fn t_div<T: Integral>(a: &T, b: &T) -> T {
-    Integral::t_div(a, b)
+pub trait ModularInteger
+    : Integer {
+    fn min_value() -> Self;
+    fn max_value() -> Self;
+    fn congruent(x: &Self, y: &Self) -> bool;
+    #[inline]
+    fn pred(&self) -> Self { *self - one() }
 }
 
 #[inline]
-pub fn t_mod<T: Integral>(a: &T, b: &T) -> T {
-    Integral::t_mod(a, b)
+pub fn t_div<T: Integer>(a: &T, b: &T) -> T {
+    Integer::t_div(a, b)
 }
 
 #[inline]
-pub fn t_div_mod<T: Integral>(a: &T, b: &T) -> (T, T) {
-    Integral::t_div_mod(a, b)
+pub fn t_mod<T: Integer>(a: &T, b: &T) -> T {
+    Integer::t_mod(a, b)
 }
 
 #[inline]
-pub fn f_div<T: Integral>(a: &T, b: &T) -> T {
-    Integral::f_div(a, b)
+pub fn t_div_mod<T: Integer>(a: &T, b: &T) -> (T, T) {
+    Integer::t_div_mod(a, b)
 }
 
 #[inline]
-pub fn f_mod<T: Integral>(a: &T, b: &T) -> T {
-    Integral::f_mod(a, b)
+pub fn f_div<T: Integer>(a: &T, b: &T) -> T {
+    Integer::f_div(a, b)
 }
 
 #[inline]
-pub fn f_div_mod<T: Integral>(a: &T, b: &T) -> (T, T) {
-    Integral::f_div_mod(a, b)
+pub fn f_mod<T: Integer>(a: &T, b: &T) -> T {
+    Integer::f_mod(a, b)
+}
+
+#[inline]
+pub fn f_div_mod<T: Integer>(a: &T, b: &T) -> (T, T) {
+    Integer::f_div_mod(a, b)
 }
 
 trait Real
