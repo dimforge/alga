@@ -17,6 +17,13 @@
 
 #![crate_name = "math"]
 #![feature(macro_rules)]
+#![feature(phase)]
+
+#[cfg(test)]
+#[phase(plugin)]
+extern crate quickcheck_macros;
+#[cfg(test)]
+extern crate quickcheck;
 
 pub mod algebra;
 pub mod float;

@@ -31,6 +31,13 @@ impl Recip for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
 pub trait AssociativeAdd
     : Add<Self, Self> {}
 
+/// Ensures that the addition operator is associative for the given arguments.
+pub fn prop_add_is_associative<T>((a, b, c): (T, T, T)) -> bool where
+    T: AssociativeAdd + PartialEq,
+{
+    (a + b) + c == a + (b + c)
+}
+
 impl AssociativeAdd for u8   {}
 impl AssociativeAdd for u16  {}
 impl AssociativeAdd for u32  {}
@@ -52,6 +59,13 @@ impl AssociativeAdd for f64  {}
 pub trait CommutativeAdd
     : Add<Self, Self> {}
 
+/// Ensures that the addition operator is commutative for the given arguments.
+pub fn prop_add_is_commutative<T>((a, b): (T, T)) -> bool where
+    T: AssociativeAdd + PartialEq,
+{
+    a + b == b + a
+}
+
 impl CommutativeAdd for u8   {}
 impl CommutativeAdd for u16  {}
 impl CommutativeAdd for u32  {}
@@ -71,7 +85,15 @@ impl CommutativeAdd for f64  {}
 /// (a * b) * c = a * (b * c)               ∀ a, b, c ∈ Self
 /// ~~~
 pub trait AssociativeMul
-    : Mul<Self, Self> {}
+    : Mul<Self, Self>
+    + PartialEq {}
+
+/// Ensures that the multiplication operator is associative for the given arguments.
+pub fn prop_mul_is_associative<T>((a, b, c): (T, T, T)) -> bool where
+    T: AssociativeMul + PartialEq,
+{
+    (a * b) * c == a * (b * c)
+}
 
 impl AssociativeMul for u8   {}
 impl AssociativeMul for u16  {}
@@ -93,6 +115,13 @@ impl AssociativeMul for f64  {}
 /// ~~~
 pub trait CommutativeMul
     : Mul<Self, Self> {}
+
+/// Ensures that the multiplication operator is commutative for the given arguments.
+pub fn prop_mul_is_commutative<T>((a, b): (T, T)) -> bool where
+    T: CommutativeMul + PartialEq,
+{
+    a * b == b * a
+}
 
 impl CommutativeMul for u8   {}
 impl CommutativeMul for u16  {}
@@ -118,6 +147,14 @@ pub trait DistributiveMulAdd
     : Mul<Self, Self>
     + Add<Self, Self> {}
 
+/// Ensures that multiplication distributes over addition for the given arguments.
+pub fn prop_mul_add_is_distributive<T>((a, b, c): (T, T, T)) -> bool where
+    T: DistributiveMulAdd + PartialEq,
+{
+    a * (b + c) == (a * b) + (a * c) &&
+    (a + b) * c == (a * c) + (b * c)
+}
+
 impl DistributiveMulAdd for u8   {}
 impl DistributiveMulAdd for u16  {}
 impl DistributiveMulAdd for u32  {}
@@ -130,3 +167,43 @@ impl DistributiveMulAdd for i64  {}
 impl DistributiveMulAdd for int  {}
 impl DistributiveMulAdd for f32  {}
 impl DistributiveMulAdd for f64  {}
+
+#[cfg(test)]
+mod tests {
+    macro_rules! quickcheck_int {
+        ($T:ident) => {
+            mod $T {
+                #[quickcheck]
+                fn prop_add_is_associative(args: ($T, $T, $T)) -> bool {
+                    ::ops::prop_add_is_associative(args)
+                }
+                #[quickcheck]
+                fn prop_add_is_commutative(args: ($T, $T)) -> bool {
+                    ::ops::prop_add_is_commutative(args)
+                }
+                #[quickcheck]
+                fn prop_mul_is_associative(args: ($T, $T, $T)) -> bool {
+                    ::ops::prop_mul_is_associative(args)
+                }
+                #[quickcheck]
+                fn prop_mul_is_commutative(args: ($T, $T)) -> bool {
+                    ::ops::prop_mul_is_commutative(args)
+                }
+                #[quickcheck]
+                fn prop_mul_add_is_distributive(args: ($T, $T, $T)) -> bool {
+                    ::ops::prop_mul_add_is_distributive(args)
+                }
+            }
+        }
+    }
+    quickcheck_int!(u8)
+    quickcheck_int!(u16)
+    quickcheck_int!(u32)
+    quickcheck_int!(u64)
+    quickcheck_int!(uint)
+    quickcheck_int!(i8)
+    quickcheck_int!(i16)
+    quickcheck_int!(i32)
+    quickcheck_int!(i64)
+    quickcheck_int!(int)
+}
