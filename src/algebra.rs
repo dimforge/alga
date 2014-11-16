@@ -27,7 +27,7 @@ use ops::DistributiveMulAdd;
 
 /// A set that is closed over the addition operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// ~~~
@@ -42,7 +42,7 @@ impl<T: Add<T, T>> AdditiveMagma for T {}
 
 /// A set that is equipped with an associative addition operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -63,7 +63,7 @@ impl<T: AdditiveMagma + AssociativeAdd> AdditiveSemiGroup for T {}
 /// A set that is equipped with an associative addition operator and a
 /// corresponding identity.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -88,7 +88,7 @@ impl<T: AdditiveSemiGroup + Zero> AdditiveMonoid for T {}
 /// A set that is equipped with an associative addition operator and a
 /// corresponding identity and inverse.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -119,7 +119,7 @@ impl<T: AdditiveMonoid + Sub<T, T> + Neg<T>> AdditiveGroup for T {}
 /// A set that is equipped with an associative and commutative addition operator
 /// and a corresponding identity and inverse.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -155,7 +155,7 @@ impl<T: AdditiveGroup + CommutativeAdd> AdditiveAbelianGroup for T {}
 
 /// A set that is closed over the multiplication operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// ~~~
@@ -170,7 +170,7 @@ impl<T: Mul<T, T>> MultiplicativeMagma for T {}
 
 /// A set that is equipped with an associative multiplication operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -191,7 +191,7 @@ impl<T: MultiplicativeMagma + AssociativeMul> MultiplicativeSemiGroup for T {}
 /// A set that is equipped with an associative multiplication operator and a
 /// corresponding identity.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -216,7 +216,7 @@ impl<T: MultiplicativeSemiGroup + One> MultiplicativeMonoid for T {}
 /// A set that is equipped with an associative multiplication operator and a
 /// corresponding identity and inverse.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -247,7 +247,7 @@ impl<T: MultiplicativeMonoid + Div<T, T> + Recip> MultiplicativeGroup for T {}
 /// A set that is equipped with an associative and commutative multiplication
 /// operator and a corresponding identity and inverse.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure
 ///     a * b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity
@@ -284,7 +284,7 @@ impl<T: MultiplicativeGroup + CommutativeMul> MultiplicativeAbelianGroup for T {
 /// Sets that form an abelian group under addition, a monoid under
 /// multiplication, and where multiplication distributes over addition.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure of +
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of +
@@ -335,7 +335,7 @@ impl<T: AdditiveAbelianGroup + MultiplicativeMonoid + DistributiveMulAdd> Ring f
 
 /// A ring whose multiplication operation is also commutative.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure of +
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of +
@@ -389,7 +389,7 @@ impl<T: Ring + CommutativeMul> CommutativeRing for T {}
 /// A commutative ring that also has a multiplicative inverse operation for
 /// every non-zero element.
 ///
-/// ~~~
+/// ~~~notrust
 /// Closure of +
 ///     a + b ∈ Self                        ∀ a, b ∈ Self
 /// Associativity of +
@@ -447,7 +447,7 @@ impl<T: CommutativeRing + MultiplicativeAbelianGroup> Field for T {}
 
 /// Ring with a notion of an absolute value, satisfying:
 ///
-/// ~~~
+/// ~~~notrust
 /// abs((signum(a)) = 1                     ∀ a ∈ Self where a ≠ 0
 /// abs(a) * signum(a) = a                  ∀ a ∈ Self
 /// ~~~
@@ -468,7 +468,7 @@ pub trait Algebraic {
     /// Calculate the length of the hypotenuse of a right-angle triangle given
     /// the lengths of the other two sides, `x` and `y`.
     ///
-    /// ~~~
+    /// ~~~notrust
     /// hypot(x, y) = √(x² + y²)
     /// ~~~
     fn hypot(x: &Self, y: &Self) -> Self;
@@ -480,7 +480,7 @@ pub trait Trigonometric
     /// The ratio of the length of the opposite side to the length of the
     /// hypotenuse of a right angle triangle.
     ///
-    /// ~~~
+    /// ~~~notrust
     /// sin(self) = opposite / hypotenuse
     /// ~~~
     ///
@@ -489,7 +489,7 @@ pub trait Trigonometric
     /// The ratio of the length of the adjacent side to the length of the
     /// hypotenuse of a right angle triangle.
     ///
-    /// ~~~
+    /// ~~~notrust
     /// cos(self) = adjacent / hypotenuse
     /// ~~~
     ///
@@ -498,7 +498,7 @@ pub trait Trigonometric
     /// The ratio of the length of the opposite side to the length of the
     /// adjacent side of a right angle triangle.
     ///
-    /// ~~~
+    /// ~~~notrust
     /// tan(self) = opposite / adjacent
     /// ~~~
     ///
@@ -514,13 +514,13 @@ pub trait Trigonometric
     ///
     /// This can be defined as either:
     ///
-    /// ~~~
+    /// ~~~notrust
     /// atan2(x, y) = 2 * atan(y / (√(x² + y²) + x))
     /// ~~~
     ///
     /// or:
     ///
-    /// ~~~
+    /// ~~~notrust
     /// x > 0           atan(y / x)
     /// y ≥ 0, x < 0    π + atan(y / x)
     /// y < 0, x < 0    -π + atan(y / x)
@@ -540,7 +540,7 @@ pub trait Transcendental
     + Trigonometric {
     /// The ratio of a circle's circumference to its diameter.
     ///
-    /// ~~~
+    /// ~~~notrust
     /// π = C / d
     /// ~~~
     fn pi() -> Self;
@@ -577,7 +577,7 @@ pub trait Transcendental
 }
 
 /// Sets that form a boolean algebra.
-/// 
+///
 /// These must contain exactly two elements, top and bottom: `{⊤, ⊥}`, and be
 /// equipped with three basic operators: `¬`, `∧`, and `∨`, the definitions of
 /// which are outlined below.
@@ -593,7 +593,7 @@ pub trait Boolean: Eq {
     ///
     /// # Truth table
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     ///   p        ¬p
     /// +--------+--------+
     /// | top    | bottom |
@@ -606,7 +606,7 @@ pub trait Boolean: Eq {
     ///
     /// # Truth table
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     ///   p        q        p ∧ q
     /// +-----------------+--------+
     /// | top      top    | top    |
@@ -621,7 +621,7 @@ pub trait Boolean: Eq {
     ///
     /// # Truth table
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     ///   p        q        p ∨ q
     /// +-----------------+--------+
     /// | top      top    | top    |
@@ -634,13 +634,13 @@ pub trait Boolean: Eq {
 
     /// Exclusive disjunction, `⊕`, where:
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     /// p ⊕ q = (p ∨ q) ∧ ¬(p ∧ q)
     /// ~~~
     ///
     /// # Truth table
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     ///   p        q        p ⊕ q
     /// +-----------------+--------+
     /// | top      top    | bottom |
@@ -654,13 +654,13 @@ pub trait Boolean: Eq {
 
     /// Material implication, `→`, where:
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     /// p → q = ¬p ∨ q
     /// ~~~
     ///
     /// # Truth table
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     ///   p        q        p → q
     /// +-----------------+--------+
     /// | top      top    | top    |
@@ -674,13 +674,13 @@ pub trait Boolean: Eq {
 
     /// Material biconditional, `≡`, where:
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     /// p ≡ q = ¬(p ⊕ q)
     /// ~~~
     ///
     /// # Truth table
     ///
-    /// ~~~ignore
+    /// ~~~notrust
     ///   p        q        p ≡ q
     /// +-----------------+--------+
     /// | top      top    | top    |
@@ -704,7 +704,7 @@ pub trait Boolean: Eq {
     ///
     /// # Example
     ///
-    /// ~~~
+    /// ~~~notrust
     /// use num::Boolean;
     ///
     /// assert_eq!(true.to_bit::<u8>(), 1);

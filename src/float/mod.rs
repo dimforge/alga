@@ -53,7 +53,7 @@ pub enum Radix {
 ///
 /// An IEEE 754 format conforms to the following properties:
 ///
-/// ~~~ignore
+/// ~~~notrust
 /// pow(-1, s) * c * pow(b, q)
 /// ~~~
 ///
@@ -133,7 +133,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// |x|
     /// ~~~
     fn abs(self) -> Self;
@@ -228,7 +228,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// e^self
     /// ~~~
     ///
@@ -249,7 +249,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// e^self - 1
     /// ~~~
     ///
@@ -268,7 +268,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// 2^self
     /// ~~~
     ///
@@ -289,7 +289,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// 2^self - 1
     /// ~~~
     ///
@@ -308,7 +308,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// 10^self
     /// ~~~
     ///
@@ -329,7 +329,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// 10^self - 1
     /// ~~~
     ///
@@ -348,7 +348,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// log_e(self)
     /// ~~~
     ///
@@ -367,7 +367,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// log_2(self)
     /// ~~~
     ///
@@ -386,7 +386,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// log_10(self)
     /// ~~~
     ///
@@ -407,7 +407,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// log_e(1 + self)
     /// ~~~
     ///
@@ -428,7 +428,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// log_2(1 + self)
     /// ~~~
     ///
@@ -449,7 +449,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// log_10(1 + self)
     /// ~~~
     ///
@@ -474,7 +474,7 @@ pub trait Ieee754<LogBFormat> {
     /// The length of the hypotenuse of a right-angle triangle with sides of
     /// length `x` and `y`.
     ///
-    /// ~~~
+    /// ~~~notrust
     /// √(x^2 + y^2)
     /// ~~~
     ///
@@ -493,7 +493,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// 1/√(self)
     /// ~~~
     ///
@@ -514,7 +514,7 @@ pub trait Ieee754<LogBFormat> {
     ///
     /// # Return value
     ///
-    /// ~~~
+    /// ~~~notrust
     /// self^(1/n)
     /// ~~~
     ///

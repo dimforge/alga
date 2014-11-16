@@ -34,7 +34,7 @@ pub trait Integer
 
     /// Truncated division satisfying:
     ///
-    /// ~~~
+    /// ~~~notrust
     /// t_div(a, b) = trunc(a / b)              ∀ a, b ∈ Self where b ≠ 0
     /// ~~~
     ///
@@ -45,7 +45,7 @@ pub trait Integer
 
     /// The remainder after truncated division satisfying:
     ///
-    /// ~~~
+    /// ~~~notrust
     /// t_mod(a, b) = a - (b * t_div(a, b))     ∀ a, b ∈ Self where b ≠ 0
     /// ~~~
     ///
@@ -62,14 +62,14 @@ pub trait Integer
 
     /// Floored division satisfying:
     ///
-    /// ~~~
+    /// ~~~notrust
     /// f_div(a, b) = ⌊a / b⌋                   ∀ a, b ∈ Self where b ≠ 0
     /// ~~~
     fn f_div(a: &Self, b: &Self) -> Self;
 
     /// The remainder after floored division satisfying:
     ///
-    /// ~~~
+    /// ~~~notrust
     /// f_mod(a, b) = a - (b * f_div(a, b))     ∀ a, b where b ≠ 0
     /// ~~~
     fn f_mod(a: &Self, b: &Self) -> Self;

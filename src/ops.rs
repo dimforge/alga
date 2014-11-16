@@ -25,7 +25,7 @@ impl Recip for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
 
 /// Sets equipped with an associative addition operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// (a + b) + c = a + (b + c)               ∀ a, b, c ∈ Self
 /// ~~~
 pub trait AssociativeAdd
@@ -46,7 +46,7 @@ impl AssociativeAdd for f64  {}
 
 /// Sets equipped with a commutative addition operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// a + b = b + a                           ∀ a, b, c ∈ Self
 /// ~~~
 pub trait CommutativeAdd
@@ -67,7 +67,7 @@ impl CommutativeAdd for f64  {}
 
 /// Sets equipped with an associative multiplication operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// (a * b) * c = a * (b * c)               ∀ a, b, c ∈ Self
 /// ~~~
 pub trait AssociativeMul
@@ -88,7 +88,7 @@ impl AssociativeMul for f64  {}
 
 /// Sets equipped with a commutative multiplication operator.
 ///
-/// ~~~
+/// ~~~notrust
 /// a * b = b * a                           ∀ a, b, c ∈ Self
 /// ~~~
 pub trait CommutativeMul
@@ -110,7 +110,7 @@ impl CommutativeMul for f64  {}
 /// A set that is equipped with a multiplication and addition operator where
 /// multiplication distributes over addition.
 ///
-/// ~~~
+/// ~~~notrust
 /// a * (b + c) = (a * b) + (a * c)         ∀ a, b, c ∈ Self
 /// (a + b) * c = (a * c) + (b * c)         ∀ a, b, c ∈ Self
 /// ~~~
