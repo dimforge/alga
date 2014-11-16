@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! IEEE 754-2008 compliant floating-point arithmetic
+//! IEEE 754-2008 compliant floating-point arithmetic.
 
 // TODO: setBinaryRoundingDirection
 // TODO: getBinaryRoundingDirection
@@ -48,7 +48,23 @@ pub enum Radix {
 
 /// A floating point number that conforms to specifications laid out in the IEEE
 /// Standard for Floating-Point Arithmetic.
-pub trait Ieee754<LogBFormat, IntegralFormat> {
+///
+/// An IEEE 754 format conforms to the following properties:
+///
+/// ~~~ignore
+/// pow(-1, s) * c * pow(b, q)
+/// ~~~
+///
+/// Where:
+///
+/// * `b` - base of either `2` (binary) or `10` (decimal)
+/// * `s` - sign of `0` or `1`
+/// * `c` - significand (an integer in the range `[0, b^p-1]`
+/// * `q` - exponent
+///
+/// * Two infinities: `+∞` and `−∞`.
+/// * Two kinds of NaN: a quiet NaN (qNaN) and a signaling NaN (sNaN).
+pub trait Ieee754<LogBFormat> {
     fn roundToIntegralTiesToEven(self) -> Self;
     fn roundToIntegralTiesToAway(self) -> Self;
     fn roundToIntegralTowardZero(self) -> Self;
@@ -78,19 +94,19 @@ pub trait Ieee754<LogBFormat, IntegralFormat> {
     fn division(x: Self, y: Self) -> Self;
     fn fusedMultiplyAdd(x: Self, y: Self, z: Self) -> Self;
     fn squareRoot(self) -> Self;
-    fn convertFromInt(x: int) -> Self;
+    fn convertFromInt<I: Int>(x: I) -> Self;
 
-    fn convertToIntegerTiesToEven(self) -> IntegralFormat;
-    fn convertToIntegerTowardZero(self) -> IntegralFormat;
-    fn convertToIntegerTowardPositive(self) -> IntegralFormat;
-    fn convertToIntegerTowardNegative(self) -> IntegralFormat;
-    fn convertToIntegerTiesToAway(self) -> IntegralFormat;
+    fn convertToIntegerTiesToEven<I: Int>(self) -> I;
+    fn convertToIntegerTowardZero<I: Int>(self) -> I;
+    fn convertToIntegerTowardPositive<I: Int>(self) -> I;
+    fn convertToIntegerTowardNegative<I: Int>(self) -> I;
+    fn convertToIntegerTiesToAway<I: Int>(self) -> I;
 
-    fn convertToIntegerExactTiesToEven(self) -> IntegralFormat;
-    fn convertToIntegerExactTowardZero(self) -> IntegralFormat;
-    fn convertToIntegerExactTowardPositive(self) -> IntegralFormat;
-    fn convertToIntegerExactTowardNegative(self) -> IntegralFormat;
-    fn convertToIntegerExactTiesToAway(self) -> IntegralFormat;
+    fn convertToIntegerExactTiesToEven<I: Int>(self) -> I;
+    fn convertToIntegerExactTowardZero<I: Int>(self) -> I;
+    fn convertToIntegerExactTowardPositive<I: Int>(self) -> I;
+    fn convertToIntegerExactTowardNegative<I: Int>(self) -> I;
+    fn convertToIntegerExactTiesToAway<I: Int>(self) -> I;
 
     // TODO: convertFormat
     // TODO: convertFromDecimalCharacter
