@@ -26,7 +26,6 @@ extern crate quickcheck_macros;
 extern crate quickcheck;
 
 pub mod algebra;
-pub mod float;
 pub mod ident;
 pub mod num;
 pub mod ops;
