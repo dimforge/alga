@@ -1,5 +1,4 @@
-// Copyright 2013 The Num-rs Developers. For a full listing of the authors,
-// refer to the AUTHORS file at the top-level directory of this distribution.
+// Copyright 2013-2014 The Num-rs Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +14,11 @@
 
 //! Identities for binary operators
 
-/// A type that is equipped with an additive identity
+/// A type that is equipped with an additive identity.
 pub trait AdditiveIdentity
     : Add<Self, Self>
 {
-    /// The additive identity, `0`. This should satisfy:
-    ///
-    /// ~~~notrust
-    /// a + 0 = a                           ∀ a ∈ Self
-    /// 0 + a = a                           ∀ a ∈ Self
-    /// ~~~
+    /// The additive identity element, `0`.
     fn zero() -> Self;
 }
 
@@ -41,16 +35,16 @@ impl AdditiveIdentity for int  { #[inline] fn zero() -> int  { 0   } }
 impl AdditiveIdentity for f32  { #[inline] fn zero() -> f32  { 0.0 } }
 impl AdditiveIdentity for f64  { #[inline] fn zero() -> f64  { 0.0 } }
 
-/// A type that is equipped with a multiplicative identity
+/// The additive identity element, `0`.
+pub fn zero<T: AdditiveIdentity>() -> T {
+    AdditiveIdentity::zero()
+}
+
+/// A type that is equipped with a multiplicative identity.
 pub trait MultiplicativeIdentity
     : Mul<Self, Self>
 {
-    /// The multiplicative identity, `1`. This should satisfy:
-    ///
-    /// ~~~notrust
-    /// a * 1 = a                           ∀ a ∈ Self
-    /// 1 * a = a                           ∀ a ∈ Self
-    /// ~~~
+    /// The multiplicative identity element, `1`.
     fn unit() -> Self;
 }
 
@@ -67,12 +61,7 @@ impl MultiplicativeIdentity for int  { #[inline] fn unit() -> int  { 1   } }
 impl MultiplicativeIdentity for f32  { #[inline] fn unit() -> f32  { 1.0 } }
 impl MultiplicativeIdentity for f64  { #[inline] fn unit() -> f64  { 1.0 } }
 
-/// The additive identity, `0`.
-pub fn zero<T: AdditiveIdentity>() -> T {
-    AdditiveIdentity::zero()
-}
-
-/// The multiplicative identity, `1`.
+/// The multiplicative identity element, `1`.
 pub fn unit<T: MultiplicativeIdentity>() -> T {
     MultiplicativeIdentity::unit()
 }

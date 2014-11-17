@@ -6,8 +6,8 @@ authors = ["Brendan Zabarauskas"]
 [lib]
 name = "math"
 
-[dependencies.quickcheck]
+[dev_dependencies.quickcheck]
 git = "https://github.com/BurntSushi/quickcheck"
 
-[dependencies.quickcheck_macros]
+[dev_dependencies.quickcheck_macros]
 git = "https://github.com/BurntSushi/quickcheck"

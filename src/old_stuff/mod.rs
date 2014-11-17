@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Traits for generic mathematics.
+//! Operators with specific properties
 
-#![crate_name = "math"]
+pub use self::associative::ApproxAssociativeAdd;
+pub use self::associative::AssociativeAdd;
+pub use self::associative::ApproxAssociativeMul;
+pub use self::associative::AssociativeMul;
 
-#![feature(globs)]
-#![feature(macro_rules)]
-#![feature(phase)]
+pub use self::commutative::ApproxCommutativeAdd;
+pub use self::commutative::CommutativeAdd;
+pub use self::commutative::ApproxCommutativeMul;
+pub use self::commutative::CommutativeMul;
 
-#[cfg(test)]
-#[phase(plugin)]
-extern crate quickcheck_macros;
-#[cfg(test)]
-extern crate quickcheck;
+pub use self::distributive::ApproxDistributiveMulAdd;
+pub use self::distributive::DistributiveMulAdd;
 
-pub mod cmp;
-pub mod ops;
-pub mod structure;
+pub use self::recip::Recip;
+
+mod associative;
+mod commutative;
+mod distributive;
+mod recip;
