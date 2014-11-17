@@ -12,62 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use equivalence::ApproxEq;
-use monoid::{AdditiveSemigroup, PartialAdditiveSemigroup};
-use monoid::{MultiplicativeSemigroup, PartialMultiplicativeSemigroup};
-use std::num::Float;
+#![allow(missing_docs)]
 
-/// The multiplicative inverse operation
-pub trait Recip {
-    fn recip(&self) -> Self;
-}
+use structure::ApproxAdditiveLoop;
+use structure::AdditiveLoop;
+use structure::ApproxMultiplicativeLoop;
+use structure::MultiplicativeLoop;
+use structure::ApproxAdditiveMonoid;
+use structure::AdditiveMonoid;
+use structure::ApproxMultiplicativeMonoid;
+use structure::MultiplicativeMonoid;
 
-impl Recip for f32 {
-    #[inline]
-    fn recip(&self) -> f32 { 1.0 / *self }
-}
-
-impl Recip for f64 {
-    #[inline]
-    fn recip(&self) -> f64 { 1.0 / *self }
-}
-
-/// A type that is equipped with an associative addition operator and a
-/// corresponding identity and inverse.
-///
-/// ~~~notrust
-/// a + -a = 0      ∀ a ∈ Self
-/// -a + a = 0      ∀ a ∈ Self
-/// ~~~
-pub trait PartialAdditiveGroup
-    : PartialAdditiveMonoid
-    + Sub<Self, Self>
-    + Neg<Self>
+pub trait ApproxAdditiveGroup
+    : ApproxAdditiveLoop
+    + ApproxAdditiveMonoid
 {}
 
-impl PartialAdditiveGroup for u8   {}
-impl PartialAdditiveGroup for u16  {}
-impl PartialAdditiveGroup for u32  {}
-impl PartialAdditiveGroup for u64  {}
-impl PartialAdditiveGroup for uint {}
-impl PartialAdditiveGroup for i8   {}
-impl PartialAdditiveGroup for i16  {}
-impl PartialAdditiveGroup for i32  {}
-impl PartialAdditiveGroup for i64  {}
-impl PartialAdditiveGroup for int  {}
-impl PartialAdditiveGroup for f32  {}
-impl PartialAdditiveGroup for f64  {}
+impl ApproxAdditiveGroup for u8   {}
+impl ApproxAdditiveGroup for u16  {}
+impl ApproxAdditiveGroup for u32  {}
+impl ApproxAdditiveGroup for u64  {}
+impl ApproxAdditiveGroup for uint {}
+impl ApproxAdditiveGroup for i8   {}
+impl ApproxAdditiveGroup for i16  {}
+impl ApproxAdditiveGroup for i32  {}
+impl ApproxAdditiveGroup for i64  {}
+impl ApproxAdditiveGroup for int  {}
 
-/// A type that is equipped with an associative addition operator and a
-/// corresponding identity and inverse.
-///
-/// ~~~notrust
-/// a + -a = 0      ∀ a ∈ Self
-/// -a + a = 0      ∀ a ∈ Self
-/// ~~~
 pub trait AdditiveGroup
-    : AdditiveMonoid
-    + PartialAdditiveGroup
+    : ApproxAdditiveGroup
+    + AdditiveLoop
+    + AdditiveMonoid
 {}
 
 impl AdditiveGroup for u8   {}
@@ -80,3 +55,14 @@ impl AdditiveGroup for i16  {}
 impl AdditiveGroup for i32  {}
 impl AdditiveGroup for i64  {}
 impl AdditiveGroup for int  {}
+
+pub trait ApproxMultiplicativeGroup
+    : ApproxMultiplicativeLoop
+    + ApproxMultiplicativeMonoid
+{}
+
+pub trait MultiplicativeGroup
+    : ApproxMultiplicativeGroup
+    + MultiplicativeLoop
+    + MultiplicativeMonoid
+{}

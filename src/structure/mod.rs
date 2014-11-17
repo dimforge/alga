@@ -135,10 +135,10 @@ pub use self::quasigroup::ApproxMultiplicativeQuasigroup;
 pub use self::quasigroup::AdditiveQuasigroup;
 pub use self::quasigroup::MultiplicativeQuasigroup;
 
-// pub use self::loop_::ApproxAdditiveLoop;
-// pub use self::loop_::ApproxMultiplicativeLoop;
-// pub use self::loop_::AdditiveLoop;
-// pub use self::loop_::MultiplicativeLoop;
+pub use self::loop_::ApproxAdditiveLoop;
+pub use self::loop_::ApproxMultiplicativeLoop;
+pub use self::loop_::AdditiveLoop;
+pub use self::loop_::MultiplicativeLoop;
 
 pub use self::semigroup::ApproxAdditiveSemigroup;
 pub use self::semigroup::ApproxMultiplicativeSemigroup;
@@ -150,10 +150,10 @@ pub use self::monoid::ApproxMultiplicativeMonoid;
 pub use self::monoid::AdditiveMonoid;
 pub use self::monoid::MultiplicativeMonoid;
 
-// pub use self::group::ApproxAdditiveGroup;
-// pub use self::group::ApproxMultiplicativeGroup;
-// pub use self::group::AdditiveGroup;
-// pub use self::group::MultiplicativeGroup;
+pub use self::group::ApproxAdditiveGroup;
+pub use self::group::ApproxMultiplicativeGroup;
+pub use self::group::AdditiveGroup;
+pub use self::group::MultiplicativeGroup;
 
 // pub use self::abelian::ApproxAdditiveAbelianGroup;
 // pub use self::abelian::ApproxMultiplicativeAbelianGroup;
@@ -171,9 +171,10 @@ mod ident;
 
 mod magma;
 mod quasigroup;
-// mod loop_;
+mod loop_;
 mod semigroup;
 mod monoid;
-// mod group;
+mod group;
+// mod abelian;
 
 // mod ring;
