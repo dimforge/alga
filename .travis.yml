@@ -1,12 +1,1 @@
-env:
-  global:
-    - LD_LIBRARY_PATH=/usr/local/lib
-#     - secure: eEAXQP0S4A9RQv4rQYGbGDgdQ2McwCGtjW4QA6oaWXxPnQLaaylRRmdKvNpgfVmWQr6gf2mcpJKar6Ys4OF7xBUTze2ObSCfBIqS4ovK72XMA4kOAonqeq7pxq/OXzKd4eN5BX2DyXxZ5nlPqr2HT7Wb/CjpazKyQ+fCsjKtyzY=
-install:
-  - curl http://www.rust-lang.org/rustup.sh | sudo sh -
-script:
-  - cargo build
-  - cargo test
-#  - rustdoc src/lib.rs
-# after_script:
-#   - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
+language: rust
