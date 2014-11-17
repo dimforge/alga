@@ -1,10 +1,10 @@
 [package]
-name = "num"
+name = "algebra"
 version = "0.1.0"
 authors = ["Brendan Zabarauskas"]
 
 [lib]
-name = "math"
+name = "algebra"
 
 [dev_dependencies.quickcheck]
 git = "https://github.com/BurntSushi/quickcheck"

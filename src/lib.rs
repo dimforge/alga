@@ -14,8 +14,6 @@
 
 //! Traits for generic mathematics.
 
-#![crate_name = "math"]
-
 #![feature(globs)]
 #![feature(macro_rules)]
 #![feature(phase)]
