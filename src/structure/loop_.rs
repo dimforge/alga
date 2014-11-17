@@ -12,55 +12,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use structure::ApproxAdditiveQuasigroup;
-use structure::AdditiveQuasigroup;
-use structure::ApproxMultiplicativeQuasigroup;
-use structure::MultiplicativeQuasigroup;
-use structure::AdditiveIdentity;
-use structure::MultiplicativeIdentity;
+use structure::QuasigroupAdditiveApprox;
+use structure::QuasigroupAdditive;
+use structure::QuasigroupMultiplicativeApprox;
+use structure::QuasigroupMultiplicative;
+use structure::IdentityAdditive;
+use structure::IdentityMultiplicative;
 
 /// An aproximate additive quasigroup with a corresponding identity.
-pub trait ApproxAdditiveLoop
-    : ApproxAdditiveQuasigroup
-    + AdditiveIdentity
+pub trait LoopAdditiveApprox
+    : QuasigroupAdditiveApprox
+    + IdentityAdditive
 {}
 
-impl ApproxAdditiveLoop for u8   {}
-impl ApproxAdditiveLoop for u16  {}
-impl ApproxAdditiveLoop for u32  {}
-impl ApproxAdditiveLoop for u64  {}
-impl ApproxAdditiveLoop for uint {}
-impl ApproxAdditiveLoop for i8   {}
-impl ApproxAdditiveLoop for i16  {}
-impl ApproxAdditiveLoop for i32  {}
-impl ApproxAdditiveLoop for i64  {}
-impl ApproxAdditiveLoop for int  {}
+impl LoopAdditiveApprox for u8   {}
+impl LoopAdditiveApprox for u16  {}
+impl LoopAdditiveApprox for u32  {}
+impl LoopAdditiveApprox for u64  {}
+impl LoopAdditiveApprox for uint {}
+impl LoopAdditiveApprox for i8   {}
+impl LoopAdditiveApprox for i16  {}
+impl LoopAdditiveApprox for i32  {}
+impl LoopAdditiveApprox for i64  {}
+impl LoopAdditiveApprox for int  {}
 
 /// An additive quasigroup with a corresponding identity.
-pub trait AdditiveLoop
-    : ApproxAdditiveLoop
-    + AdditiveQuasigroup
+pub trait LoopAdditive
+    : LoopAdditiveApprox
+    + QuasigroupAdditive
 {}
 
-impl AdditiveLoop for u8   {}
-impl AdditiveLoop for u16  {}
-impl AdditiveLoop for u32  {}
-impl AdditiveLoop for u64  {}
-impl AdditiveLoop for uint {}
-impl AdditiveLoop for i8   {}
-impl AdditiveLoop for i16  {}
-impl AdditiveLoop for i32  {}
-impl AdditiveLoop for i64  {}
-impl AdditiveLoop for int  {}
+impl LoopAdditive for u8   {}
+impl LoopAdditive for u16  {}
+impl LoopAdditive for u32  {}
+impl LoopAdditive for u64  {}
+impl LoopAdditive for uint {}
+impl LoopAdditive for i8   {}
+impl LoopAdditive for i16  {}
+impl LoopAdditive for i32  {}
+impl LoopAdditive for i64  {}
+impl LoopAdditive for int  {}
 
 /// An aproximate multiplicative quasigroup with a corresponding identity.
-pub trait ApproxMultiplicativeLoop
-    : ApproxMultiplicativeQuasigroup
-    + MultiplicativeIdentity
+pub trait LoopMultiplicativeApprox
+    : QuasigroupMultiplicativeApprox
+    + IdentityMultiplicative
 {}
 
 /// An aproximate multiplicative quasigroup with a corresponding identity.
-pub trait MultiplicativeLoop
-    : ApproxMultiplicativeLoop
-    + MultiplicativeQuasigroup
+pub trait LoopMultiplicative
+    : LoopMultiplicativeApprox
+    + QuasigroupMultiplicative
 {}

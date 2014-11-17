@@ -20,7 +20,7 @@
 //! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
 //! ~~~
 //!
-//! For most applications requiring an abstraction over the reals, `ApproxField`
+//! For most applications requiring an abstraction over the reals, `FieldApprox`
 //! should be suffient.
 //!
 //! # Fundamental algebraic structures
@@ -34,8 +34,8 @@
 //! Two traits are provided that allow the definition of the additive and
 //! multiplicative identity elements:
 //!
-//! - `AdditiveIdentity`
-//! - `MultiplicativeIdentity`
+//! - `IdentityAdditive`
+//! - `IdentityMultiplicative`
 //!
 //! ## Group-like structures
 //!
@@ -71,19 +71,19 @@
 //!
 //! The following traits are provided:
 //!
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Closure`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Magma`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Quasigroup`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Loop`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Semigroup`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Monoid`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`Group`
-//! - (`Approx`)?(`Additive`|`Multiplicative`)`AbelianGroup`
+//! -      `Closure`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -        `Magma`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -   `Quasigroup`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -         `Loop`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -    `Semigroup`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -       `Monoid`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -        `Group`(`Additive`|`Multiplicative`)(`Approx`)?
+//! - `AbelianGroup`(`Additive`|`Multiplicative`)(`Approx`)?
 //!
 //! ## Ring-like structures
 //!
 //! ~~~notrust
-//! AdditiveAbelianGroup     MultiplicativeMonoid
+//! GroupAdditiveAbelian     MonoidMultiplicative
 //!           \________   ________/
 //!                    \ /
 //!                     |
@@ -93,7 +93,7 @@
 //!            commutativity_of_mul
 //!                     |
 //!                     V
-//!              CommutativeRing     MultiplicativeAbelianGroup
+//!              RingCommutative     GroupMultiplicativeAbelian
 //!                      \_______   ___________/
 //!                              \ /
 //!                               |
@@ -103,9 +103,9 @@
 //!
 //! The following traits are provided:
 //!
-//! - (`Approx`)?`Ring`
-//! - (`Approx`)?`CommutativeRing`
-//! - (`Approx`)?`Field`
+//! -            `Ring`(`Approx`)?
+//! - `RingCommutative`(`Approx`)?
+//! -           `Field`(`Approx`)?
 //!
 //! # Quickcheck properties
 //!
@@ -115,56 +115,56 @@
 //! For example:
 //!
 //! ~~~
-//! # use algebra::structure::ApproxMultiplicativeSemigroup;
+//! # use algebra::structure::SemigroupMultiplicativeApprox;
 //! #[quickcheck]
-//! fn prop_mul_is_approx_associative(args: (i32, i32, i32)) -> bool {
-//!     ApproxMultiplicativeSemigroup::prop_mul_is_approx_associative(args)
+//! fn prop_mul_is_associative_approx(args: (i32, i32, i32)) -> bool {
+//!     SemigroupMultiplicativeApprox::prop_mul_is_associative_approx(args)
 //! }
 //! ~~~
 
-pub use self::ident::{AdditiveIdentity, zero};
-pub use self::ident::{MultiplicativeIdentity, unit};
+pub use self::ident::{IdentityAdditive, zero};
+pub use self::ident::{IdentityMultiplicative, unit};
 
-pub use self::magma::ApproxAdditiveMagma;
-pub use self::magma::ApproxMultiplicativeMagma;
-pub use self::magma::AdditiveMagma;
-pub use self::magma::MultiplicativeMagma;
+pub use self::magma::MagmaAdditiveApprox;
+pub use self::magma::MagmaMultiplicativeApprox;
+pub use self::magma::MagmaAdditive;
+pub use self::magma::MagmaMultiplicative;
 
-pub use self::quasigroup::ApproxAdditiveQuasigroup;
-pub use self::quasigroup::ApproxMultiplicativeQuasigroup;
-pub use self::quasigroup::AdditiveQuasigroup;
-pub use self::quasigroup::MultiplicativeQuasigroup;
+pub use self::quasigroup::QuasigroupAdditiveApprox;
+pub use self::quasigroup::QuasigroupMultiplicativeApprox;
+pub use self::quasigroup::QuasigroupAdditive;
+pub use self::quasigroup::QuasigroupMultiplicative;
 
-pub use self::loop_::ApproxAdditiveLoop;
-pub use self::loop_::ApproxMultiplicativeLoop;
-pub use self::loop_::AdditiveLoop;
-pub use self::loop_::MultiplicativeLoop;
+pub use self::loop_::LoopAdditiveApprox;
+pub use self::loop_::LoopMultiplicativeApprox;
+pub use self::loop_::LoopAdditive;
+pub use self::loop_::LoopMultiplicative;
 
-pub use self::semigroup::ApproxAdditiveSemigroup;
-pub use self::semigroup::ApproxMultiplicativeSemigroup;
-pub use self::semigroup::AdditiveSemigroup;
-pub use self::semigroup::MultiplicativeSemigroup;
+pub use self::semigroup::SemigroupAdditiveApprox;
+pub use self::semigroup::SemigroupMultiplicativeApprox;
+pub use self::semigroup::SemigroupAdditive;
+pub use self::semigroup::SemigroupMultiplicative;
 
-pub use self::monoid::ApproxAdditiveMonoid;
-pub use self::monoid::ApproxMultiplicativeMonoid;
-pub use self::monoid::AdditiveMonoid;
-pub use self::monoid::MultiplicativeMonoid;
+pub use self::monoid::MonoidAdditiveApprox;
+pub use self::monoid::MonoidMultiplicativeApprox;
+pub use self::monoid::MonoidAdditive;
+pub use self::monoid::MonoidMultiplicative;
 
-pub use self::group::ApproxAdditiveGroup;
-pub use self::group::ApproxMultiplicativeGroup;
-pub use self::group::AdditiveGroup;
-pub use self::group::MultiplicativeGroup;
+pub use self::group::GroupAdditiveApprox;
+pub use self::group::GroupMultiplicativeApprox;
+pub use self::group::GroupAdditive;
+pub use self::group::GroupMultiplicative;
 
-pub use self::abelian::ApproxAdditiveAbelianGroup;
-pub use self::abelian::ApproxMultiplicativeAbelianGroup;
-pub use self::abelian::AdditiveAbelianGroup;
-pub use self::abelian::MultiplicativeAbelianGroup;
+pub use self::abelian::GroupAdditiveAbelianApprox;
+pub use self::abelian::GroupMultiplicativeAbelianApprox;
+pub use self::abelian::GroupAdditiveAbelian;
+pub use self::abelian::GroupMultiplicativeAbelian;
 
-// pub use self::ring::ApproxRing;
+// pub use self::ring::RingApprox;
 // pub use self::ring::Ring;
-// pub use self::ring::ApproxCommutativeRing;
-// pub use self::ring::CommutativeRing;
-// pub use self::ring::ApproxField;
+// pub use self::ring::RingCommutativeApprox;
+// pub use self::ring::RingCommutative;
+// pub use self::ring::FieldApprox;
 // pub use self::ring::Field;
 
 mod ident;

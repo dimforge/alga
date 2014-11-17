@@ -15,18 +15,18 @@
 #![allow(missing_docs)]
 
 use ops::Recip;
-use structure::ApproxAdditiveMagma;
-use structure::AdditiveMagma;
-use structure::ApproxMultiplicativeMagma;
-use structure::MultiplicativeMagma;
+use structure::MagmaAdditiveApprox;
+use structure::MagmaAdditive;
+use structure::MagmaMultiplicativeApprox;
+use structure::MagmaMultiplicative;
 
 /// An additive magma that for which subtraction is always possible.
-pub trait ApproxAdditiveQuasigroup
-    : ApproxAdditiveMagma
+pub trait QuasigroupAdditiveApprox
+    : MagmaAdditiveApprox
     + Sub<Self, Self>
     + Neg<Self>
 {
-    fn prop_sub_is_approx_latin_square(args: (Self, Self)) -> bool {
+    fn prop_sub_is_latin_square_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
 
         a == (a + -b) + b &&
@@ -38,21 +38,21 @@ pub trait ApproxAdditiveQuasigroup
     }
 }
 
-impl ApproxAdditiveQuasigroup for u8   {}
-impl ApproxAdditiveQuasigroup for u16  {}
-impl ApproxAdditiveQuasigroup for u32  {}
-impl ApproxAdditiveQuasigroup for u64  {}
-impl ApproxAdditiveQuasigroup for uint {}
-impl ApproxAdditiveQuasigroup for i8   {}
-impl ApproxAdditiveQuasigroup for i16  {}
-impl ApproxAdditiveQuasigroup for i32  {}
-impl ApproxAdditiveQuasigroup for i64  {}
-impl ApproxAdditiveQuasigroup for int  {}
+impl QuasigroupAdditiveApprox for u8   {}
+impl QuasigroupAdditiveApprox for u16  {}
+impl QuasigroupAdditiveApprox for u32  {}
+impl QuasigroupAdditiveApprox for u64  {}
+impl QuasigroupAdditiveApprox for uint {}
+impl QuasigroupAdditiveApprox for i8   {}
+impl QuasigroupAdditiveApprox for i16  {}
+impl QuasigroupAdditiveApprox for i32  {}
+impl QuasigroupAdditiveApprox for i64  {}
+impl QuasigroupAdditiveApprox for int  {}
 
 /// An additive magma that for which subtraction is always possible.
-pub trait AdditiveQuasigroup
-    : AdditiveMagma
-    + ApproxAdditiveQuasigroup
+pub trait QuasigroupAdditive
+    : MagmaAdditive
+    + QuasigroupAdditiveApprox
 {
     fn prop_sub_is_latin_square(args: (Self, Self)) -> bool {
         let (a, b) = args;
@@ -66,24 +66,24 @@ pub trait AdditiveQuasigroup
     }
 }
 
-impl AdditiveQuasigroup for u8   {}
-impl AdditiveQuasigroup for u16  {}
-impl AdditiveQuasigroup for u32  {}
-impl AdditiveQuasigroup for u64  {}
-impl AdditiveQuasigroup for uint {}
-impl AdditiveQuasigroup for i8   {}
-impl AdditiveQuasigroup for i16  {}
-impl AdditiveQuasigroup for i32  {}
-impl AdditiveQuasigroup for i64  {}
-impl AdditiveQuasigroup for int  {}
+impl QuasigroupAdditive for u8   {}
+impl QuasigroupAdditive for u16  {}
+impl QuasigroupAdditive for u32  {}
+impl QuasigroupAdditive for u64  {}
+impl QuasigroupAdditive for uint {}
+impl QuasigroupAdditive for i8   {}
+impl QuasigroupAdditive for i16  {}
+impl QuasigroupAdditive for i32  {}
+impl QuasigroupAdditive for i64  {}
+impl QuasigroupAdditive for int  {}
 
 /// An multiplicative magma that for which division is always possible.
-pub trait ApproxMultiplicativeQuasigroup
-    : ApproxMultiplicativeMagma
+pub trait QuasigroupMultiplicativeApprox
+    : MagmaMultiplicativeApprox
     + Div<Self, Self>
     + Recip<Self>
 {
-    fn prop_div_is_approx_latin_square(args: (Self, Self)) -> bool {
+    fn prop_div_is_latin_square_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
 
         a == (a * b.recip()) * b &&
@@ -96,9 +96,9 @@ pub trait ApproxMultiplicativeQuasigroup
 }
 
 /// An multiplicative magma that for which division is always possible.
-pub trait MultiplicativeQuasigroup
-    : MultiplicativeMagma
-    + ApproxMultiplicativeQuasigroup
+pub trait QuasigroupMultiplicative
+    : MagmaMultiplicative
+    + QuasigroupMultiplicativeApprox
 {
     fn prop_div_is_latin_square(args: (Self, Self)) -> bool {
         let (a, b) = args;
@@ -117,16 +117,16 @@ mod tests {
     macro_rules! check_int {
         ($T:ident) => {
             mod $T {
-                use structure::ApproxAdditiveQuasigroup;
-                use structure::AdditiveQuasigroup;
+                use structure::QuasigroupAdditiveApprox;
+                use structure::QuasigroupAdditive;
 
                 #[quickcheck]
-                fn prop_sub_is_approx_latin_square(args: ($T, $T)) -> bool {
-                    ApproxAdditiveQuasigroup::prop_sub_is_approx_latin_square(args)
+                fn prop_sub_is_latin_square_approx(args: ($T, $T)) -> bool {
+                    QuasigroupAdditiveApprox::prop_sub_is_latin_square_approx(args)
                 }
                 #[quickcheck]
                 fn prop_sub_is_latin_square(args: ($T, $T)) -> bool {
-                    AdditiveQuasigroup::prop_sub_is_latin_square(args)
+                    QuasigroupAdditive::prop_sub_is_latin_square(args)
                 }
             }
         }
