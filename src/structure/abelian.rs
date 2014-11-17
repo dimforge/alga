@@ -14,36 +14,36 @@
 
 #![allow(missing_docs)]
 
-use structure::ApproxAdditiveGroup;
-use structure::AdditiveGroup;
-use structure::ApproxMultiplicativeGroup;
-use structure::MultiplicativeGroup;
+use structure::GroupAdditiveApprox;
+use structure::GroupAdditive;
+use structure::GroupMultiplicativeApprox;
+use structure::GroupMultiplicative;
 
-pub trait ApproxAdditiveAbelianGroup
-    : ApproxAdditiveGroup
+pub trait GroupAdditiveAbelianApprox
+    : GroupAdditiveApprox
 {
     /// Returns `true` if the addition operator is approximately commutative for
     /// the given argument tuple.
-    fn prop_add_is_approx_commutative(args: (Self, Self)) -> bool {
+    fn prop_add_is_commutative_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
         a + b == b + a
     }
 }
 
-impl ApproxAdditiveAbelianGroup for u8   {}
-impl ApproxAdditiveAbelianGroup for u16  {}
-impl ApproxAdditiveAbelianGroup for u32  {}
-impl ApproxAdditiveAbelianGroup for u64  {}
-impl ApproxAdditiveAbelianGroup for uint {}
-impl ApproxAdditiveAbelianGroup for i8   {}
-impl ApproxAdditiveAbelianGroup for i16  {}
-impl ApproxAdditiveAbelianGroup for i32  {}
-impl ApproxAdditiveAbelianGroup for i64  {}
-impl ApproxAdditiveAbelianGroup for int  {}
+impl GroupAdditiveAbelianApprox for u8   {}
+impl GroupAdditiveAbelianApprox for u16  {}
+impl GroupAdditiveAbelianApprox for u32  {}
+impl GroupAdditiveAbelianApprox for u64  {}
+impl GroupAdditiveAbelianApprox for uint {}
+impl GroupAdditiveAbelianApprox for i8   {}
+impl GroupAdditiveAbelianApprox for i16  {}
+impl GroupAdditiveAbelianApprox for i32  {}
+impl GroupAdditiveAbelianApprox for i64  {}
+impl GroupAdditiveAbelianApprox for int  {}
 
-pub trait AdditiveAbelianGroup
-    : ApproxAdditiveAbelianGroup
-    + AdditiveGroup
+pub trait GroupAdditiveAbelian
+    : GroupAdditiveAbelianApprox
+    + GroupAdditive
 {
     /// Returns `true` if the addition operator is commutative for the given
     /// argument tuple.
@@ -53,31 +53,31 @@ pub trait AdditiveAbelianGroup
     }
 }
 
-impl AdditiveAbelianGroup for u8   {}
-impl AdditiveAbelianGroup for u16  {}
-impl AdditiveAbelianGroup for u32  {}
-impl AdditiveAbelianGroup for u64  {}
-impl AdditiveAbelianGroup for uint {}
-impl AdditiveAbelianGroup for i8   {}
-impl AdditiveAbelianGroup for i16  {}
-impl AdditiveAbelianGroup for i32  {}
-impl AdditiveAbelianGroup for i64  {}
-impl AdditiveAbelianGroup for int  {}
+impl GroupAdditiveAbelian for u8   {}
+impl GroupAdditiveAbelian for u16  {}
+impl GroupAdditiveAbelian for u32  {}
+impl GroupAdditiveAbelian for u64  {}
+impl GroupAdditiveAbelian for uint {}
+impl GroupAdditiveAbelian for i8   {}
+impl GroupAdditiveAbelian for i16  {}
+impl GroupAdditiveAbelian for i32  {}
+impl GroupAdditiveAbelian for i64  {}
+impl GroupAdditiveAbelian for int  {}
 
-pub trait ApproxMultiplicativeAbelianGroup
-    : ApproxMultiplicativeGroup
+pub trait GroupMultiplicativeAbelianApprox
+    : GroupMultiplicativeApprox
 {
     /// Returns `true` if the multiplication operator is approximately
     /// commutative for the given argument tuple.
-    fn prop_mul_is_approx_commutative(args: (Self, Self)) -> bool {
+    fn prop_mul_is_commutative_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
         a * b == b * a
     }
 }
 
-pub trait MultiplicativeAbelianGroup
-    : ApproxMultiplicativeAbelianGroup
-    + MultiplicativeGroup
+pub trait GroupMultiplicativeAbelian
+    : GroupMultiplicativeAbelianApprox
+    + GroupMultiplicative
 {
     /// Returns `true` if the multiplication operator is commutative for the
     /// given argument tuple.

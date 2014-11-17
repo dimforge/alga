@@ -14,55 +14,55 @@
 
 #![allow(missing_docs)]
 
-use structure::ApproxAdditiveLoop;
-use structure::AdditiveLoop;
-use structure::ApproxMultiplicativeLoop;
-use structure::MultiplicativeLoop;
-use structure::ApproxAdditiveMonoid;
-use structure::AdditiveMonoid;
-use structure::ApproxMultiplicativeMonoid;
-use structure::MultiplicativeMonoid;
+use structure::LoopAdditiveApprox;
+use structure::LoopAdditive;
+use structure::LoopMultiplicativeApprox;
+use structure::LoopMultiplicative;
+use structure::MonoidAdditiveApprox;
+use structure::MonoidAdditive;
+use structure::MonoidMultiplicativeApprox;
+use structure::MonoidMultiplicative;
 
-pub trait ApproxAdditiveGroup
-    : ApproxAdditiveLoop
-    + ApproxAdditiveMonoid
+pub trait GroupAdditiveApprox
+    : LoopAdditiveApprox
+    + MonoidAdditiveApprox
 {}
 
-impl ApproxAdditiveGroup for u8   {}
-impl ApproxAdditiveGroup for u16  {}
-impl ApproxAdditiveGroup for u32  {}
-impl ApproxAdditiveGroup for u64  {}
-impl ApproxAdditiveGroup for uint {}
-impl ApproxAdditiveGroup for i8   {}
-impl ApproxAdditiveGroup for i16  {}
-impl ApproxAdditiveGroup for i32  {}
-impl ApproxAdditiveGroup for i64  {}
-impl ApproxAdditiveGroup for int  {}
+impl GroupAdditiveApprox for u8   {}
+impl GroupAdditiveApprox for u16  {}
+impl GroupAdditiveApprox for u32  {}
+impl GroupAdditiveApprox for u64  {}
+impl GroupAdditiveApprox for uint {}
+impl GroupAdditiveApprox for i8   {}
+impl GroupAdditiveApprox for i16  {}
+impl GroupAdditiveApprox for i32  {}
+impl GroupAdditiveApprox for i64  {}
+impl GroupAdditiveApprox for int  {}
 
-pub trait AdditiveGroup
-    : ApproxAdditiveGroup
-    + AdditiveLoop
-    + AdditiveMonoid
+pub trait GroupAdditive
+    : GroupAdditiveApprox
+    + LoopAdditive
+    + MonoidAdditive
 {}
 
-impl AdditiveGroup for u8   {}
-impl AdditiveGroup for u16  {}
-impl AdditiveGroup for u32  {}
-impl AdditiveGroup for u64  {}
-impl AdditiveGroup for uint {}
-impl AdditiveGroup for i8   {}
-impl AdditiveGroup for i16  {}
-impl AdditiveGroup for i32  {}
-impl AdditiveGroup for i64  {}
-impl AdditiveGroup for int  {}
+impl GroupAdditive for u8   {}
+impl GroupAdditive for u16  {}
+impl GroupAdditive for u32  {}
+impl GroupAdditive for u64  {}
+impl GroupAdditive for uint {}
+impl GroupAdditive for i8   {}
+impl GroupAdditive for i16  {}
+impl GroupAdditive for i32  {}
+impl GroupAdditive for i64  {}
+impl GroupAdditive for int  {}
 
-pub trait ApproxMultiplicativeGroup
-    : ApproxMultiplicativeLoop
-    + ApproxMultiplicativeMonoid
+pub trait GroupMultiplicativeApprox
+    : LoopMultiplicativeApprox
+    + MonoidMultiplicativeApprox
 {}
 
-pub trait MultiplicativeGroup
-    : ApproxMultiplicativeGroup
-    + MultiplicativeLoop
-    + MultiplicativeMonoid
+pub trait GroupMultiplicative
+    : GroupMultiplicativeApprox
+    + LoopMultiplicative
+    + MonoidMultiplicative
 {}

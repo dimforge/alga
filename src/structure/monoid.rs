@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use structure::ApproxAdditiveSemigroup;
-use structure::AdditiveSemigroup;
-use structure::ApproxMultiplicativeSemigroup;
-use structure::MultiplicativeSemigroup;
-use structure::{AdditiveIdentity, zero};
-use structure::{MultiplicativeIdentity, unit};
+use structure::SemigroupAdditiveApprox;
+use structure::SemigroupAdditive;
+use structure::SemigroupMultiplicativeApprox;
+use structure::SemigroupMultiplicative;
+use structure::{IdentityAdditive, zero};
+use structure::{IdentityMultiplicative, unit};
 
 /// A type that is equipped with an approximately associative addition operator
 /// and a corresponding identity. This should satisfy:
@@ -26,28 +26,28 @@ use structure::{MultiplicativeIdentity, unit};
 /// a + 0 ≈ a       ∀ a ∈ Self
 /// 0 + a ≈ a       ∀ a ∈ Self
 /// ~~~
-pub trait ApproxAdditiveMonoid
-    : ApproxAdditiveSemigroup
-    + AdditiveIdentity
+pub trait MonoidAdditiveApprox
+    : SemigroupAdditiveApprox
+    + IdentityAdditive
 {
     /// Checks whether adding `0` is approximately a no-op for the given
     /// argument.
-    fn prop_add_zero_is_approx_noop(a: Self) -> bool {
+    fn prop_add_zero_is_noop_approx(a: Self) -> bool {
         a + zero::<Self>() == a &&
         zero::<Self>() + a == a
     }
 }
 
-impl ApproxAdditiveMonoid for u8   {}
-impl ApproxAdditiveMonoid for u16  {}
-impl ApproxAdditiveMonoid for u32  {}
-impl ApproxAdditiveMonoid for u64  {}
-impl ApproxAdditiveMonoid for uint {}
-impl ApproxAdditiveMonoid for i8   {}
-impl ApproxAdditiveMonoid for i16  {}
-impl ApproxAdditiveMonoid for i32  {}
-impl ApproxAdditiveMonoid for i64  {}
-impl ApproxAdditiveMonoid for int  {}
+impl MonoidAdditiveApprox for u8   {}
+impl MonoidAdditiveApprox for u16  {}
+impl MonoidAdditiveApprox for u32  {}
+impl MonoidAdditiveApprox for u64  {}
+impl MonoidAdditiveApprox for uint {}
+impl MonoidAdditiveApprox for i8   {}
+impl MonoidAdditiveApprox for i16  {}
+impl MonoidAdditiveApprox for i32  {}
+impl MonoidAdditiveApprox for i64  {}
+impl MonoidAdditiveApprox for int  {}
 
 /// A type that is equipped with an associative addition operator and a
 /// corresponding identity. This should satisfy:
@@ -56,9 +56,9 @@ impl ApproxAdditiveMonoid for int  {}
 /// a + 0 = a                           ∀ a ∈ Self
 /// 0 + a = a                           ∀ a ∈ Self
 /// ~~~
-pub trait AdditiveMonoid
-    : ApproxAdditiveMonoid
-    + AdditiveSemigroup
+pub trait MonoidAdditive
+    : MonoidAdditiveApprox
+    + SemigroupAdditive
 {
     /// Checks whether adding `0` is a no-op for the given argument.
     fn prop_add_zero_is_noop(a: Self) -> bool {
@@ -67,16 +67,16 @@ pub trait AdditiveMonoid
     }
 }
 
-impl AdditiveMonoid for u8   {}
-impl AdditiveMonoid for u16  {}
-impl AdditiveMonoid for u32  {}
-impl AdditiveMonoid for u64  {}
-impl AdditiveMonoid for uint {}
-impl AdditiveMonoid for i8   {}
-impl AdditiveMonoid for i16  {}
-impl AdditiveMonoid for i32  {}
-impl AdditiveMonoid for i64  {}
-impl AdditiveMonoid for int  {}
+impl MonoidAdditive for u8   {}
+impl MonoidAdditive for u16  {}
+impl MonoidAdditive for u32  {}
+impl MonoidAdditive for u64  {}
+impl MonoidAdditive for uint {}
+impl MonoidAdditive for i8   {}
+impl MonoidAdditive for i16  {}
+impl MonoidAdditive for i32  {}
+impl MonoidAdditive for i64  {}
+impl MonoidAdditive for int  {}
 
 /// A type that is equipped with an approximately associative multiplication
 /// operator and a corresponding identity. This should satisfy:
@@ -85,28 +85,28 @@ impl AdditiveMonoid for int  {}
 /// a * 1 ≈ a       ∀ a ∈ Self
 /// 1 * a ≈ a       ∀ a ∈ Self
 /// ~~~
-pub trait ApproxMultiplicativeMonoid
-    : ApproxMultiplicativeSemigroup
-    + MultiplicativeIdentity
+pub trait MonoidMultiplicativeApprox
+    : SemigroupMultiplicativeApprox
+    + IdentityMultiplicative
 {
     /// Checks whether multiplying by `1` is approximately a no-op for the given
     /// argument.
-    fn prop_mul_unit_is_approx_noop(a: Self) -> bool {
+    fn prop_mul_unit_is_noop_approx(a: Self) -> bool {
         a * unit::<Self>() == a &&
         unit::<Self>() * a == a
     }
 }
 
-impl ApproxMultiplicativeMonoid for u8   {}
-impl ApproxMultiplicativeMonoid for u16  {}
-impl ApproxMultiplicativeMonoid for u32  {}
-impl ApproxMultiplicativeMonoid for u64  {}
-impl ApproxMultiplicativeMonoid for uint {}
-impl ApproxMultiplicativeMonoid for i8   {}
-impl ApproxMultiplicativeMonoid for i16  {}
-impl ApproxMultiplicativeMonoid for i32  {}
-impl ApproxMultiplicativeMonoid for i64  {}
-impl ApproxMultiplicativeMonoid for int  {}
+impl MonoidMultiplicativeApprox for u8   {}
+impl MonoidMultiplicativeApprox for u16  {}
+impl MonoidMultiplicativeApprox for u32  {}
+impl MonoidMultiplicativeApprox for u64  {}
+impl MonoidMultiplicativeApprox for uint {}
+impl MonoidMultiplicativeApprox for i8   {}
+impl MonoidMultiplicativeApprox for i16  {}
+impl MonoidMultiplicativeApprox for i32  {}
+impl MonoidMultiplicativeApprox for i64  {}
+impl MonoidMultiplicativeApprox for int  {}
 
 /// A type that is equipped with an associative multiplication operator and a
 /// corresponding identity. This should satisfy:
@@ -115,9 +115,9 @@ impl ApproxMultiplicativeMonoid for int  {}
 /// a * 1 = a       ∀ a ∈ Self
 /// 1 * a = a       ∀ a ∈ Self
 /// ~~~
-pub trait MultiplicativeMonoid
-    : ApproxMultiplicativeMonoid
-    + MultiplicativeSemigroup
+pub trait MonoidMultiplicative
+    : MonoidMultiplicativeApprox
+    + SemigroupMultiplicative
 {
     /// Checks whether multiplying by `1` is a no-op for the given argument.
     fn prop_mul_unit_is_noop(a: Self) -> bool {
@@ -126,43 +126,43 @@ pub trait MultiplicativeMonoid
     }
 }
 
-impl MultiplicativeMonoid for u8   {}
-impl MultiplicativeMonoid for u16  {}
-impl MultiplicativeMonoid for u32  {}
-impl MultiplicativeMonoid for u64  {}
-impl MultiplicativeMonoid for uint {}
-impl MultiplicativeMonoid for i8   {}
-impl MultiplicativeMonoid for i16  {}
-impl MultiplicativeMonoid for i32  {}
-impl MultiplicativeMonoid for i64  {}
-impl MultiplicativeMonoid for int  {}
+impl MonoidMultiplicative for u8   {}
+impl MonoidMultiplicative for u16  {}
+impl MonoidMultiplicative for u32  {}
+impl MonoidMultiplicative for u64  {}
+impl MonoidMultiplicative for uint {}
+impl MonoidMultiplicative for i8   {}
+impl MonoidMultiplicative for i16  {}
+impl MonoidMultiplicative for i32  {}
+impl MonoidMultiplicative for i64  {}
+impl MonoidMultiplicative for int  {}
 
 #[cfg(test)]
 mod tests {
     macro_rules! check_int {
         ($T:ident) => {
             mod $T {
-                use structure::ApproxAdditiveMonoid;
-                use structure::AdditiveMonoid;
-                use structure::ApproxMultiplicativeMonoid;
-                use structure::MultiplicativeMonoid;
+                use structure::MonoidAdditiveApprox;
+                use structure::MonoidAdditive;
+                use structure::MonoidMultiplicativeApprox;
+                use structure::MonoidMultiplicative;
 
                 #[quickcheck]
-                fn prop_add_zero_is_approx_noop(args: $T) -> bool {
-                    ApproxAdditiveMonoid::prop_add_zero_is_approx_noop(args)
+                fn prop_add_zero_is_noop_approx(args: $T) -> bool {
+                    MonoidAdditiveApprox::prop_add_zero_is_noop_approx(args)
                 }
                 #[quickcheck]
                 fn prop_add_zero_is_noop(args: $T) -> bool {
-                    AdditiveMonoid::prop_add_zero_is_noop(args)
+                    MonoidAdditive::prop_add_zero_is_noop(args)
                 }
 
                 #[quickcheck]
-                fn prop_mul_unit_is_approx_noop(args: $T) -> bool {
-                    ApproxMultiplicativeMonoid::prop_mul_unit_is_approx_noop(args)
+                fn prop_mul_unit_is_noop_approx(args: $T) -> bool {
+                    MonoidMultiplicativeApprox::prop_mul_unit_is_noop_approx(args)
                 }
                 #[quickcheck]
                 fn prop_mul_unit_is_noop(args: $T) -> bool {
-                    MultiplicativeMonoid::prop_mul_unit_is_noop(args)
+                    MonoidMultiplicative::prop_mul_unit_is_noop(args)
                 }
             }
         }

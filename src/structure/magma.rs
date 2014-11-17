@@ -18,13 +18,13 @@
 /// a = b               ∃ a, b ∈ Self
 /// a + b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
-pub trait ApproxAdditiveMagma
+pub trait MagmaAdditiveApprox
     : Add<Self, Self>
 //  + ApproxEq (TODO: requires better support for associated types)
     + PartialEq
 {}
 
-impl<T> ApproxAdditiveMagma for T where
+impl<T> MagmaAdditiveApprox for T where
     T: Add<T, T> /*+ ApproxEq*/ + PartialEq,
 {}
 
@@ -34,13 +34,13 @@ impl<T> ApproxAdditiveMagma for T where
 /// a = b               ∀ a, b ∈ Self
 /// a + b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
-pub trait AdditiveMagma
-    : ApproxAdditiveMagma
+pub trait MagmaAdditive
+    : MagmaAdditiveApprox
     + Eq
 {}
 
-impl<T> AdditiveMagma for T where
-    T: ApproxAdditiveMagma + Eq,
+impl<T> MagmaAdditive for T where
+    T: MagmaAdditiveApprox + Eq,
 {}
 
 /// A multiplicative closure that forms a partial equivalence relation.
@@ -49,13 +49,13 @@ impl<T> AdditiveMagma for T where
 /// a = b               ∃ a, b ∈ Self
 /// a * b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
-pub trait ApproxMultiplicativeMagma
+pub trait MagmaMultiplicativeApprox
     : Mul<Self, Self>
 //  + ApproxEq (TODO: requires better support for associated types)
     + PartialEq
 {}
 
-impl<T> ApproxMultiplicativeMagma for T where
+impl<T> MagmaMultiplicativeApprox for T where
     T: Mul<T, T> /*+ ApproxEq*/ + PartialEq,
 {}
 
@@ -65,11 +65,11 @@ impl<T> ApproxMultiplicativeMagma for T where
 /// a = b               ∀ a, b ∈ Self
 /// a * b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
-pub trait MultiplicativeMagma
-    : ApproxMultiplicativeMagma
+pub trait MagmaMultiplicative
+    : MagmaMultiplicativeApprox
     + Eq
 {}
 
-impl<T> MultiplicativeMagma for T where
-    T: ApproxMultiplicativeMagma + Eq,
+impl<T> MagmaMultiplicative for T where
+    T: MagmaMultiplicativeApprox + Eq,
 {}
