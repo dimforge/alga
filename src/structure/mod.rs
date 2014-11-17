@@ -115,7 +115,7 @@
 //! For example:
 //!
 //! ~~~
-//! # use math::structure::ApproxMultiplicativeSemigroup;
+//! # use algebra::structure::ApproxMultiplicativeSemigroup;
 //! #[quickcheck]
 //! fn prop_mul_is_approx_associative(args: (i32, i32, i32)) -> bool {
 //!     ApproxMultiplicativeSemigroup::prop_mul_is_approx_associative(args)
