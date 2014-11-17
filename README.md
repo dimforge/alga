@@ -1,20 +1,14 @@
-# num-rs
+# Abstract algebra for Rust
 
-[![Build Status](https://travis-ci.org/bjz/num-rs.png?branch=master)](https://travis-ci.org/bjz/num-rs)
+[![Build Status](https://travis-ci.org/bjz/algebra.png?branch=master)](https://travis-ci.org/bjz/algebra)
 
-After the traits in `std::num` have been simplified, this library is intended to 
-provide a strong algebraic foundation for numeric libraries. Hopefully this will
-be then be bundled with Rust in a separate module like `extra::num` or
-`extra::algebra`.
-
-Whilst many of the trait names names used in the library are intimidating, the
-most programmers will only need to use the traits defined in the `num` module.
-
-## Overview
+~~~
+|(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
+~~~
 
 Abstract algebra organises organises a wide range of structures into
-a logically consistent framework. These classifications can be incredibly
-creating composable libraries and APIs.
+a logically consistent framework. These classifications can be incredibly useful
+for creating composable libraries and APIs.
 
 Examples of types that could be included under the algebraic framework:
 
@@ -25,12 +19,6 @@ Examples of types that could be included under the algebraic framework:
 - Matrices and vectors
 - Quaternions and octonians
 - Strings under concatenation
-
-## Open questions
-
-- How do we handle the imperfectness of floating point numbers, and types
-  parameterised over them, for example `Vector3<f32>`?
-- How do we handle integer overflow?
 
 ## Research
 
