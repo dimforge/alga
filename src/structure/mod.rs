@@ -155,10 +155,10 @@ pub use self::group::ApproxMultiplicativeGroup;
 pub use self::group::AdditiveGroup;
 pub use self::group::MultiplicativeGroup;
 
-// pub use self::abelian::ApproxAdditiveAbelianGroup;
-// pub use self::abelian::ApproxMultiplicativeAbelianGroup;
-// pub use self::abelian::AdditiveAbelianGroup;
-// pub use self::abelian::MultiplicativeAbelianGroup;
+pub use self::abelian::ApproxAdditiveAbelianGroup;
+pub use self::abelian::ApproxMultiplicativeAbelianGroup;
+pub use self::abelian::AdditiveAbelianGroup;
+pub use self::abelian::MultiplicativeAbelianGroup;
 
 // pub use self::ring::ApproxRing;
 // pub use self::ring::Ring;
@@ -175,6 +175,6 @@ mod loop_;
 mod semigroup;
 mod monoid;
 mod group;
-// mod abelian;
+mod abelian;
 
 // mod ring;
