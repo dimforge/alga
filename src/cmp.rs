@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::num::{Float, SignedInt};
-
 /// A type with an approximate equivalence relation.
-pub trait ApproxEq<Eps> {
+pub trait ApproxEq<Eps> : Sized {
     /// The default epsilon value to use in `ApproxEq::approx_eq`.
     fn default_epsilon(_: Option<Self>) -> Eps;
 
@@ -73,15 +71,13 @@ macro_rules! impl_approx_eq_for_float {
     }
 }
 
-impl_approx_eq_for_uint!(u8)
-impl_approx_eq_for_uint!(u16)
-impl_approx_eq_for_uint!(u32)
-impl_approx_eq_for_uint!(u64)
-impl_approx_eq_for_uint!(uint)
-impl_approx_eq_for_int!(i8)
-impl_approx_eq_for_int!(i16)
-impl_approx_eq_for_int!(i32)
-impl_approx_eq_for_int!(i64)
-impl_approx_eq_for_int!(int)
-impl_approx_eq_for_float!(f32)
-impl_approx_eq_for_float!(f64)
+impl_approx_eq_for_uint!(u8);
+impl_approx_eq_for_uint!(u16);
+impl_approx_eq_for_uint!(u32);
+impl_approx_eq_for_uint!(u64);
+impl_approx_eq_for_int!(i8);
+impl_approx_eq_for_int!(i16);
+impl_approx_eq_for_int!(i32);
+impl_approx_eq_for_int!(i64);
+impl_approx_eq_for_float!(f32);
+impl_approx_eq_for_float!(f64);

@@ -26,20 +26,18 @@ pub trait GroupAdditiveAbelianApprox
     /// the given argument tuple.
     fn prop_add_is_commutative_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
-        a + b == b + a
+        a.clone() + b.clone() == b + a
     }
 }
 
-impl GroupAdditiveAbelianApprox for u8   {}
-impl GroupAdditiveAbelianApprox for u16  {}
-impl GroupAdditiveAbelianApprox for u32  {}
-impl GroupAdditiveAbelianApprox for u64  {}
-impl GroupAdditiveAbelianApprox for uint {}
+//impl GroupAdditiveAbelianApprox for u8   {}
+//impl GroupAdditiveAbelianApprox for u16  {}
+//impl GroupAdditiveAbelianApprox for u32  {}
+//impl GroupAdditiveAbelianApprox for u64  {}
 impl GroupAdditiveAbelianApprox for i8   {}
 impl GroupAdditiveAbelianApprox for i16  {}
 impl GroupAdditiveAbelianApprox for i32  {}
 impl GroupAdditiveAbelianApprox for i64  {}
-impl GroupAdditiveAbelianApprox for int  {}
 
 pub trait GroupAdditiveAbelian
     : GroupAdditiveAbelianApprox
@@ -49,20 +47,18 @@ pub trait GroupAdditiveAbelian
     /// argument tuple.
     fn prop_add_is_commutative(args: (Self, Self)) -> bool {
         let (a, b) = args;
-        a + b == b + a
+        a.clone() + b.clone() == b + a
     }
 }
 
-impl GroupAdditiveAbelian for u8   {}
-impl GroupAdditiveAbelian for u16  {}
-impl GroupAdditiveAbelian for u32  {}
-impl GroupAdditiveAbelian for u64  {}
-impl GroupAdditiveAbelian for uint {}
+//impl GroupAdditiveAbelian for u8   {}
+//impl GroupAdditiveAbelian for u16  {}
+//impl GroupAdditiveAbelian for u32  {}
+//impl GroupAdditiveAbelian for u64  {}
 impl GroupAdditiveAbelian for i8   {}
 impl GroupAdditiveAbelian for i16  {}
 impl GroupAdditiveAbelian for i32  {}
 impl GroupAdditiveAbelian for i64  {}
-impl GroupAdditiveAbelian for int  {}
 
 pub trait GroupMultiplicativeAbelianApprox
     : GroupMultiplicativeApprox
@@ -71,7 +67,7 @@ pub trait GroupMultiplicativeAbelianApprox
     /// commutative for the given argument tuple.
     fn prop_mul_is_commutative_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
-        a * b == b * a
+        a.clone() * b.clone() == b * a
     }
 }
 
@@ -83,6 +79,6 @@ pub trait GroupMultiplicativeAbelian
     /// given argument tuple.
     fn prop_mul_is_commutative(args: (Self, Self)) -> bool {
         let (a, b) = args;
-        a * b == b * a
+        a.clone() * b.clone() == b * a
     }
 }

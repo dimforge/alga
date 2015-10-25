@@ -10,8 +10,6 @@ repository = "https://github.com/bjz/algebra"
 [lib]
 name = "algebra"
 
-[dev_dependencies.quickcheck]
-git = "https://github.com/BurntSushi/quickcheck"
-
-[dev_dependencies.quickcheck_macros]
-git = "https://github.com/BurntSushi/quickcheck"
+[dev-dependencies]
+quickcheck = "0.2"
+quickcheck_macros = "0.2"

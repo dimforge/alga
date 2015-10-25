@@ -33,8 +33,8 @@ pub trait MonoidAdditiveApprox
     /// Checks whether adding `0` is approximately a no-op for the given
     /// argument.
     fn prop_add_zero_is_noop_approx(a: Self) -> bool {
-        a + zero::<Self>() == a &&
-        zero::<Self>() + a == a
+        a.clone() + zero::<Self>() == a.clone() &&
+        zero::<Self>() + a.clone() == a.clone()
     }
 }
 
@@ -42,12 +42,10 @@ impl MonoidAdditiveApprox for u8   {}
 impl MonoidAdditiveApprox for u16  {}
 impl MonoidAdditiveApprox for u32  {}
 impl MonoidAdditiveApprox for u64  {}
-impl MonoidAdditiveApprox for uint {}
 impl MonoidAdditiveApprox for i8   {}
 impl MonoidAdditiveApprox for i16  {}
 impl MonoidAdditiveApprox for i32  {}
 impl MonoidAdditiveApprox for i64  {}
-impl MonoidAdditiveApprox for int  {}
 
 /// A type that is equipped with an associative addition operator and a
 /// corresponding identity. This should satisfy:
@@ -62,8 +60,8 @@ pub trait MonoidAdditive
 {
     /// Checks whether adding `0` is a no-op for the given argument.
     fn prop_add_zero_is_noop(a: Self) -> bool {
-        a + zero::<Self>() == a &&
-        zero::<Self>() + a == a
+        a.clone() + zero::<Self>() == a.clone() &&
+        zero::<Self>() + a.clone() == a.clone()
     }
 }
 
@@ -71,12 +69,10 @@ impl MonoidAdditive for u8   {}
 impl MonoidAdditive for u16  {}
 impl MonoidAdditive for u32  {}
 impl MonoidAdditive for u64  {}
-impl MonoidAdditive for uint {}
 impl MonoidAdditive for i8   {}
 impl MonoidAdditive for i16  {}
 impl MonoidAdditive for i32  {}
 impl MonoidAdditive for i64  {}
-impl MonoidAdditive for int  {}
 
 /// A type that is equipped with an approximately associative multiplication
 /// operator and a corresponding identity. This should satisfy:
@@ -92,8 +88,8 @@ pub trait MonoidMultiplicativeApprox
     /// Checks whether multiplying by `1` is approximately a no-op for the given
     /// argument.
     fn prop_mul_unit_is_noop_approx(a: Self) -> bool {
-        a * unit::<Self>() == a &&
-        unit::<Self>() * a == a
+        a.clone() * unit::<Self>() == a.clone() &&
+        unit::<Self>() * a.clone() == a.clone()
     }
 }
 
@@ -101,12 +97,10 @@ impl MonoidMultiplicativeApprox for u8   {}
 impl MonoidMultiplicativeApprox for u16  {}
 impl MonoidMultiplicativeApprox for u32  {}
 impl MonoidMultiplicativeApprox for u64  {}
-impl MonoidMultiplicativeApprox for uint {}
 impl MonoidMultiplicativeApprox for i8   {}
 impl MonoidMultiplicativeApprox for i16  {}
 impl MonoidMultiplicativeApprox for i32  {}
 impl MonoidMultiplicativeApprox for i64  {}
-impl MonoidMultiplicativeApprox for int  {}
 
 /// A type that is equipped with an associative multiplication operator and a
 /// corresponding identity. This should satisfy:
@@ -121,8 +115,8 @@ pub trait MonoidMultiplicative
 {
     /// Checks whether multiplying by `1` is a no-op for the given argument.
     fn prop_mul_unit_is_noop(a: Self) -> bool {
-        a * unit::<Self>() == a &&
-        unit::<Self>() * a == a
+        a.clone() * unit::<Self>() == a.clone() &&
+        unit::<Self>() * a.clone() == a.clone()
     }
 }
 
@@ -130,12 +124,10 @@ impl MonoidMultiplicative for u8   {}
 impl MonoidMultiplicative for u16  {}
 impl MonoidMultiplicative for u32  {}
 impl MonoidMultiplicative for u64  {}
-impl MonoidMultiplicative for uint {}
 impl MonoidMultiplicative for i8   {}
 impl MonoidMultiplicative for i16  {}
 impl MonoidMultiplicative for i32  {}
 impl MonoidMultiplicative for i64  {}
-impl MonoidMultiplicative for int  {}
 
 #[cfg(test)]
 mod tests {
@@ -167,14 +159,12 @@ mod tests {
             }
         }
     }
-    check_int!(u8)
-    check_int!(u16)
-    check_int!(u32)
-    check_int!(u64)
-    check_int!(uint)
-    check_int!(i8)
-    check_int!(i16)
-    check_int!(i32)
-    check_int!(i64)
-    check_int!(int)
+    check_int!(u8);
+    check_int!(u16);
+    check_int!(u32);
+    check_int!(u64);
+    check_int!(i8);
+    check_int!(i16);
+    check_int!(i32);
+    check_int!(i64);
 }
