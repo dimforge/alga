@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::ops::{Add, Mul};
+
 /// An additive closure that forms a partial equivalence relation.
 ///
 /// ~~~notrust
@@ -19,13 +21,15 @@
 /// a + b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
 pub trait MagmaAdditiveApprox
-    : Add<Self, Self>
+    : Add<Self, Output=Self>
 //  + ApproxEq (TODO: requires better support for associated types)
     + PartialEq
+    + Sized
+    + Clone
 {}
 
 impl<T> MagmaAdditiveApprox for T where
-    T: Add<T, T> /*+ ApproxEq*/ + PartialEq,
+    T: Add<T, Output=T> /*+ ApproxEq*/ + PartialEq + Clone,
 {}
 
 /// An additive closure that forms an equivalence relation.
@@ -50,13 +54,15 @@ impl<T> MagmaAdditive for T where
 /// a * b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
 pub trait MagmaMultiplicativeApprox
-    : Mul<Self, Self>
+    : Mul<Self, Output=Self>
 //  + ApproxEq (TODO: requires better support for associated types)
     + PartialEq
+    + Sized
+    + Clone
 {}
 
 impl<T> MagmaMultiplicativeApprox for T where
-    T: Mul<T, T> /*+ ApproxEq*/ + PartialEq,
+    T: Mul<T, Output=T> /*+ ApproxEq*/ + PartialEq + Clone,
 {}
 
 /// A multiplicative closure that forms an equivalence relation.

@@ -32,7 +32,7 @@ pub trait SemigroupAdditiveApprox
     fn prop_add_is_associative_approx(args: (Self, Self, Self)) -> bool {
         // TODO: use ApproxEq
         let (a, b, c) = args;
-        (a + b) + c == a + (b + c)
+        (a.clone() + b.clone()) + c.clone() == a + (b + c)
     }
 }
 
@@ -40,12 +40,10 @@ impl SemigroupAdditiveApprox for u8   {}
 impl SemigroupAdditiveApprox for u16  {}
 impl SemigroupAdditiveApprox for u32  {}
 impl SemigroupAdditiveApprox for u64  {}
-impl SemigroupAdditiveApprox for uint {}
 impl SemigroupAdditiveApprox for i8   {}
 impl SemigroupAdditiveApprox for i16  {}
 impl SemigroupAdditiveApprox for i32  {}
 impl SemigroupAdditiveApprox for i64  {}
-impl SemigroupAdditiveApprox for int  {}
 
 /// A type that is closed over an associative addition operator.
 ///
@@ -62,7 +60,7 @@ pub trait SemigroupAdditive
     /// arguments.
     fn prop_add_is_associative(args: (Self, Self, Self)) -> bool {
         let (a, b, c) = args;
-        (a + b) + c == a + (b + c)
+        (a.clone() + b.clone()) + c.clone() == a + (b + c)
     }
 }
 
@@ -70,12 +68,10 @@ impl SemigroupAdditive for u8   {}
 impl SemigroupAdditive for u16  {}
 impl SemigroupAdditive for u32  {}
 impl SemigroupAdditive for u64  {}
-impl SemigroupAdditive for uint {}
 impl SemigroupAdditive for i8   {}
 impl SemigroupAdditive for i16  {}
 impl SemigroupAdditive for i32  {}
 impl SemigroupAdditive for i64  {}
-impl SemigroupAdditive for int  {}
 
 /// A type that is closed over an approximately associative multiplication operator.
 ///
@@ -92,7 +88,7 @@ pub trait SemigroupMultiplicativeApprox
     fn prop_mul_is_associative_approx(args: (Self, Self, Self)) -> bool {
         // TODO: use ApproxEq
         let (a, b, c) = args;
-        (a * b) * c == a * (b * c)
+        (a.clone() * b.clone()) * c.clone() == a * (b * c)
     }
 }
 
@@ -100,12 +96,10 @@ impl SemigroupMultiplicativeApprox for u8   {}
 impl SemigroupMultiplicativeApprox for u16  {}
 impl SemigroupMultiplicativeApprox for u32  {}
 impl SemigroupMultiplicativeApprox for u64  {}
-impl SemigroupMultiplicativeApprox for uint {}
 impl SemigroupMultiplicativeApprox for i8   {}
 impl SemigroupMultiplicativeApprox for i16  {}
 impl SemigroupMultiplicativeApprox for i32  {}
 impl SemigroupMultiplicativeApprox for i64  {}
-impl SemigroupMultiplicativeApprox for int  {}
 
 /// A type that is closed over an associative multiplication operator.
 ///
@@ -122,7 +116,7 @@ pub trait SemigroupMultiplicative
     /// arguments.
     fn prop_mul_is_associative(args: (Self, Self, Self)) -> bool {
         let (a, b, c) = args;
-        (a * b) * c == a * (b * c)
+        (a.clone() * b.clone()) * c.clone() == a * (b * c)
     }
 }
 
@@ -130,12 +124,10 @@ impl SemigroupMultiplicative for u8   {}
 impl SemigroupMultiplicative for u16  {}
 impl SemigroupMultiplicative for u32  {}
 impl SemigroupMultiplicative for u64  {}
-impl SemigroupMultiplicative for uint {}
 impl SemigroupMultiplicative for i8   {}
 impl SemigroupMultiplicative for i16  {}
 impl SemigroupMultiplicative for i32  {}
 impl SemigroupMultiplicative for i64  {}
-impl SemigroupMultiplicative for int  {}
 
 #[cfg(test)]
 mod tests {
@@ -167,14 +159,12 @@ mod tests {
             }
         }
     }
-    check_int!(u8)
-    check_int!(u16)
-    check_int!(u32)
-    check_int!(u64)
-    check_int!(uint)
-    check_int!(i8)
-    check_int!(i16)
-    check_int!(i32)
-    check_int!(i64)
-    check_int!(int)
+    check_int!(u8);
+    check_int!(u16);
+    check_int!(u32);
+    check_int!(u64);
+    check_int!(i8);
+    check_int!(i16);
+    check_int!(i32);
+    check_int!(i64);
 }

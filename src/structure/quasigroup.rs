@@ -11,8 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #![allow(missing_docs)]
+
+use std::ops::{Sub, Neg, Div};
 
 use ops::Recip;
 use structure::MagmaAdditiveApprox;
@@ -23,31 +24,29 @@ use structure::MagmaMultiplicative;
 /// An additive magma that for which subtraction is always possible.
 pub trait QuasigroupAdditiveApprox
     : MagmaAdditiveApprox
-    + Sub<Self, Self>
-    + Neg<Self>
+    + Sub<Self, Output=Self>
+    + Neg<Output=Self>
 {
     fn prop_sub_is_latin_square_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
 
-        a == (a + -b) + b &&
-        a == (a + b) + -b &&
-        a == (a - b) + b &&
-        a == (a + b) - b
+        a.clone() == (a.clone() + -b.clone()) + b.clone() &&
+        a.clone() == (a.clone() + b.clone()) + -b.clone() &&
+        a.clone() == (a.clone() - b.clone()) + b.clone() &&
+        a.clone() == (a.clone() + b.clone()) - b.clone()
 
         // TODO: psuedo inverse?
     }
 }
 
-impl QuasigroupAdditiveApprox for u8   {}
-impl QuasigroupAdditiveApprox for u16  {}
-impl QuasigroupAdditiveApprox for u32  {}
-impl QuasigroupAdditiveApprox for u64  {}
-impl QuasigroupAdditiveApprox for uint {}
+//impl QuasigroupAdditiveApprox for u8   {}
+//impl QuasigroupAdditiveApprox for u16  {}
+//impl QuasigroupAdditiveApprox for u32  {}
+//impl QuasigroupAdditiveApprox for u64  {}
 impl QuasigroupAdditiveApprox for i8   {}
 impl QuasigroupAdditiveApprox for i16  {}
 impl QuasigroupAdditiveApprox for i32  {}
 impl QuasigroupAdditiveApprox for i64  {}
-impl QuasigroupAdditiveApprox for int  {}
 
 /// An additive magma that for which subtraction is always possible.
 pub trait QuasigroupAdditive
@@ -57,39 +56,37 @@ pub trait QuasigroupAdditive
     fn prop_sub_is_latin_square(args: (Self, Self)) -> bool {
         let (a, b) = args;
 
-        a == (a + -b) + b &&
-        a == (a + b) + -b &&
-        a == (a - b) + b &&
-        a == (a + b) - b
+        a.clone() == (a.clone() + -b.clone()) + b.clone() &&
+        a.clone() == (a.clone() + b.clone()) + -b.clone() &&
+        a.clone() == (a.clone() - b.clone()) + b.clone() &&
+        a.clone() == (a.clone() + b.clone()) - b.clone()
 
         // TODO: psuedo inverse?
     }
 }
 
-impl QuasigroupAdditive for u8   {}
-impl QuasigroupAdditive for u16  {}
-impl QuasigroupAdditive for u32  {}
-impl QuasigroupAdditive for u64  {}
-impl QuasigroupAdditive for uint {}
+//impl QuasigroupAdditive for u8   {}
+//impl QuasigroupAdditive for u16  {}
+//impl QuasigroupAdditive for u32  {}
+//impl QuasigroupAdditive for u64  {}
 impl QuasigroupAdditive for i8   {}
 impl QuasigroupAdditive for i16  {}
 impl QuasigroupAdditive for i32  {}
 impl QuasigroupAdditive for i64  {}
-impl QuasigroupAdditive for int  {}
 
 /// An multiplicative magma that for which division is always possible.
 pub trait QuasigroupMultiplicativeApprox
     : MagmaMultiplicativeApprox
-    + Div<Self, Self>
+    + Div<Self, Output=Self>
     + Recip<Self>
 {
     fn prop_div_is_latin_square_approx(args: (Self, Self)) -> bool {
         let (a, b) = args;
 
-        a == (a * b.recip()) * b &&
-        a == (a * b) * b.recip() &&
-        a == (a / b) * b &&
-        a == (a * b) / b
+        a.clone() == (a.clone() * b.clone().recip()) * b.clone() &&
+        a.clone() == (a.clone() * b.clone()) * b.clone().recip() &&
+        a.clone() == (a.clone() / b.clone()) * b.clone() &&
+        a.clone() == (a.clone() * b.clone()) / b.clone()
 
         // TODO: psuedo inverse?
     }
@@ -103,10 +100,10 @@ pub trait QuasigroupMultiplicative
     fn prop_div_is_latin_square(args: (Self, Self)) -> bool {
         let (a, b) = args;
 
-        a == (a * b.recip()) * b &&
-        a == (a * b) * b.recip() &&
-        a == (a / b) * b &&
-        a == (a * b) / b
+        a.clone() == (a.clone() * b.clone().recip()) * b.clone() &&
+        a.clone() == (a.clone() * b.clone()) * b.clone().recip() &&
+        a.clone() == (a.clone() / b.clone()) * b.clone() &&
+        a.clone() == (a.clone() * b.clone()) / b.clone()
 
         // TODO: psuedo inverse?
     }
@@ -131,14 +128,12 @@ mod tests {
             }
         }
     }
-    check_int!(u8)
-    check_int!(u16)
-    check_int!(u32)
-    check_int!(u64)
-    check_int!(uint)
-    check_int!(i8)
-    check_int!(i16)
-    check_int!(i32)
-    check_int!(i64)
-    check_int!(int)
+    //check_int!(u8);
+    //check_int!(u16);
+    //check_int!(u32);
+    //check_int!(u64);
+    check_int!(i8);
+    check_int!(i16);
+    check_int!(i32);
+    check_int!(i64);
 }
