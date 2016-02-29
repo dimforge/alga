@@ -79,7 +79,7 @@ impl RingCommutativeApprox for i32  {}
 impl RingCommutativeApprox for i64  {}
 
 pub trait RingCommutative
-    : RingApprox
+    : RingCommutativeApprox
     + Ring
 {
     /// Returns `true` if the multiplication operator is commutative for
