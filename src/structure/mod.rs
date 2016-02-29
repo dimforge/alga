@@ -167,6 +167,11 @@ pub use self::ring::RingCommutative;
 pub use self::ring::FieldApprox;
 pub use self::ring::Field;
 
+pub use self::module::ModuleApprox;
+pub use self::module::Module;
+pub use self::module::VectorApprox;
+pub use self::module::Vector;
+
 mod ident;
 
 mod magma;
@@ -177,4 +182,4 @@ mod monoid;
 mod group;
 mod abelian;
 mod ring;
-mod vector;
+mod module;
