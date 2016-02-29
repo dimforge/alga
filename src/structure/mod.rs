@@ -177,3 +177,4 @@ mod monoid;
 mod group;
 mod abelian;
 mod ring;
+mod vector;
