@@ -18,7 +18,7 @@ use std::ops::{Add, Mul};
 
 /// A type that is equipped with an additive identity.
 pub trait IdentityAdditive
-    : Add<Self, Output=Self>
+    : Add<Self, Output=Self> + Sized
 {
     /// The additive identity element, `0`.
     fn zero() -> Self;
@@ -42,7 +42,7 @@ pub fn zero<T: IdentityAdditive>() -> T {
 
 /// A type that is equipped with a multiplicative identity.
 pub trait IdentityMultiplicative
-    : Mul<Self, Output=Self>
+    : Mul<Self, Output=Self> + Sized
 {
     /// The multiplicative identity element, `1`.
     fn unit() -> Self;
