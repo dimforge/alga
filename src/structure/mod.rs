@@ -160,12 +160,12 @@ pub use self::abelian::GroupMultiplicativeAbelianApprox;
 pub use self::abelian::GroupAdditiveAbelian;
 pub use self::abelian::GroupMultiplicativeAbelian;
 
-// pub use self::ring::RingApprox;
-// pub use self::ring::Ring;
-// pub use self::ring::RingCommutativeApprox;
-// pub use self::ring::RingCommutative;
-// pub use self::ring::FieldApprox;
-// pub use self::ring::Field;
+pub use self::ring::RingApprox;
+pub use self::ring::Ring;
+pub use self::ring::RingCommutativeApprox;
+pub use self::ring::RingCommutative;
+pub use self::ring::FieldApprox;
+pub use self::ring::Field;
 
 mod ident;
 
@@ -176,5 +176,4 @@ mod semigroup;
 mod monoid;
 mod group;
 mod abelian;
-
-// mod ring;
+mod ring;
