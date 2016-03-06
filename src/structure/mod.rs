@@ -107,6 +107,27 @@
 //! - `RingCommutative`(`Approx`)?
 //! -           `Field`(`Approx`)?
 //!
+//! ## Module-like structures
+//!
+//! ~~~notrust
+//! GroupAdditiveAbelian     RingCommutative
+//!           \______         _____/
+//!                  \       /
+//!                   |     |
+//!                   V     V
+//!                Module<Scalar>          Field
+//!                    \______         _____/
+//!                           \       /
+//!                            |     |
+//!                            V     V
+//!                         Vector<Scalar>
+//! ~~~
+//!
+//! The following traits are provided:
+//!
+//! - `Module`(`Approx`)?
+//! - `Vector`(`Approx`)?
+//!
 //! # Quickcheck properties
 //!
 //! Functions are provided to test that algebraic properties like
@@ -167,6 +188,11 @@ pub use self::ring::RingCommutative;
 pub use self::ring::FieldApprox;
 pub use self::ring::Field;
 
+pub use self::module::ModuleApprox;
+pub use self::module::Module;
+pub use self::module::VectorApprox;
+pub use self::module::Vector;
+
 mod ident;
 
 mod magma;
@@ -177,3 +203,4 @@ mod monoid;
 mod group;
 mod abelian;
 mod ring;
+mod module;
