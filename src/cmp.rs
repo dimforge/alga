@@ -13,71 +13,45 @@
 // limitations under the License.
 
 /// A type with an approximate equivalence relation.
-pub trait ApproxEq<Eps> : Sized {
+pub trait ApproxEq {
+    type Eps: Sized;
+
     /// The default epsilon value to use in `ApproxEq::approx_eq`.
-    fn default_epsilon(_: Option<Self>) -> Eps;
+    fn default_epsilon() -> Self::Eps;
 
     /// Compare `a` and `b` for approximate equality using the specified
     /// epsilon value.
-    fn approx_eq_eps(a: &Self, b: &Self, epsilon: &Eps) -> bool;
+    fn approx_eq_eps(a: &Self, b: &Self, epsilon: &Self::Eps) -> bool;
 
     /// Compare `a` and `b` for approximate equality using the default
     /// epsilon value returned by `ApproxEq::default_epsilon`.
     #[inline]
     fn approx_eq(a: &Self, b: &Self) -> bool {
-        ApproxEq::approx_eq_eps(a, b, &ApproxEq::default_epsilon(None::<Self>))
+        Self::approx_eq_eps(a, b, &Self::default_epsilon())
     }
 }
 
-macro_rules! impl_approx_eq_for_uint {
-    ($T:ty) => {
-        impl ApproxEq<$T> for $T {
+macro_rules! impl_approx_eq {
+    ($T:ty, $V:expr) => {
+        impl ApproxEq for $T {
+            type Eps = $T;
             #[inline]
-            fn default_epsilon(_: Option<$T>) -> $T { 0 }
+            fn default_epsilon() -> $T { $V }
             #[inline]
             fn approx_eq_eps(a: &$T, b: &$T, epsilon: &$T) -> bool {
                 (*a - *b) < *epsilon
             }
         }
-
     }
 }
 
-macro_rules! impl_approx_eq_for_int {
-    ($T:ty) => {
-        impl ApproxEq<$T> for $T {
-            #[inline]
-            fn default_epsilon(_: Option<$T>) -> $T { 0 }
-            #[inline]
-            fn approx_eq_eps(a: &$T, b: &$T, epsilon: &$T) -> bool {
-                (*a - *b).abs() < *epsilon
-            }
-        }
-
-    }
-}
-
-macro_rules! impl_approx_eq_for_float {
-    ($T:ty) => {
-        impl ApproxEq<$T> for $T {
-            #[inline]
-            fn default_epsilon(_: Option<$T>) -> $T { 1.0e-6 }
-            #[inline]
-            fn approx_eq_eps(a: &$T, b: &$T, epsilon: &$T) -> bool {
-                (*a - *b).abs() < *epsilon
-            }
-        }
-
-    }
-}
-
-impl_approx_eq_for_uint!(u8);
-impl_approx_eq_for_uint!(u16);
-impl_approx_eq_for_uint!(u32);
-impl_approx_eq_for_uint!(u64);
-impl_approx_eq_for_int!(i8);
-impl_approx_eq_for_int!(i16);
-impl_approx_eq_for_int!(i32);
-impl_approx_eq_for_int!(i64);
-impl_approx_eq_for_float!(f32);
-impl_approx_eq_for_float!(f64);
+impl_approx_eq!(u8, 0);
+impl_approx_eq!(u16, 0);
+impl_approx_eq!(u32, 0);
+impl_approx_eq!(u64, 0);
+impl_approx_eq!(i8, 0);
+impl_approx_eq!(i16, 0);
+impl_approx_eq!(i32, 0);
+impl_approx_eq!(i64, 0);
+impl_approx_eq!(f32, 1.0e-6);
+impl_approx_eq!(f64, 1.0e-6);
