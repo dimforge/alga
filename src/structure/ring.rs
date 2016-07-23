@@ -15,6 +15,9 @@
 #![allow(missing_docs)]
 
 use ops::{Additive, Multiplicative};
+use cmp::ApproxEq;
+
+use structure::Ma;
 
 use structure::MonoidApprox;
 use structure::Monoid;
@@ -28,13 +31,11 @@ pub trait RingApprox
     /// Returns `true` if the multiplication and addition operators are approximately distributive for
     /// the given argument tuple.
     fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool {
-        use ops::Multiplicative as Mul;
-        use ops::Additive as Add;
-        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        let (a, b, c) = (|| Ma(args.0.clone(), Additive), || Ma::new(args.1.clone()), || Ma::new(args.2.clone()));
         // Left distributivity
-        Self::approx_eq(&a().ap(Mul, b().ap(Add, c())), &a().ap(Mul, b()).ap(Add, a().ap(Mul, c()))) &&
+        ((a() * b()) + c()).approx_eq(&((a() * b()) + (a() * c()))) &&
         // Right distributivity
-        Self::approx_eq(&b().ap(Add, c()).ap(Mul, a()), &b().ap(Mul, a()).ap(Add, c().ap(Mul, a())))
+        ((b() + c()) * a()).approx_eq(&((b() * a()) + (c() * a())))
     }
 }
 
@@ -48,13 +49,11 @@ pub trait Ring
     /// Returns `true` if the multiplication and addition operators are distributive for
     /// the given argument tuple.
     fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool {
-        use ops::Multiplicative as Mul;
-        use ops::Additive as Add;
-        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        let (a, b, c) = (|| Ma(args.0.clone(), Additive), || Ma::new(args.1.clone()), || Ma::new(args.2.clone()));
         // Left distributivity
-        a().op(Mul, b().op(Add, c())) == a().op(Mul, b()).op(Add, a().op(Mul, c())) &&
+        (a() * b()) + c() == (a() * b()) + (a() * c()) &&
         // Right distributivity
-        b().op(Add, c()).op(Mul, a()) == b().op(Mul, a()).op(Add, c().op(Mul, a()))
+        (b() + c()) * a() == (b() * a()) + (c() * a())
     }
 }
 
@@ -66,9 +65,8 @@ pub trait RingCommutativeApprox
     /// Returns `true` if the multiplication operator is approximately commutative for
     /// the given argument tuple.
     fn prop_mul_is_commutative_approx(args: (Self, Self)) -> bool {
-        use ops::Multiplicative as Mul;
-        let (a, b) = (|| args.0.clone(), || args.1.clone());
-        Self::approx_eq(&a().ap(Mul, b()), &b().ap(Mul, a()))
+        let (a, b) = (|| Ma(args.0.clone(), Multiplicative), || Ma::new(args.1.clone()));
+        (a() * b()).approx_eq(&(b() * a()))
     }
 }
 
@@ -81,9 +79,8 @@ pub trait RingCommutative
     /// Returns `true` if the multiplication operator is commutative for
     /// the given argument tuple.
     fn prop_mul_is_commutative(args: (Self, Self)) -> bool {
-        use ops::Multiplicative as Mul;
-        let (a, b) = (|| args.0.clone(), || args.1.clone());
-        a().op(Mul, b()) == b().op(Mul, a())
+        let (a, b) = (|| Ma(args.0.clone(), Multiplicative), || Ma::new(args.1.clone()));
+        a() * b() == b() * a()
     }
 }
 

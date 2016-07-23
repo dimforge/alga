@@ -21,13 +21,13 @@ pub trait ApproxEq {
 
     /// Compare `a` and `b` for approximate equality using the specified
     /// epsilon value.
-    fn approx_eq_eps(a: &Self, b: &Self, epsilon: &Self::Eps) -> bool;
+    fn approx_eq_eps(&self, b: &Self, epsilon: &Self::Eps) -> bool;
 
     /// Compare `a` and `b` for approximate equality using the default
     /// epsilon value returned by `ApproxEq::default_epsilon`.
     #[inline]
-    fn approx_eq(a: &Self, b: &Self) -> bool {
-        Self::approx_eq_eps(a, b, &Self::default_epsilon())
+    fn approx_eq(&self, b: &Self) -> bool {
+        Self::approx_eq_eps(self, b, &Self::default_epsilon())
     }
 }
 
@@ -37,10 +37,13 @@ macro_rules! impl_approx_eq {
             type Eps = $T;
             #[inline]
             fn default_epsilon() -> Self::Eps { $V }
-
             #[inline]
-            fn approx_eq_eps(a: &$T, b: &$T, epsilon: &$T) -> bool {
-                (*a - *b) < *epsilon
+            fn approx_eq_eps(&self, b: &$T, epsilon: &$T) -> bool {
+                if self < b {
+                    *b - *self < *epsilon
+                } else {
+                    *self - *b < *epsilon
+                }
             }
         })+
     }
