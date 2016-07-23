@@ -14,52 +14,37 @@
 
 //! Identities for binary operators
 
-use std::ops::{Add, Mul};
+use ops::{Op, Additive, Multiplicative};
 
-/// A type that is equipped with an additive identity.
-pub trait IdentityAdditive
-    : Add<Self, Output=Self> + Sized
-{
-    /// The additive identity element, `0`.
-    fn zero() -> Self;
+/// A type that is equipped with identity.
+pub trait Identity<O: Op> {
+    /// The identity element.
+    fn id() -> Self;
 }
 
-impl IdentityAdditive for u8   { #[inline] fn zero() -> u8   { 0   } }
-impl IdentityAdditive for u16  { #[inline] fn zero() -> u16  { 0   } }
-impl IdentityAdditive for u32  { #[inline] fn zero() -> u32  { 0   } }
-impl IdentityAdditive for u64  { #[inline] fn zero() -> u64  { 0   } }
-impl IdentityAdditive for i8   { #[inline] fn zero() -> i8   { 0   } }
-impl IdentityAdditive for i16  { #[inline] fn zero() -> i16  { 0   } }
-impl IdentityAdditive for i32  { #[inline] fn zero() -> i32  { 0   } }
-impl IdentityAdditive for i64  { #[inline] fn zero() -> i64  { 0   } }
-impl IdentityAdditive for f32  { #[inline] fn zero() -> f32  { 0.0 } }
-impl IdentityAdditive for f64  { #[inline] fn zero() -> f64  { 0.0 } }
-
-/// The additive identity element, `0`.
-pub fn zero<T: IdentityAdditive>() -> T {
-    IdentityAdditive::zero()
+/// The identity element.
+pub fn id<T: Identity<O>, O: Op>() -> T {
+    Identity::id()
 }
 
-/// A type that is equipped with a multiplicative identity.
-pub trait IdentityMultiplicative
-    : Mul<Self, Output=Self> + Sized
-{
-    /// The multiplicative identity element, `1`.
-    fn unit() -> Self;
-}
+impl Identity<Additive> for u8   { #[inline] fn id() -> u8   { 0   } }
+impl Identity<Additive> for u16  { #[inline] fn id() -> u16  { 0   } }
+impl Identity<Additive> for u32  { #[inline] fn id() -> u32  { 0   } }
+impl Identity<Additive> for u64  { #[inline] fn id() -> u64  { 0   } }
+impl Identity<Additive> for i8   { #[inline] fn id() -> i8   { 0   } }
+impl Identity<Additive> for i16  { #[inline] fn id() -> i16  { 0   } }
+impl Identity<Additive> for i32  { #[inline] fn id() -> i32  { 0   } }
+impl Identity<Additive> for i64  { #[inline] fn id() -> i64  { 0   } }
+impl Identity<Additive> for f32  { #[inline] fn id() -> f32  { 0.0 } }
+impl Identity<Additive> for f64  { #[inline] fn id() -> f64  { 0.0 } }
 
-impl IdentityMultiplicative for u8   { #[inline] fn unit() -> u8   { 1   } }
-impl IdentityMultiplicative for u16  { #[inline] fn unit() -> u16  { 1   } }
-impl IdentityMultiplicative for u32  { #[inline] fn unit() -> u32  { 1   } }
-impl IdentityMultiplicative for u64  { #[inline] fn unit() -> u64  { 1   } }
-impl IdentityMultiplicative for i8   { #[inline] fn unit() -> i8   { 1   } }
-impl IdentityMultiplicative for i16  { #[inline] fn unit() -> i16  { 1   } }
-impl IdentityMultiplicative for i32  { #[inline] fn unit() -> i32  { 1   } }
-impl IdentityMultiplicative for i64  { #[inline] fn unit() -> i64  { 1   } }
-impl IdentityMultiplicative for f32  { #[inline] fn unit() -> f32  { 1.0 } }
-impl IdentityMultiplicative for f64  { #[inline] fn unit() -> f64  { 1.0 } }
-
-/// The multiplicative identity element, `1`.
-pub fn unit<T: IdentityMultiplicative>() -> T {
-    IdentityMultiplicative::unit()
-}
+impl Identity<Multiplicative> for u8   { #[inline] fn id() -> u8   { 1   } }
+impl Identity<Multiplicative> for u16  { #[inline] fn id() -> u16  { 1   } }
+impl Identity<Multiplicative> for u32  { #[inline] fn id() -> u32  { 1   } }
+impl Identity<Multiplicative> for u64  { #[inline] fn id() -> u64  { 1   } }
+impl Identity<Multiplicative> for i8   { #[inline] fn id() -> i8   { 1   } }
+impl Identity<Multiplicative> for i16  { #[inline] fn id() -> i16  { 1   } }
+impl Identity<Multiplicative> for i32  { #[inline] fn id() -> i32  { 1   } }
+impl Identity<Multiplicative> for i64  { #[inline] fn id() -> i64  { 1   } }
+impl Identity<Multiplicative> for f32  { #[inline] fn id() -> f32  { 1.0 } }
+impl Identity<Multiplicative> for f64  { #[inline] fn id() -> f64  { 1.0 } }

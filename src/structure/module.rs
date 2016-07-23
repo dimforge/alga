@@ -14,20 +14,22 @@
 
 #![allow(missing_docs)]
 
-use structure::GroupAdditiveAbelianApprox;
-use structure::GroupAdditiveAbelian;
+use ops::{Additive};
+
+use structure::GroupAbelianApprox;
+use structure::GroupAbelian;
 use structure::RingCommutativeApprox;
 use structure::RingCommutative;
 use structure::FieldApprox;
 use structure::Field;
 
 pub trait ModuleApprox<S: RingCommutativeApprox>
-    : GroupAdditiveAbelianApprox
+    : GroupAbelianApprox<Additive>
 {}
 
 pub trait Module<S: RingCommutative>
     : ModuleApprox<S>
-    + GroupAdditiveAbelian
+    + GroupAbelian<Additive>
 {}
 
 pub trait VectorApprox<S: FieldApprox>

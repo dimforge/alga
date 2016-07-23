@@ -12,122 +12,86 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use structure::SemigroupAdditiveApprox;
-use structure::SemigroupAdditive;
-use structure::SemigroupMultiplicativeApprox;
-use structure::SemigroupMultiplicative;
-use structure::{IdentityAdditive, zero};
-use structure::{IdentityMultiplicative, unit};
+use ops::{Op, Additive, Multiplicative};
 
-/// A type that is equipped with an approximately associative addition operator
+use structure::SemigroupApprox;
+use structure::Semigroup;
+use structure::{Identity, id};
+
+/// A type that is equipped with an approximately associative operator
 /// and a corresponding identity. This should satisfy:
 ///
 /// ~~~notrust
-/// a + 0 ≈ a       ∀ a ∈ Self
-/// 0 + a ≈ a       ∀ a ∈ Self
+/// a + e ≈ a       ∀ a ∈ Self
+/// e + a ≈ a       ∀ a ∈ Self
 /// ~~~
-pub trait MonoidAdditiveApprox
-    : SemigroupAdditiveApprox
-    + IdentityAdditive
+pub trait MonoidApprox<O: Op>
+    : SemigroupApprox<O>
+    + Identity<O>
 {
-    /// Checks whether adding `0` is approximately a no-op for the given
+    /// Checks whether operating with identity is approximately a no-op for the given
     /// argument.
-    fn prop_add_zero_is_noop_approx(a: Self) -> bool {
-        a.clone() + zero::<Self>() == a.clone() &&
-        zero::<Self>() + a.clone() == a.clone()
+    fn prop_operating_identity_is_noop_approx(a: Self) -> bool {
+        let a = || a.clone();
+        a().approx(id()) == a() &&
+        Self::approx_eq(&Self::id().approx(a()), &a())
     }
 }
 
-impl MonoidAdditiveApprox for u8   {}
-impl MonoidAdditiveApprox for u16  {}
-impl MonoidAdditiveApprox for u32  {}
-impl MonoidAdditiveApprox for u64  {}
-impl MonoidAdditiveApprox for i8   {}
-impl MonoidAdditiveApprox for i16  {}
-impl MonoidAdditiveApprox for i32  {}
-impl MonoidAdditiveApprox for i64  {}
+impl MonoidApprox<Additive> for u8   {}
+impl MonoidApprox<Additive> for u16  {}
+impl MonoidApprox<Additive> for u32  {}
+impl MonoidApprox<Additive> for u64  {}
+impl MonoidApprox<Additive> for i8   {}
+impl MonoidApprox<Additive> for i16  {}
+impl MonoidApprox<Additive> for i32  {}
+impl MonoidApprox<Additive> for i64  {}
 
-/// A type that is equipped with an associative addition operator and a
+impl MonoidApprox<Multiplicative> for u8   {}
+impl MonoidApprox<Multiplicative> for u16  {}
+impl MonoidApprox<Multiplicative> for u32  {}
+impl MonoidApprox<Multiplicative> for u64  {}
+impl MonoidApprox<Multiplicative> for i8   {}
+impl MonoidApprox<Multiplicative> for i16  {}
+impl MonoidApprox<Multiplicative> for i32  {}
+impl MonoidApprox<Multiplicative> for i64  {}
+
+/// A type that is equipped with an associative operator and a
 /// corresponding identity. This should satisfy:
 ///
 /// ~~~notrust
-/// a + 0 = a                           ∀ a ∈ Self
-/// 0 + a = a                           ∀ a ∈ Self
+/// a + e = a                           ∀ a ∈ Self
+/// e + a = a                           ∀ a ∈ Self
 /// ~~~
-pub trait MonoidAdditive
-    : MonoidAdditiveApprox
-    + SemigroupAdditive
+pub trait Monoid<O: Op>
+    : MonoidApprox<O>
+    + Semigroup<O>
 {
-    /// Checks whether adding `0` is a no-op for the given argument.
-    fn prop_add_zero_is_noop(a: Self) -> bool {
-        a.clone() + zero::<Self>() == a.clone() &&
-        zero::<Self>() + a.clone() == a.clone()
+    /// Checks whether operating with identity is a no-op for the given argument.
+    fn prop_operating_identity_is_noop(a: Self) -> bool {
+        let a = || a.clone();
+        a().operate(id()) == a() &&
+        Self::id().operate(a()) == a()
     }
 }
 
-impl MonoidAdditive for u8   {}
-impl MonoidAdditive for u16  {}
-impl MonoidAdditive for u32  {}
-impl MonoidAdditive for u64  {}
-impl MonoidAdditive for i8   {}
-impl MonoidAdditive for i16  {}
-impl MonoidAdditive for i32  {}
-impl MonoidAdditive for i64  {}
+impl Monoid<Additive> for u8   {}
+impl Monoid<Additive> for u16  {}
+impl Monoid<Additive> for u32  {}
+impl Monoid<Additive> for u64  {}
+impl Monoid<Additive> for i8   {}
+impl Monoid<Additive> for i16  {}
+impl Monoid<Additive> for i32  {}
+impl Monoid<Additive> for i64  {}
 
-/// A type that is equipped with an approximately associative multiplication
-/// operator and a corresponding identity. This should satisfy:
-///
-/// ~~~notrust
-/// a * 1 ≈ a       ∀ a ∈ Self
-/// 1 * a ≈ a       ∀ a ∈ Self
-/// ~~~
-pub trait MonoidMultiplicativeApprox
-    : SemigroupMultiplicativeApprox
-    + IdentityMultiplicative
-{
-    /// Checks whether multiplying by `1` is approximately a no-op for the given
-    /// argument.
-    fn prop_mul_unit_is_noop_approx(a: Self) -> bool {
-        a.clone() * unit::<Self>() == a.clone() &&
-        unit::<Self>() * a.clone() == a.clone()
-    }
-}
-
-impl MonoidMultiplicativeApprox for u8   {}
-impl MonoidMultiplicativeApprox for u16  {}
-impl MonoidMultiplicativeApprox for u32  {}
-impl MonoidMultiplicativeApprox for u64  {}
-impl MonoidMultiplicativeApprox for i8   {}
-impl MonoidMultiplicativeApprox for i16  {}
-impl MonoidMultiplicativeApprox for i32  {}
-impl MonoidMultiplicativeApprox for i64  {}
-
-/// A type that is equipped with an associative multiplication operator and a
-/// corresponding identity. This should satisfy:
-///
-/// ~~~notrust
-/// a * 1 = a       ∀ a ∈ Self
-/// 1 * a = a       ∀ a ∈ Self
-/// ~~~
-pub trait MonoidMultiplicative
-    : MonoidMultiplicativeApprox
-    + SemigroupMultiplicative
-{
-    /// Checks whether multiplying by `1` is a no-op for the given argument.
-    fn prop_mul_unit_is_noop(a: Self) -> bool {
-        a.clone() * unit::<Self>() == a.clone() &&
-        unit::<Self>() * a.clone() == a.clone()
-    }
-}
-
-impl MonoidMultiplicative for u8   {}
-impl MonoidMultiplicative for u16  {}
-impl MonoidMultiplicative for u32  {}
-impl MonoidMultiplicative for u64  {}
-impl MonoidMultiplicative for i8   {}
-impl MonoidMultiplicative for i16  {}
-impl MonoidMultiplicative for i32  {}
-impl MonoidMultiplicative for i64  {}
+impl Monoid<Multiplicative> for u8   {}
+impl Monoid<Multiplicative> for u16  {}
+impl Monoid<Multiplicative> for u32  {}
+impl Monoid<Multiplicative> for u64  {}
+impl Monoid<Multiplicative> for i8   {}
+impl Monoid<Multiplicative> for i16  {}
+impl Monoid<Multiplicative> for i32  {}
+impl Monoid<Multiplicative> for i64  {}
 
 #[cfg(test)]
 mod tests {

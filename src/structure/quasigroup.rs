@@ -11,103 +11,48 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#![allow(missing_docs)]
 
-use std::ops::{Sub, Neg, Div};
+use ops::{Op, Inverse, Additive};
+use structure::MagmaApprox;
+use structure::Magma;
 
-use ops::Recip;
-use structure::MagmaAdditiveApprox;
-use structure::MagmaAdditive;
-use structure::MagmaMultiplicativeApprox;
-use structure::MagmaMultiplicative;
-
-/// An additive magma that for which subtraction is always possible.
-pub trait QuasigroupAdditiveApprox
-    : MagmaAdditiveApprox
-    + Sub<Self, Output=Self>
-    + Neg<Output=Self>
+/// A magma that for which approximated inverse is always possible.
+pub trait QuasigroupApprox<O: Op>
+    : MagmaApprox<O>
+    + Inverse<O>
 {
-    fn prop_sub_is_latin_square_approx(args: (Self, Self)) -> bool {
-        let (a, b) = args;
+    /// Returns `true` if latin squareness holds approximately for
+    /// the given arguments.
+    fn prop_inv_is_latin_square_approx(args: (Self, Self)) -> bool {
+        let (a, b) = (|| args.0.clone(), || args.1.clone());
 
-        a.clone() == (a.clone() + -b.clone()) + b.clone() &&
-        a.clone() == (a.clone() + b.clone()) + -b.clone() &&
-        a.clone() == (a.clone() - b.clone()) + b.clone() &&
-        a.clone() == (a.clone() + b.clone()) - b.clone()
+        a().approx_eq(&(a().approx(b().inv()).approx(b()))) &&
+        a().approx_eq(&(a().approx(b().approx(b().inv()))))
 
         // TODO: psuedo inverse?
     }
 }
 
-//impl QuasigroupAdditiveApprox for u8   {}
-//impl QuasigroupAdditiveApprox for u16  {}
-//impl QuasigroupAdditiveApprox for u32  {}
-//impl QuasigroupAdditiveApprox for u64  {}
-impl QuasigroupAdditiveApprox for i8   {}
-impl QuasigroupAdditiveApprox for i16  {}
-impl QuasigroupAdditiveApprox for i32  {}
-impl QuasigroupAdditiveApprox for i64  {}
+impl_marker!(QuasigroupApprox<Additive>; i8, i16, i32, i64,);
 
-/// An additive magma that for which subtraction is always possible.
-pub trait QuasigroupAdditive
-    : MagmaAdditive
-    + QuasigroupAdditiveApprox
+/// A magma that for which inverse is always possible.
+pub trait Quasigroup<O: Op>
+    : QuasigroupApprox<O>
+    + Magma<O>
 {
-    fn prop_sub_is_latin_square(args: (Self, Self)) -> bool {
-        let (a, b) = args;
+    /// Returns `true` if latin squareness holdsy for
+    /// the given arguments.
+    fn prop_inv_is_latin_square(args: (Self, Self)) -> bool {
+        let (a, b) = (|| args.0.clone(), || args.1.clone());
 
-        a.clone() == (a.clone() + -b.clone()) + b.clone() &&
-        a.clone() == (a.clone() + b.clone()) + -b.clone() &&
-        a.clone() == (a.clone() - b.clone()) + b.clone() &&
-        a.clone() == (a.clone() + b.clone()) - b.clone()
+        a() == a().operate(b().inv()).operate(b()) &&
+        a() == a().operate(b()).operate(b().inv())
 
         // TODO: psuedo inverse?
     }
 }
 
-//impl QuasigroupAdditive for u8   {}
-//impl QuasigroupAdditive for u16  {}
-//impl QuasigroupAdditive for u32  {}
-//impl QuasigroupAdditive for u64  {}
-impl QuasigroupAdditive for i8   {}
-impl QuasigroupAdditive for i16  {}
-impl QuasigroupAdditive for i32  {}
-impl QuasigroupAdditive for i64  {}
-
-/// An multiplicative magma that for which division is always possible.
-pub trait QuasigroupMultiplicativeApprox
-    : MagmaMultiplicativeApprox
-    + Div<Self, Output=Self>
-    + Recip<Self>
-{
-    fn prop_div_is_latin_square_approx(args: (Self, Self)) -> bool {
-        let (a, b) = args;
-
-        a.clone() == (a.clone() * b.clone().recip()) * b.clone() &&
-        a.clone() == (a.clone() * b.clone()) * b.clone().recip() &&
-        a.clone() == (a.clone() / b.clone()) * b.clone() &&
-        a.clone() == (a.clone() * b.clone()) / b.clone()
-
-        // TODO: psuedo inverse?
-    }
-}
-
-/// An multiplicative magma that for which division is always possible.
-pub trait QuasigroupMultiplicative
-    : MagmaMultiplicative
-    + QuasigroupMultiplicativeApprox
-{
-    fn prop_div_is_latin_square(args: (Self, Self)) -> bool {
-        let (a, b) = args;
-
-        a.clone() == (a.clone() * b.clone().recip()) * b.clone() &&
-        a.clone() == (a.clone() * b.clone()) * b.clone().recip() &&
-        a.clone() == (a.clone() / b.clone()) * b.clone() &&
-        a.clone() == (a.clone() * b.clone()) / b.clone()
-
-        // TODO: psuedo inverse?
-    }
-}
+impl_marker!(Quasigroup<Additive>; i8, i16, i32, i64,);
 
 #[cfg(test)]
 mod tests {

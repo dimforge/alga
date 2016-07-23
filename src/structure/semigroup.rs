@@ -12,122 +12,84 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use structure::MagmaAdditiveApprox;
-use structure::MagmaAdditive;
-use structure::MagmaMultiplicativeApprox;
-use structure::MagmaMultiplicative;
+use ops::{Op, Additive, Multiplicative};
 
-/// A type that is closed over an approximately associative addition operator.
+use structure::MagmaApprox;
+use structure::Magma;
+
+/// A type that is closed over an approximately associative operator.
 ///
-/// The addition operator must satisfy:
+/// The operator must satisfy:
 ///
 /// ~~~notrust
-/// (a + b) + c ≈ a + (b + c)           ∀ a, b, c ∈ Self
+/// (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)           ∀ a, b, c ∈ Self
 /// ~~~
-pub trait SemigroupAdditiveApprox
-    : MagmaAdditiveApprox
+pub trait SemigroupApprox<O: Op>
+    : MagmaApprox<O>
 {
-    /// Returns `true` if associativity over addition holds approximately for
+    /// Returns `true` if associativity holds approximately for
     /// the given arguments.
-    fn prop_add_is_associative_approx(args: (Self, Self, Self)) -> bool {
-        // TODO: use ApproxEq
-        let (a, b, c) = args;
-        (a.clone() + b.clone()) + c.clone() == a + (b + c)
+    fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool {
+         // TODO: use ApproxEq
+        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        Self::approx_eq(&a().approx(b()).approx(c()), &a().approx(b().approx(c())))
     }
 }
 
-impl SemigroupAdditiveApprox for u8   {}
-impl SemigroupAdditiveApprox for u16  {}
-impl SemigroupAdditiveApprox for u32  {}
-impl SemigroupAdditiveApprox for u64  {}
-impl SemigroupAdditiveApprox for i8   {}
-impl SemigroupAdditiveApprox for i16  {}
-impl SemigroupAdditiveApprox for i32  {}
-impl SemigroupAdditiveApprox for i64  {}
+impl SemigroupApprox<Additive> for u8   {}
+impl SemigroupApprox<Additive> for u16  {}
+impl SemigroupApprox<Additive> for u32  {}
+impl SemigroupApprox<Additive> for u64  {}
+impl SemigroupApprox<Additive> for i8   {}
+impl SemigroupApprox<Additive> for i16  {}
+impl SemigroupApprox<Additive> for i32  {}
+impl SemigroupApprox<Additive> for i64  {}
 
-/// A type that is closed over an associative addition operator.
+impl SemigroupApprox<Multiplicative> for u8   {}
+impl SemigroupApprox<Multiplicative> for u16  {}
+impl SemigroupApprox<Multiplicative> for u32  {}
+impl SemigroupApprox<Multiplicative> for u64  {}
+impl SemigroupApprox<Multiplicative> for i8   {}
+impl SemigroupApprox<Multiplicative> for i16  {}
+impl SemigroupApprox<Multiplicative> for i32  {}
+impl SemigroupApprox<Multiplicative> for i64  {}
+
+/// A type that is closed over an associative operator.
+/// The operator must satisfy:
 ///
-/// The addition operator must satisfy:
 ///
 /// ~~~notrust
-/// (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
+/// (a ∘ b) ∘ c = a ∘ (b ∘ c)           ∀ a, b, c ∈ Self
 /// ~~~
-pub trait SemigroupAdditive
-    : MagmaAdditive
-    + SemigroupAdditiveApprox
+pub trait Semigroup<O: Op>
+    : SemigroupApprox<O>
+    + Magma<O>
 {
-    /// Returns `true` if associativity over addition holds for the given
+    /// Returns `true` if associativity holds for the given
     /// arguments.
-    fn prop_add_is_associative(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = args;
-        (a.clone() + b.clone()) + c.clone() == a + (b + c)
+    fn prop_is_associative(args: (Self, Self, Self)) -> bool {
+        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        a().operate(b()).operate(c()) == a().operate(b().operate(c()))
     }
 }
 
-impl SemigroupAdditive for u8   {}
-impl SemigroupAdditive for u16  {}
-impl SemigroupAdditive for u32  {}
-impl SemigroupAdditive for u64  {}
-impl SemigroupAdditive for i8   {}
-impl SemigroupAdditive for i16  {}
-impl SemigroupAdditive for i32  {}
-impl SemigroupAdditive for i64  {}
+impl Semigroup<Additive> for u8   {}
+impl Semigroup<Additive> for u16  {}
+impl Semigroup<Additive> for u32  {}
+impl Semigroup<Additive> for u64  {}
+impl Semigroup<Additive> for i8   {}
+impl Semigroup<Additive> for i16  {}
+impl Semigroup<Additive> for i32  {}
+impl Semigroup<Additive> for i64  {}
 
-/// A type that is closed over an approximately associative multiplication operator.
-///
-/// The multiplication operator must satisfy:
-///
-/// ~~~notrust
-/// (a * b) * c ≈ a * (b * c)           ∀ a, b, c ∈ Self
-/// ~~~
-pub trait SemigroupMultiplicativeApprox
-    : MagmaMultiplicativeApprox
-{
-    /// Returns `true` if associativity over multiplication holds approximately for
-    /// the given arguments.
-    fn prop_mul_is_associative_approx(args: (Self, Self, Self)) -> bool {
-        // TODO: use ApproxEq
-        let (a, b, c) = args;
-        (a.clone() * b.clone()) * c.clone() == a * (b * c)
-    }
-}
-
-impl SemigroupMultiplicativeApprox for u8   {}
-impl SemigroupMultiplicativeApprox for u16  {}
-impl SemigroupMultiplicativeApprox for u32  {}
-impl SemigroupMultiplicativeApprox for u64  {}
-impl SemigroupMultiplicativeApprox for i8   {}
-impl SemigroupMultiplicativeApprox for i16  {}
-impl SemigroupMultiplicativeApprox for i32  {}
-impl SemigroupMultiplicativeApprox for i64  {}
-
-/// A type that is closed over an associative multiplication operator.
-///
-/// The multiplication operator must satisfy:
-///
-/// ~~~notrust
-/// (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
-/// ~~~
-pub trait SemigroupMultiplicative
-    : MagmaMultiplicative
-    + SemigroupMultiplicativeApprox
-{
-    /// Returns `true` if associativity over multiplication holds for the given
-    /// arguments.
-    fn prop_mul_is_associative(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = args;
-        (a.clone() * b.clone()) * c.clone() == a * (b * c)
-    }
-}
-
-impl SemigroupMultiplicative for u8   {}
-impl SemigroupMultiplicative for u16  {}
-impl SemigroupMultiplicative for u32  {}
-impl SemigroupMultiplicative for u64  {}
-impl SemigroupMultiplicative for i8   {}
-impl SemigroupMultiplicative for i16  {}
-impl SemigroupMultiplicative for i32  {}
-impl SemigroupMultiplicative for i64  {}
+impl Semigroup<Multiplicative> for u8   {}
+impl Semigroup<Multiplicative> for u16  {}
+impl Semigroup<Multiplicative> for u32  {}
+impl Semigroup<Multiplicative> for u64  {}
+impl Semigroup<Multiplicative> for i8   {}
+impl Semigroup<Multiplicative> for i16  {}
+impl Semigroup<Multiplicative> for i32  {}
+impl Semigroup<Multiplicative> for i64  {}
 
 #[cfg(test)]
 mod tests {

@@ -16,6 +16,26 @@
 pub use std::ops::{Add, Sub, Neg};
 pub use std::ops::{Mul, Div, Rem};
 
+pub trait Inverse<O: Op> {
+    fn inv(self) -> Self;
+}
+
+impl<T> Inverse<Additive> for T
+where T: Neg<Output=T>
+{
+    fn inv(self) -> Self {
+        -self
+    }
+}
+
+impl<T> Inverse<Multiplicative> for T
+where T: Recip<T>
+{
+    fn inv(self) -> Self {
+        self.recip()
+    }
+}
+
 /// The multiplicative inverse operation
 pub trait Recip<Result> {
     fn recip(&self) -> Result;
@@ -23,3 +43,23 @@ pub trait Recip<Result> {
 
 impl Recip<f32> for f32 { #[inline] fn recip(&self) -> f32 { 1.0 / *self } }
 impl Recip<f64> for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
+
+pub trait Op {
+    fn oper() -> Self;
+}
+
+pub struct Additive;
+
+impl Op for Additive {
+    fn oper() -> Self {
+        Additive
+    }
+}
+
+pub struct Multiplicative;
+
+impl Op for Multiplicative {
+    fn oper() -> Self {
+        Multiplicative
+    }
+}
