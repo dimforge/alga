@@ -20,6 +20,8 @@
 #[cfg(test)]
 extern crate quickcheck;
 
+#[macro_use]
+mod macros;
 pub mod cmp;
 pub mod ops;
 pub mod structure;

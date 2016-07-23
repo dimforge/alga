@@ -31,10 +31,7 @@ pub trait GroupAbelianApprox<O: Op>
     }
 }
 
-impl GroupAbelianApprox<Additive> for i8   {}
-impl GroupAbelianApprox<Additive> for i16  {}
-impl GroupAbelianApprox<Additive> for i32  {}
-impl GroupAbelianApprox<Additive> for i64  {}
+impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64,);
 
 pub trait GroupAbelian<O: Op>
     : GroupAbelianApprox<O>
@@ -48,7 +45,4 @@ pub trait GroupAbelian<O: Op>
     }
 }
 
-impl GroupAbelian<Additive> for i8   {}
-impl GroupAbelian<Additive> for i16  {}
-impl GroupAbelian<Additive> for i32  {}
-impl GroupAbelian<Additive> for i64  {}
+impl_marker!(GroupAbelian<Additive>; i8, i16, i32, i64,);

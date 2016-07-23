@@ -26,10 +26,7 @@ pub trait GroupApprox<O: Op>
     + MonoidApprox<O>
 {}
 
-impl GroupApprox<Additive> for i8   {}
-impl GroupApprox<Additive> for i16  {}
-impl GroupApprox<Additive> for i32  {}
-impl GroupApprox<Additive> for i64  {}
+impl_marker!(GroupApprox<Additive>; i8, i16, i32, i64,);
 
 pub trait Group<O: Op>
     : GroupApprox<O>
@@ -37,7 +34,4 @@ pub trait Group<O: Op>
     + Monoid<O>
 {}
 
-impl Group<Additive> for i8   {}
-impl Group<Additive> for i16  {}
-impl Group<Additive> for i32  {}
-impl Group<Additive> for i64  {}
+impl_marker!(Group<Additive>; i8, i16, i32, i64,);

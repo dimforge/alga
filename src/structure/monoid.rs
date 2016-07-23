@@ -38,23 +38,8 @@ pub trait MonoidApprox<O: Op>
     }
 }
 
-impl MonoidApprox<Additive> for u8   {}
-impl MonoidApprox<Additive> for u16  {}
-impl MonoidApprox<Additive> for u32  {}
-impl MonoidApprox<Additive> for u64  {}
-impl MonoidApprox<Additive> for i8   {}
-impl MonoidApprox<Additive> for i16  {}
-impl MonoidApprox<Additive> for i32  {}
-impl MonoidApprox<Additive> for i64  {}
-
-impl MonoidApprox<Multiplicative> for u8   {}
-impl MonoidApprox<Multiplicative> for u16  {}
-impl MonoidApprox<Multiplicative> for u32  {}
-impl MonoidApprox<Multiplicative> for u64  {}
-impl MonoidApprox<Multiplicative> for i8   {}
-impl MonoidApprox<Multiplicative> for i16  {}
-impl MonoidApprox<Multiplicative> for i32  {}
-impl MonoidApprox<Multiplicative> for i64  {}
+impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
 
 /// A type that is equipped with an associative operator and a
 /// corresponding identity. This should satisfy:
@@ -75,23 +60,8 @@ pub trait Monoid<O: Op>
     }
 }
 
-impl Monoid<Additive> for u8   {}
-impl Monoid<Additive> for u16  {}
-impl Monoid<Additive> for u32  {}
-impl Monoid<Additive> for u64  {}
-impl Monoid<Additive> for i8   {}
-impl Monoid<Additive> for i16  {}
-impl Monoid<Additive> for i32  {}
-impl Monoid<Additive> for i64  {}
-
-impl Monoid<Multiplicative> for u8   {}
-impl Monoid<Multiplicative> for u16  {}
-impl Monoid<Multiplicative> for u32  {}
-impl Monoid<Multiplicative> for u64  {}
-impl Monoid<Multiplicative> for i8   {}
-impl Monoid<Multiplicative> for i16  {}
-impl Monoid<Multiplicative> for i32  {}
-impl Monoid<Multiplicative> for i64  {}
+impl_marker!(Monoid<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(Monoid<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
 
 #[cfg(test)]
 mod tests {

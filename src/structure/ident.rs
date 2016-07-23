@@ -27,24 +27,7 @@ pub fn id<T: Identity<O>, O: Op>() -> T {
     Identity::id()
 }
 
-impl Identity<Additive> for u8   { #[inline] fn id() -> u8   { 0   } }
-impl Identity<Additive> for u16  { #[inline] fn id() -> u16  { 0   } }
-impl Identity<Additive> for u32  { #[inline] fn id() -> u32  { 0   } }
-impl Identity<Additive> for u64  { #[inline] fn id() -> u64  { 0   } }
-impl Identity<Additive> for i8   { #[inline] fn id() -> i8   { 0   } }
-impl Identity<Additive> for i16  { #[inline] fn id() -> i16  { 0   } }
-impl Identity<Additive> for i32  { #[inline] fn id() -> i32  { 0   } }
-impl Identity<Additive> for i64  { #[inline] fn id() -> i64  { 0   } }
-impl Identity<Additive> for f32  { #[inline] fn id() -> f32  { 0.0 } }
-impl Identity<Additive> for f64  { #[inline] fn id() -> f64  { 0.0 } }
-
-impl Identity<Multiplicative> for u8   { #[inline] fn id() -> u8   { 1   } }
-impl Identity<Multiplicative> for u16  { #[inline] fn id() -> u16  { 1   } }
-impl Identity<Multiplicative> for u32  { #[inline] fn id() -> u32  { 1   } }
-impl Identity<Multiplicative> for u64  { #[inline] fn id() -> u64  { 1   } }
-impl Identity<Multiplicative> for i8   { #[inline] fn id() -> i8   { 1   } }
-impl Identity<Multiplicative> for i16  { #[inline] fn id() -> i16  { 1   } }
-impl Identity<Multiplicative> for i32  { #[inline] fn id() -> i32  { 1   } }
-impl Identity<Multiplicative> for i64  { #[inline] fn id() -> i64  { 1   } }
-impl Identity<Multiplicative> for f32  { #[inline] fn id() -> f32  { 1.0 } }
-impl Identity<Multiplicative> for f64  { #[inline] fn id() -> f64  { 1.0 } }
+impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_ident!(Additive; 0.; f32, f64,);
+impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_ident!(Multiplicative; 1.; f32, f64,);

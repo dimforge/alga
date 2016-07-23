@@ -36,23 +36,8 @@ pub trait SemigroupApprox<O: Op>
     }
 }
 
-impl SemigroupApprox<Additive> for u8   {}
-impl SemigroupApprox<Additive> for u16  {}
-impl SemigroupApprox<Additive> for u32  {}
-impl SemigroupApprox<Additive> for u64  {}
-impl SemigroupApprox<Additive> for i8   {}
-impl SemigroupApprox<Additive> for i16  {}
-impl SemigroupApprox<Additive> for i32  {}
-impl SemigroupApprox<Additive> for i64  {}
-
-impl SemigroupApprox<Multiplicative> for u8   {}
-impl SemigroupApprox<Multiplicative> for u16  {}
-impl SemigroupApprox<Multiplicative> for u32  {}
-impl SemigroupApprox<Multiplicative> for u64  {}
-impl SemigroupApprox<Multiplicative> for i8   {}
-impl SemigroupApprox<Multiplicative> for i16  {}
-impl SemigroupApprox<Multiplicative> for i32  {}
-impl SemigroupApprox<Multiplicative> for i64  {}
+impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
 
 /// A type that is closed over an associative operator.
 /// The operator must satisfy:
@@ -73,23 +58,8 @@ pub trait Semigroup<O: Op>
     }
 }
 
-impl Semigroup<Additive> for u8   {}
-impl Semigroup<Additive> for u16  {}
-impl Semigroup<Additive> for u32  {}
-impl Semigroup<Additive> for u64  {}
-impl Semigroup<Additive> for i8   {}
-impl Semigroup<Additive> for i16  {}
-impl Semigroup<Additive> for i32  {}
-impl Semigroup<Additive> for i64  {}
-
-impl Semigroup<Multiplicative> for u8   {}
-impl Semigroup<Multiplicative> for u16  {}
-impl Semigroup<Multiplicative> for u32  {}
-impl Semigroup<Multiplicative> for u64  {}
-impl Semigroup<Multiplicative> for i8   {}
-impl Semigroup<Multiplicative> for i16  {}
-impl Semigroup<Multiplicative> for i32  {}
-impl Semigroup<Multiplicative> for i64  {}
+impl_marker!(Semigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(Semigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
 
 #[cfg(test)]
 mod tests {

@@ -24,10 +24,7 @@ pub trait LoopApprox<O: Op>
     + Identity<O>
 {}
 
-impl LoopApprox<Additive> for i8   {}
-impl LoopApprox<Additive> for i16  {}
-impl LoopApprox<Additive> for i32  {}
-impl LoopApprox<Additive> for i64  {}
+impl_marker!(LoopApprox<Additive>; i8, i16, i32, i64,);
 
 /// A quasigroup with a corresponding identity.
 pub trait Loop<O: Op>
@@ -35,7 +32,4 @@ pub trait Loop<O: Op>
     + Quasigroup<O>
 {}
 
-impl Loop<Additive> for i8   {}
-impl Loop<Additive> for i16  {}
-impl Loop<Additive> for i32  {}
-impl Loop<Additive> for i64  {}
+impl_marker!(Loop<Additive>; i8, i16, i32, i64,);

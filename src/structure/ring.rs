@@ -38,10 +38,7 @@ pub trait RingApprox
     }
 }
 
-impl RingApprox for i8   {}
-impl RingApprox for i16  {}
-impl RingApprox for i32  {}
-impl RingApprox for i64  {}
+impl_marker!(RingApprox; i8, i16, i32, i64,);
 
 pub trait Ring
     : RingApprox
@@ -61,10 +58,7 @@ pub trait Ring
     }
 }
 
-impl Ring for i8   {}
-impl Ring for i16  {}
-impl Ring for i32  {}
-impl Ring for i64  {}
+impl_marker!(Ring; i8, i16, i32, i64,);
 
 pub trait RingCommutativeApprox
     : RingApprox
@@ -78,10 +72,7 @@ pub trait RingCommutativeApprox
     }
 }
 
-impl RingCommutativeApprox for i8   {}
-impl RingCommutativeApprox for i16  {}
-impl RingCommutativeApprox for i32  {}
-impl RingCommutativeApprox for i64  {}
+impl_marker!(RingCommutativeApprox; i8, i16, i32, i64,);
 
 pub trait RingCommutative
     : RingCommutativeApprox
@@ -96,10 +87,7 @@ pub trait RingCommutative
     }
 }
 
-impl RingCommutative for i8   {}
-impl RingCommutative for i16  {}
-impl RingCommutative for i32  {}
-impl RingCommutative for i64  {}
+impl_marker!(RingCommutative; i8, i16, i32, i64,);
 
 pub trait FieldApprox
     : RingCommutativeApprox
