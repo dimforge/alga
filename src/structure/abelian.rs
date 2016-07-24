@@ -27,7 +27,7 @@ pub trait GroupAbelianApprox<O: Op>
     /// the given argument tuple.
     fn prop_is_commutative_approx(args: (Self, Self)) -> bool {
         let (a, b) = (|| args.0.clone(), || args.1.clone());
-        Self::approx_eq(&a().approx(b()), &b().approx(a()))
+        (a().approx(b())).approx_eq(&b().approx(a()))
     }
 }
 

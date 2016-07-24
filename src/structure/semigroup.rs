@@ -32,7 +32,7 @@ pub trait SemigroupApprox<O: Op>
     fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool {
          // TODO: use ApproxEq
         let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
-        Self::approx_eq(&a().approx(b()).approx(c()), &a().approx(b().approx(c())))
+        (a().approx(b()).approx(c())).approx_eq(&a().approx(b().approx(c())))
     }
 }
 

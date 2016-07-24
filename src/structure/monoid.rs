@@ -33,8 +33,8 @@ pub trait MonoidApprox<O: Op>
     /// argument.
     fn prop_operating_identity_is_noop_approx(a: Self) -> bool {
         let a = || a.clone();
-        a().approx(id()) == a() &&
-        Self::approx_eq(&Self::id().approx(a()), &a())
+        (a().approx(id())).approx_eq(&a()) &&
+        (Self::id().approx(a())).approx_eq(&a())
     }
 }
 
