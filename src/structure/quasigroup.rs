@@ -30,7 +30,7 @@ pub trait QuasigroupApprox<O: Op>
         a().approx_eq(&(a().approx(b().inv()).approx(b()))) &&
         a().approx_eq(&(a().approx(b().approx(b().inv()))))
 
-        // TODO: psuedo inverse?
+        // TODO: pseudo inverse?
     }
 }
 
@@ -49,7 +49,7 @@ pub trait Quasigroup<O: Op>
         a() == a().operate(b().inv()).operate(b()) &&
         a() == a().operate(b()).operate(b().inv())
 
-        // TODO: psuedo inverse?
+        // TODO: pseudo inverse?
     }
 }
 

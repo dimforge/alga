@@ -13,10 +13,10 @@
 // limitations under the License.
 
 use ops::{Op, Additive, Multiplicative};
+use ident::Identity;
 
 use structure::SemigroupApprox;
 use structure::Semigroup;
-use structure::{Identity, id};
 
 /// A type that is equipped with an approximately associative operator
 /// and a corresponding identity. This should satisfy:
@@ -33,7 +33,7 @@ pub trait MonoidApprox<O: Op>
     /// argument.
     fn prop_operating_identity_is_noop_approx(a: Self) -> bool {
         let a = || a.clone();
-        (a().approx(id())).approx_eq(&a()) &&
+        (a().approx(Identity::id())).approx_eq(&a()) &&
         (Self::id().approx(a())).approx_eq(&a())
     }
 }
@@ -55,7 +55,7 @@ pub trait Monoid<O: Op>
     /// Checks whether operating with identity is a no-op for the given argument.
     fn prop_operating_identity_is_noop(a: Self) -> bool {
         let a = || a.clone();
-        a().operate(id()) == a() &&
+        a().operate(Identity::id()) == a() &&
         Self::id().operate(a()) == a()
     }
 }

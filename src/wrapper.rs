@@ -3,10 +3,10 @@ use std::fmt::{Display, Formatter, Error};
 
 use ops::{Op, Inverse, Recip, Additive, Multiplicative};
 use cmp::ApproxEq;
+use ident::Identity;
 
 use structure::MagmaApprox;
 use structure::QuasigroupApprox;
-use structure::Identity;
 
 /// Wrapper that allows to use operators on algebraic types.
 #[derive(Clone, Copy, PartialOrd, PartialEq, Debug)]

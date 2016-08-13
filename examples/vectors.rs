@@ -1,12 +1,14 @@
 extern crate algebra;
 
 use std::mem::swap;
-use std::fmt::{Debug, Formatter, Error};
+use std::fmt::{Display, Formatter, Error};
 
-use algebra::ops::{Additive, Multiplicative, Inverse};
-use algebra::cmp::{ApproxEq};
-use algebra::structure::{Identity, wrap_id, MagmaApprox, FieldApprox, QuasigroupApprox, LoopApprox, SemigroupApprox, MonoidApprox, GroupApprox, GroupAbelianApprox, ModuleApprox, VectorApprox, RingApprox, RingCommutativeApprox};
-use algebra::structure::Wrapper as W;
+use algebra::ops::{Additive, Multiplicative, Inverse, inv};
+use algebra::cmp::ApproxEq;
+use algebra::structure::*;
+use algebra::wrapper::Wrapper as W;
+use algebra::wrapper::id as wrap_id;
+use algebra::ident::{Identity, id};
 
 #[derive(PartialEq, Clone)]
 struct Vec2<Scalar: FieldApprox> {
@@ -23,9 +25,9 @@ impl<Scalar: FieldApprox> Vec2<Scalar> {
     }
 }
 
-impl<Scalar: FieldApprox + Debug> Debug for Vec2<Scalar> {
+impl<Scalar: FieldApprox + Display> Display for Vec2<Scalar> {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
-        fmt.write_fmt(format_args!("({:?}, {:?})", self.x, self.y))
+        fmt.write_fmt(format_args!("({}, {})", self.x, self.y))
     }
 }
 
@@ -52,8 +54,8 @@ impl<Scalar: FieldApprox> MagmaApprox<Additive> for Vec2<Scalar> {
 
 impl<Scalar: FieldApprox> Inverse<Additive> for Vec2<Scalar> {
     fn inv(mut self) -> Self {
-        self.x = Inverse::<Additive>::inv(self.x);
-        self.y = Inverse::<Additive>::inv(self.y);
+        self.x = inv(Additive, self.x);
+        self.y = inv(Additive, self.y);
         self
     }
 }
@@ -61,8 +63,8 @@ impl<Scalar: FieldApprox> Inverse<Additive> for Vec2<Scalar> {
 impl<Scalar: FieldApprox> Identity<Additive> for Vec2<Scalar> {
     fn id() -> Self {
         Vec2 {
-            x: Identity::<Additive>::id(),
-            y: Identity::<Additive>::id(),
+            x: id(Additive),
+            y: id(Additive),
         }
     }
 }
@@ -90,15 +92,11 @@ impl<Scalar: FieldApprox> MagmaApprox<Multiplicative> for Vec2<Scalar> {
 impl<Scalar: FieldApprox> Identity<Multiplicative> for Vec2<Scalar> {
     fn id() -> Self {
         Vec2 {
-            x: Identity::<Multiplicative>::id(),
-            y: Identity::<Multiplicative>::id(),
+            x: id(Multiplicative),
+            y: id(Multiplicative),
         }
     }
 }
-
-// TODO: Is this valid? And does it mean that these vectors are rings themselves?.
-impl<Scalar: FieldApprox> SemigroupApprox<Multiplicative> for Vec2<Scalar> {}
-impl<Scalar: FieldApprox> MonoidApprox<Multiplicative> for Vec2<Scalar> {}
 
 fn gcd<T: RingCommutativeApprox + PartialOrd>(a: T, b: T) -> T {
     let (mut a, mut b) = (W(a), W(b));
@@ -158,7 +156,7 @@ impl Rational {
     }
 }
 
-impl Debug for Rational {
+impl Display for Rational {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
         if self.b == 1 {
             fmt.write_fmt(format_args!("{}", self.a))
@@ -184,7 +182,7 @@ impl ApproxEq for Rational {
     fn approx_eq_eps(&self, b: &Self, epsilon: &Self::Eps) -> bool {
         let us = self.a as f64 / self.b as f64;
         let them = b.a as f64 / b.b as f64;
-        (us - them).abs() < *epsilon
+        (us - them).abs() <= *epsilon
     }
 }
 
@@ -273,8 +271,8 @@ fn main() {
     let vec4 = (vec() * vec2()) + (vec() * vec3());
     let vec5 = vec() * (vec2() + vec3());
     if vec4.approx_eq(&vec5) {
-        println!("{:?} == {:?}", vec4, vec5);
+        println!("{} == {}", vec4, vec5);
     } else {
-        println!("{:?} != {:?}", vec4, vec5);
+        println!("{} != {}", vec4, vec5);
     }
 }

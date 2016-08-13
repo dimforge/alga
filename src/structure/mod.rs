@@ -143,10 +143,6 @@
 //! }
 //! ~~~
 
-pub use self::ident::{Identity, id};
-pub use self::wrapper::Wrapper;
-pub use self::wrapper::id as wrap_id;
-
 pub use self::magma::MagmaApprox;
 pub use self::magma::Magma;
 
@@ -179,9 +175,6 @@ pub use self::module::ModuleApprox;
 pub use self::module::Module;
 pub use self::module::VectorApprox;
 pub use self::module::Vector;
-
-mod ident;
-mod wrapper;
 
 mod magma;
 mod quasigroup;

@@ -30,7 +30,6 @@ pub trait SemigroupApprox<O: Op>
     /// Returns `true` if associativity holds approximately for
     /// the given arguments.
     fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool {
-         // TODO: use ApproxEq
         let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
         (a().approx(b()).approx(c())).approx_eq(&a().approx(b().approx(c())))
     }

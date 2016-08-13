@@ -13,10 +13,10 @@
 // limitations under the License.
 
 use ops::{Op, Additive};
+use ident::Identity;
 
 use structure::Quasigroup;
 use structure::QuasigroupApprox;
-use structure::Identity;
 
 /// An aproximate quasigroup with a corresponding identity.
 pub trait LoopApprox<O: Op>

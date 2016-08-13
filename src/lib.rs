@@ -24,4 +24,6 @@ extern crate quickcheck;
 mod macros;
 pub mod cmp;
 pub mod ops;
+pub mod ident;
+pub mod wrapper;
 pub mod structure;

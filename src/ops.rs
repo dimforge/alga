@@ -20,6 +20,10 @@ pub trait Inverse<O: Op> {
     fn inv(self) -> Self;
 }
 
+pub fn inv<O: Op, M: Inverse<O>>(_: O, m: M) -> M {
+    m.inv()
+}
+
 impl<T> Inverse<Additive> for T
 where T: Neg<Output=T>
 {

@@ -17,7 +17,7 @@
 use ops::{Additive, Multiplicative};
 use cmp::ApproxEq;
 
-use structure::Wrapper as W;
+use wrapper::Wrapper as W;
 
 use structure::MonoidApprox;
 use structure::Monoid;

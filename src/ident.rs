@@ -23,7 +23,7 @@ pub trait Identity<O: Op> {
 }
 
 /// The identity element.
-pub fn id<T: Identity<O>, O: Op>() -> T {
+pub fn id<T: Identity<O>, O: Op>(_: O) -> T {
     Identity::id()
 }
 
