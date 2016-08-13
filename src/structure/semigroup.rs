@@ -36,8 +36,8 @@ pub trait SemigroupApprox<O: Op>
     }
 }
 
-impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
-impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
 /// A type that is closed over an associative operator.
 /// The operator must satisfy:
@@ -58,45 +58,38 @@ pub trait Semigroup<O: Op>
     }
 }
 
-impl_marker!(Semigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
-impl_marker!(Semigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(Semigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(Semigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
 #[cfg(test)]
 mod tests {
     macro_rules! check_int {
-        ($T:ident) => {
-            mod $T {
-                use structure::SemigroupAdditiveApprox;
-                use structure::SemigroupAdditive;
-                use structure::SemigroupMultiplicativeApprox;
-                use structure::SemigroupMultiplicative;
+        ($($T:ident),* $(,)*) => {
+            $(mod $T {
+                use ops::{Additive, Multiplicative};
+                use structure::SemigroupApprox;
+                use structure::Semigroup;
 
                 #[quickcheck]
                 fn prop_add_is_associative_approx(args: ($T, $T, $T)) -> bool {
-                    SemigroupAdditiveApprox::prop_add_is_associative_approx(args)
+                    SemigroupApprox::<Additive>::prop_is_associative_approx(args)
                 }
+
                 #[quickcheck]
                 fn prop_add_is_associative(args: ($T, $T, $T)) -> bool {
-                    SemigroupAdditive::prop_add_is_associative(args)
+                    Semigroup::<Additive>::prop_is_associative(args)
                 }
 
                 #[quickcheck]
                 fn prop_mul_is_associative_approx(args: ($T, $T, $T)) -> bool {
-                    SemigroupMultiplicativeApprox::prop_mul_is_associative_approx(args)
+                    SemigroupApprox::<Multiplicative>::prop_is_associative_approx(args)
                 }
                 #[quickcheck]
                 fn prop_mul_is_associative(args: ($T, $T, $T)) -> bool {
-                    SemigroupMultiplicative::prop_mul_is_associative(args)
+                    Semigroup::<Multiplicative>::prop_is_associative(args)
                 }
-            }
+            })+
         }
     }
-    check_int!(u8);
-    check_int!(u16);
-    check_int!(u32);
-    check_int!(u64);
-    check_int!(i8);
-    check_int!(i16);
-    check_int!(i32);
-    check_int!(i64);
+    check_int!(u8, u16, u32, u64, i8, i16, i32, i64);
 }

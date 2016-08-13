@@ -17,7 +17,7 @@
 use ops::{Additive, Multiplicative};
 use cmp::ApproxEq;
 
-use structure::Ma;
+use structure::Wrapper as W;
 
 use structure::MonoidApprox;
 use structure::Monoid;
@@ -31,7 +31,7 @@ pub trait RingApprox
     /// Returns `true` if the multiplication and addition operators are approximately distributive for
     /// the given argument tuple.
     fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = (|| Ma(args.0.clone(), Additive), || Ma::new(args.1.clone()), || Ma::new(args.2.clone()));
+        let (a, b, c) = (|| W(args.0.clone()), || W(args.1.clone()), || W(args.2.clone()));
         // Left distributivity
         ((a() * b()) + c()).approx_eq(&((a() * b()) + (a() * c()))) &&
         // Right distributivity
@@ -39,7 +39,7 @@ pub trait RingApprox
     }
 }
 
-impl_marker!(RingApprox; i8, i16, i32, i64,);
+impl_marker!(RingApprox; i8, i16, i32, i64);
 
 pub trait Ring
     : RingApprox
@@ -49,7 +49,7 @@ pub trait Ring
     /// Returns `true` if the multiplication and addition operators are distributive for
     /// the given argument tuple.
     fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = (|| Ma(args.0.clone(), Additive), || Ma::new(args.1.clone()), || Ma::new(args.2.clone()));
+        let (a, b, c) = (|| W(args.0.clone()), || W(args.1.clone()), || W(args.2.clone()));
         // Left distributivity
         (a() * b()) + c() == (a() * b()) + (a() * c()) &&
         // Right distributivity
@@ -57,7 +57,7 @@ pub trait Ring
     }
 }
 
-impl_marker!(Ring; i8, i16, i32, i64,);
+impl_marker!(Ring; i8, i16, i32, i64);
 
 pub trait RingCommutativeApprox
     : RingApprox
@@ -65,12 +65,12 @@ pub trait RingCommutativeApprox
     /// Returns `true` if the multiplication operator is approximately commutative for
     /// the given argument tuple.
     fn prop_mul_is_commutative_approx(args: (Self, Self)) -> bool {
-        let (a, b) = (|| Ma(args.0.clone(), Multiplicative), || Ma::new(args.1.clone()));
+        let (a, b) = (|| W(args.0.clone()), || W(args.1.clone()));
         (a() * b()).approx_eq(&(b() * a()))
     }
 }
 
-impl_marker!(RingCommutativeApprox; i8, i16, i32, i64,);
+impl_marker!(RingCommutativeApprox; i8, i16, i32, i64);
 
 pub trait RingCommutative
     : RingCommutativeApprox
@@ -79,12 +79,12 @@ pub trait RingCommutative
     /// Returns `true` if the multiplication operator is commutative for
     /// the given argument tuple.
     fn prop_mul_is_commutative(args: (Self, Self)) -> bool {
-        let (a, b) = (|| Ma(args.0.clone(), Multiplicative), || Ma::new(args.1.clone()));
+        let (a, b) = (|| W(args.0.clone()), || W(args.1.clone()));
         a() * b() == b() * a()
     }
 }
 
-impl_marker!(RingCommutative; i8, i16, i32, i64,);
+impl_marker!(RingCommutative; i8, i16, i32, i64);
 
 pub trait FieldApprox
     : RingCommutativeApprox

@@ -38,8 +38,8 @@ pub trait MonoidApprox<O: Op>
     }
 }
 
-impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
-impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
 /// A type that is equipped with an associative operator and a
 /// corresponding identity. This should satisfy:
@@ -60,45 +60,37 @@ pub trait Monoid<O: Op>
     }
 }
 
-impl_marker!(Monoid<Additive>; u8, u16, u32, u64, i8, i16, i32, i64,);
-impl_marker!(Monoid<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_marker!(Monoid<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(Monoid<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
 #[cfg(test)]
 mod tests {
     macro_rules! check_int {
-        ($T:ident) => {
-            mod $T {
-                use structure::MonoidAdditiveApprox;
-                use structure::MonoidAdditive;
-                use structure::MonoidMultiplicativeApprox;
-                use structure::MonoidMultiplicative;
+        ($($T:ident),* $(,)*) => {
+            $(mod $T {
+                use ops::{Additive, Multiplicative};
+                use structure::MonoidApprox;
+                use structure::Monoid;
 
                 #[quickcheck]
-                fn prop_add_zero_is_noop_approx(args: $T) -> bool {
-                    MonoidAdditiveApprox::prop_add_zero_is_noop_approx(args)
+                fn prop_zero_is_noop_approx(args: $T) -> bool {
+                    MonoidApprox::<Additive>::prop_operating_identity_is_noop_approx(args)
                 }
                 #[quickcheck]
                 fn prop_add_zero_is_noop(args: $T) -> bool {
-                    MonoidAdditive::prop_add_zero_is_noop(args)
+                    Monoid::<Additive>::prop_operating_identity_is_noop(args)
                 }
 
                 #[quickcheck]
                 fn prop_mul_unit_is_noop_approx(args: $T) -> bool {
-                    MonoidMultiplicativeApprox::prop_mul_unit_is_noop_approx(args)
+                    MonoidApprox::<Multiplicative>::prop_operating_identity_is_noop_approx(args)
                 }
                 #[quickcheck]
                 fn prop_mul_unit_is_noop(args: $T) -> bool {
-                    MonoidMultiplicative::prop_mul_unit_is_noop(args)
+                    Monoid::<Multiplicative>::prop_operating_identity_is_noop(args)
                 }
-            }
+            })+
         }
     }
-    check_int!(u8);
-    check_int!(u16);
-    check_int!(u32);
-    check_int!(u64);
-    check_int!(i8);
-    check_int!(i16);
-    check_int!(i32);
-    check_int!(i64);
+    check_int!(u8, u16, u32, u64, i8, i16, i32, i64);
 }

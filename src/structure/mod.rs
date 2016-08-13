@@ -144,7 +144,8 @@
 //! ~~~
 
 pub use self::ident::{Identity, id};
-pub use self::wrapper::Ma;
+pub use self::wrapper::Wrapper;
+pub use self::wrapper::id as wrap_id;
 
 pub use self::magma::MagmaApprox;
 pub use self::magma::Magma;

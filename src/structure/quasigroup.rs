@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use ops::{Op, Inverse, Additive};
+
 use structure::MagmaApprox;
 use structure::Magma;
 
@@ -33,7 +34,7 @@ pub trait QuasigroupApprox<O: Op>
     }
 }
 
-impl_marker!(QuasigroupApprox<Additive>; i8, i16, i32, i64,);
+impl_marker!(QuasigroupApprox<Additive>; i8, i16, i32, i64);
 
 /// A magma that for which inverse is always possible.
 pub trait Quasigroup<O: Op>
@@ -52,33 +53,31 @@ pub trait Quasigroup<O: Op>
     }
 }
 
-impl_marker!(Quasigroup<Additive>; i8, i16, i32, i64,);
+impl_marker!(Quasigroup<Additive>; i8, i16, i32, i64);
 
 #[cfg(test)]
 mod tests {
     macro_rules! check_int {
-        ($T:ident) => {
-            mod $T {
-                use structure::QuasigroupAdditiveApprox;
-                use structure::QuasigroupAdditive;
+        ($($T:ident),* $(,)*) => {
+            $(mod $T {
+                use ops::Additive;
+                use structure::QuasigroupApprox;
+                use structure::Quasigroup;
 
                 #[quickcheck]
-                fn prop_sub_is_latin_square_approx(args: ($T, $T)) -> bool {
-                    QuasigroupAdditiveApprox::prop_sub_is_latin_square_approx(args)
+                fn prop_inv_is_latin_square_approx(args: ($T, $T)) -> bool {
+                    QuasigroupApprox::<Additive>::prop_inv_is_latin_square_approx(args)
                 }
                 #[quickcheck]
-                fn prop_sub_is_latin_square(args: ($T, $T)) -> bool {
-                    QuasigroupAdditive::prop_sub_is_latin_square(args)
+                fn prop_inv_is_latin_square(args: ($T, $T)) -> bool {
+                    Quasigroup::<Additive>::prop_inv_is_latin_square(args)
                 }
-            }
+            })+
         }
     }
     //check_int!(u8);
     //check_int!(u16);
     //check_int!(u32);
     //check_int!(u64);
-    check_int!(i8);
-    check_int!(i16);
-    check_int!(i32);
-    check_int!(i64);
+    check_int!(i8, i16, i32, i64);
 }

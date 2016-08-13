@@ -1,39 +1,32 @@
 use std::ops::{Add, Neg, Sub, Mul, Div};
+use std::fmt::{Display, Formatter, Error};
 
-use ops::{Op, Additive, Multiplicative};
+use ops::{Op, Inverse, Recip, Additive, Multiplicative};
 use cmp::ApproxEq;
 
 use structure::MagmaApprox;
 use structure::QuasigroupApprox;
+use structure::Identity;
 
 /// Wrapper that allows to use operators on algebraic types.
-pub struct Ma<M: MagmaApprox<O>, O: Op>(pub M, pub O);
+#[derive(Clone, Copy, PartialOrd, PartialEq, Debug)]
+pub struct Wrapper<M>(pub M);
 
-impl<M, O> Clone for Ma<M, O>
-where M: MagmaApprox<O>, O: Op
+impl<M: Display> Display for Wrapper<M> {
+    fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
+        self.0.fmt(fmt)
+    }
+}
+
+/// Creates wrapper with identity value for a specific operator.
+pub fn id<O: Op, M>(_: O) -> Wrapper<M>
+where M: Identity<O>
 {
-    fn clone(&self) -> Self {
-        Ma(self.0.clone(), O::oper())
-    }
+    Wrapper(Identity::<O>::id())
 }
 
-impl<M: MagmaApprox<O>, O: Op> Ma<M, O> {
-    /// Creates new wrapper with specified value.
-    pub fn new(value: M) -> Self {
-        Ma(value, O::oper())
-    }
-}
-
-impl<M, O> PartialEq for Ma<M, O>
-where M: MagmaApprox<O>, O: Op
-{
-    fn eq(&self, lhs: &Self) -> bool {
-        self.0 == lhs.0
-    }
-}
-
-impl<M, O> ApproxEq for Ma<M, O>
-where M: MagmaApprox<O>, O: Op
+impl<M> ApproxEq for Wrapper<M>
+where M: ApproxEq
 {
     type Eps = M::Eps;
     fn default_epsilon() -> Self::Eps {
@@ -45,17 +38,17 @@ where M: MagmaApprox<O>, O: Op
     }
 }
 
-impl<M, O> Add<Ma<M, O>> for Ma<M, O>
-where M: MagmaApprox<Additive> + MagmaApprox<O>, O: Op
+impl<M> Add<Wrapper<M>> for Wrapper<M>
+where M: MagmaApprox<Additive>
 {
     type Output = Self;
     fn add(self, lhs: Self) -> Self {
-        Ma(self.0.ap(Additive, lhs.0), O::oper())
+        Wrapper(self.0.approx(lhs.0))
     }
 }
 
-impl<M, O> Neg for Ma<M, O>
-where M: QuasigroupApprox<Additive> + MagmaApprox<O>, O: Op
+impl<M> Neg for Wrapper<M>
+where M: QuasigroupApprox<Additive>
 {
     type Output = Self;
     fn neg(mut self) -> Self {
@@ -64,8 +57,8 @@ where M: QuasigroupApprox<Additive> + MagmaApprox<O>, O: Op
     }
 }
 
-impl<M, O> Sub<Ma<M, O>> for Ma<M, O>
-where M: QuasigroupApprox<Additive> + MagmaApprox<O>, O: Op
+impl<M> Sub<Wrapper<M>> for Wrapper<M>
+where M: QuasigroupApprox<Additive>
 {
     type Output = Self;
     fn sub(self, lhs: Self) -> Self {
@@ -73,20 +66,29 @@ where M: QuasigroupApprox<Additive> + MagmaApprox<O>, O: Op
     }
 }
 
-impl<M, O> Mul<Ma<M, O>> for Ma<M, O>
-where M: MagmaApprox<Multiplicative> + MagmaApprox<O>, O: Op
+impl<M> Mul<Wrapper<M>> for Wrapper<M>
+where M: MagmaApprox<Multiplicative>
 {
     type Output = Self;
     fn mul(self, lhs: Self) -> Self {
-        Ma(self.0.ap(Multiplicative, lhs.0), O::oper())
+        Wrapper(self.0.approx(lhs.0))
     }
 }
 
-impl<M, O> Div<Ma<M, O>> for Ma<M, O>
-where M: QuasigroupApprox<Multiplicative> + MagmaApprox<O>, O: Op
+impl<M> Recip for Wrapper<M>
+where M: QuasigroupApprox<Multiplicative>
+{
+    type Result = Self;
+    fn recip(self) -> Self {
+        Wrapper(self.0.inv())
+    }
+}
+
+impl<M> Div<Wrapper<M>> for Wrapper<M>
+where M: QuasigroupApprox<Multiplicative>
 {
     type Output = Self;
     fn div(self, lhs: Self) -> Self {
-        Ma(self.0.ap(Multiplicative, lhs.0.inv()), O::oper())
+        self * lhs.inv()
     }
 }

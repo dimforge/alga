@@ -15,7 +15,6 @@
 #![allow(missing_docs)]
 
 use ops::{Op, Additive};
-use cmp::ApproxEq;
 
 use structure::GroupApprox;
 use structure::Group;
@@ -31,7 +30,7 @@ pub trait GroupAbelianApprox<O: Op>
     }
 }
 
-impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64,);
+impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64);
 
 pub trait GroupAbelian<O: Op>
     : GroupAbelianApprox<O>
@@ -45,4 +44,4 @@ pub trait GroupAbelian<O: Op>
     }
 }
 
-impl_marker!(GroupAbelian<Additive>; i8, i16, i32, i64,);
+impl_marker!(GroupAbelian<Additive>; i8, i16, i32, i64);

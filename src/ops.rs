@@ -29,7 +29,7 @@ where T: Neg<Output=T>
 }
 
 impl<T> Inverse<Multiplicative> for T
-where T: Recip<T>
+where T: Recip<Result=T>
 {
     fn inv(self) -> Self {
         self.recip()
@@ -37,17 +37,19 @@ where T: Recip<T>
 }
 
 /// The multiplicative inverse operation
-pub trait Recip<Result> {
-    fn recip(&self) -> Result;
+pub trait Recip {
+    type Result;
+    fn recip(self) -> Self::Result;
 }
 
-impl Recip<f32> for f32 { #[inline] fn recip(&self) -> f32 { 1.0 / *self } }
-impl Recip<f64> for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
+impl Recip for f32 { type Result = Self; #[inline] fn recip(self) -> f32 { 1.0 / self } }
+impl Recip for f64 { type Result = Self; #[inline] fn recip(self) -> f64 { 1.0 / self } }
 
-pub trait Op {
+pub trait Op: Copy {
     fn oper() -> Self;
 }
 
+#[derive(Clone, Copy)]
 pub struct Additive;
 
 impl Op for Additive {
@@ -56,6 +58,7 @@ impl Op for Additive {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct Multiplicative;
 
 impl Op for Multiplicative {

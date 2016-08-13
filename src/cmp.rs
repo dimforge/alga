@@ -31,23 +31,5 @@ pub trait ApproxEq {
     }
 }
 
-macro_rules! impl_approx_eq {
-    ($V:expr; $($T:ty,)+) => {
-        $(impl ApproxEq for $T {
-            type Eps = $T;
-            #[inline]
-            fn default_epsilon() -> Self::Eps { $V }
-            #[inline]
-            fn approx_eq_eps(&self, b: &$T, epsilon: &$T) -> bool {
-                if self < b {
-                    *b - *self < *epsilon
-                } else {
-                    *self - *b < *epsilon
-                }
-            }
-        })+
-    }
-}
-
 impl_approx_eq!(0; u8, u16, u32, u64, i8, i16, i32, i64,);
 impl_approx_eq!(1.0e-6; f32, f64,);
