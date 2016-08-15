@@ -14,53 +14,50 @@
 
 #![allow(missing_docs)]
 
-use structure::MonoidMultiplicativeApprox;
-use structure::MonoidMultiplicative;
-use structure::GroupAdditiveAbelianApprox;
-use structure::GroupAdditiveAbelian;
-use structure::GroupMultiplicativeAbelian;
-use structure::GroupMultiplicativeAbelianApprox;
+use ops::{Additive, Multiplicative};
+use cmp::ApproxEq;
+
+use wrapper::Wrapper as W;
+
+use structure::MonoidApprox;
+use structure::Monoid;
+use structure::GroupAbelianApprox;
+use structure::GroupAbelian;
 
 pub trait RingApprox
-    : GroupAdditiveAbelianApprox
-    + MonoidMultiplicativeApprox
+    : GroupAbelianApprox<Additive>
+    + MonoidApprox<Multiplicative>
 {
     /// Returns `true` if the multiplication and addition operators are approximately distributive for
     /// the given argument tuple.
     fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = args;
+        let (a, b, c) = (|| W(args.0.clone()), || W(args.1.clone()), || W(args.2.clone()));
         // Left distributivity
-        a.clone() * (b.clone() + c.clone()) == (a.clone() * b.clone()) + (a.clone() * c.clone()) &&
+        ((a() * b()) + c()).approx_eq(&((a() * b()) + (a() * c()))) &&
         // Right distributivity
-        (b.clone() + c.clone()) * a.clone() == (b * a.clone()) + (c * a)
+        ((b() + c()) * a()).approx_eq(&((b() * a()) + (c() * a())))
     }
 }
 
-impl RingApprox for i8   {}
-impl RingApprox for i16  {}
-impl RingApprox for i32  {}
-impl RingApprox for i64  {}
+impl_marker!(RingApprox; i8, i16, i32, i64);
 
 pub trait Ring
     : RingApprox
-    + GroupAdditiveAbelian
-    + MonoidMultiplicative
+    + GroupAbelian<Additive>
+    + Monoid<Multiplicative>
 {
     /// Returns `true` if the multiplication and addition operators are distributive for
     /// the given argument tuple.
-    fn prop_mul_and_add_are_distributive(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = args;
+    fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool {
+        let (a, b, c) = (|| W(args.0.clone()), || W(args.1.clone()), || W(args.2.clone()));
         // Left distributivity
-        a.clone() * (b.clone() + c.clone()) == (a.clone() * b.clone()) + (a.clone() * c.clone()) &&
+        (a() * b()) + c() == (a() * b()) + (a() * c()) &&
         // Right distributivity
-        (b.clone() + c.clone()) * a.clone() == (b * a.clone()) + (c * a)
+        (b() + c()) * a() == (b() * a()) + (c() * a())
     }
 }
 
-impl Ring for i8   {}
-impl Ring for i16  {}
-impl Ring for i32  {}
-impl Ring for i64  {}
+impl_marker!(Ring; i8, i16, i32, i64);
 
 pub trait RingCommutativeApprox
     : RingApprox
@@ -68,15 +65,12 @@ pub trait RingCommutativeApprox
     /// Returns `true` if the multiplication operator is approximately commutative for
     /// the given argument tuple.
     fn prop_mul_is_commutative_approx(args: (Self, Self)) -> bool {
-        let (a, b) = args;
-        a.clone() * b.clone() == b * a
+        let (a, b) = (|| W(args.0.clone()), || W(args.1.clone()));
+        (a() * b()).approx_eq(&(b() * a()))
     }
 }
 
-impl RingCommutativeApprox for i8   {}
-impl RingCommutativeApprox for i16  {}
-impl RingCommutativeApprox for i32  {}
-impl RingCommutativeApprox for i64  {}
+impl_marker!(RingCommutativeApprox; i8, i16, i32, i64);
 
 pub trait RingCommutative
     : RingCommutativeApprox
@@ -85,23 +79,20 @@ pub trait RingCommutative
     /// Returns `true` if the multiplication operator is commutative for
     /// the given argument tuple.
     fn prop_mul_is_commutative(args: (Self, Self)) -> bool {
-        let (a, b) = args;
-        a.clone() * b.clone() == b * a
+        let (a, b) = (|| W(args.0.clone()), || W(args.1.clone()));
+        a() * b() == b() * a()
     }
 }
 
-impl RingCommutative for i8   {}
-impl RingCommutative for i16  {}
-impl RingCommutative for i32  {}
-impl RingCommutative for i64  {}
+impl_marker!(RingCommutative; i8, i16, i32, i64);
 
 pub trait FieldApprox
     : RingCommutativeApprox
-    + GroupMultiplicativeAbelianApprox
+    + GroupAbelianApprox<Multiplicative>
 {}
 
 pub trait Field
     : FieldApprox
     + RingCommutative
-    + GroupMultiplicativeAbelian
+    + GroupAbelian<Multiplicative>
 {}

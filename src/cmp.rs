@@ -21,37 +21,15 @@ pub trait ApproxEq {
 
     /// Compare `a` and `b` for approximate equality using the specified
     /// epsilon value.
-    fn approx_eq_eps(a: &Self, b: &Self, epsilon: &Self::Eps) -> bool;
+    fn approx_eq_eps(&self, b: &Self, epsilon: &Self::Eps) -> bool;
 
     /// Compare `a` and `b` for approximate equality using the default
     /// epsilon value returned by `ApproxEq::default_epsilon`.
     #[inline]
-    fn approx_eq(a: &Self, b: &Self) -> bool {
-        Self::approx_eq_eps(a, b, &Self::default_epsilon())
+    fn approx_eq(&self, b: &Self) -> bool {
+        Self::approx_eq_eps(self, b, &Self::default_epsilon())
     }
 }
 
-macro_rules! impl_approx_eq {
-    ($T:ty, $V:expr) => {
-        impl ApproxEq for $T {
-            type Eps = $T;
-            #[inline]
-            fn default_epsilon() -> $T { $V }
-            #[inline]
-            fn approx_eq_eps(a: &$T, b: &$T, epsilon: &$T) -> bool {
-                (*a - *b) < *epsilon
-            }
-        }
-    }
-}
-
-impl_approx_eq!(u8, 0);
-impl_approx_eq!(u16, 0);
-impl_approx_eq!(u32, 0);
-impl_approx_eq!(u64, 0);
-impl_approx_eq!(i8, 0);
-impl_approx_eq!(i16, 0);
-impl_approx_eq!(i32, 0);
-impl_approx_eq!(i64, 0);
-impl_approx_eq!(f32, 1.0e-6);
-impl_approx_eq!(f64, 1.0e-6);
+impl_approx_eq!(0; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_approx_eq!(1.0e-6; f32, f64,);

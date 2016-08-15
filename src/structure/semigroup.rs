@@ -12,159 +12,83 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use structure::MagmaAdditiveApprox;
-use structure::MagmaAdditive;
-use structure::MagmaMultiplicativeApprox;
-use structure::MagmaMultiplicative;
+use ops::{Op, Additive, Multiplicative};
 
-/// A type that is closed over an approximately associative addition operator.
+use structure::MagmaApprox;
+use structure::Magma;
+
+/// A type that is closed over an approximately associative operator.
 ///
-/// The addition operator must satisfy:
+/// The operator must satisfy:
 ///
 /// ~~~notrust
-/// (a + b) + c ≈ a + (b + c)           ∀ a, b, c ∈ Self
+/// (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)           ∀ a, b, c ∈ Self
 /// ~~~
-pub trait SemigroupAdditiveApprox
-    : MagmaAdditiveApprox
+pub trait SemigroupApprox<O: Op>
+    : MagmaApprox<O>
 {
-    /// Returns `true` if associativity over addition holds approximately for
+    /// Returns `true` if associativity holds approximately for
     /// the given arguments.
-    fn prop_add_is_associative_approx(args: (Self, Self, Self)) -> bool {
-        // TODO: use ApproxEq
-        let (a, b, c) = args;
-        (a.clone() + b.clone()) + c.clone() == a + (b + c)
+    fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool {
+        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        (a().approx(b()).approx(c())).approx_eq(&a().approx(b().approx(c())))
     }
 }
 
-impl SemigroupAdditiveApprox for u8   {}
-impl SemigroupAdditiveApprox for u16  {}
-impl SemigroupAdditiveApprox for u32  {}
-impl SemigroupAdditiveApprox for u64  {}
-impl SemigroupAdditiveApprox for i8   {}
-impl SemigroupAdditiveApprox for i16  {}
-impl SemigroupAdditiveApprox for i32  {}
-impl SemigroupAdditiveApprox for i64  {}
+impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
-/// A type that is closed over an associative addition operator.
+/// A type that is closed over an associative operator.
+/// The operator must satisfy:
 ///
-/// The addition operator must satisfy:
 ///
 /// ~~~notrust
-/// (a + b) + c = a + (b + c)           ∀ a, b, c ∈ Self
+/// (a ∘ b) ∘ c = a ∘ (b ∘ c)           ∀ a, b, c ∈ Self
 /// ~~~
-pub trait SemigroupAdditive
-    : MagmaAdditive
-    + SemigroupAdditiveApprox
+pub trait Semigroup<O: Op>
+    : SemigroupApprox<O>
+    + Magma<O>
 {
-    /// Returns `true` if associativity over addition holds for the given
+    /// Returns `true` if associativity holds for the given
     /// arguments.
-    fn prop_add_is_associative(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = args;
-        (a.clone() + b.clone()) + c.clone() == a + (b + c)
+    fn prop_is_associative(args: (Self, Self, Self)) -> bool {
+        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        a().operate(b()).operate(c()) == a().operate(b().operate(c()))
     }
 }
 
-impl SemigroupAdditive for u8   {}
-impl SemigroupAdditive for u16  {}
-impl SemigroupAdditive for u32  {}
-impl SemigroupAdditive for u64  {}
-impl SemigroupAdditive for i8   {}
-impl SemigroupAdditive for i16  {}
-impl SemigroupAdditive for i32  {}
-impl SemigroupAdditive for i64  {}
-
-/// A type that is closed over an approximately associative multiplication operator.
-///
-/// The multiplication operator must satisfy:
-///
-/// ~~~notrust
-/// (a * b) * c ≈ a * (b * c)           ∀ a, b, c ∈ Self
-/// ~~~
-pub trait SemigroupMultiplicativeApprox
-    : MagmaMultiplicativeApprox
-{
-    /// Returns `true` if associativity over multiplication holds approximately for
-    /// the given arguments.
-    fn prop_mul_is_associative_approx(args: (Self, Self, Self)) -> bool {
-        // TODO: use ApproxEq
-        let (a, b, c) = args;
-        (a.clone() * b.clone()) * c.clone() == a * (b * c)
-    }
-}
-
-impl SemigroupMultiplicativeApprox for u8   {}
-impl SemigroupMultiplicativeApprox for u16  {}
-impl SemigroupMultiplicativeApprox for u32  {}
-impl SemigroupMultiplicativeApprox for u64  {}
-impl SemigroupMultiplicativeApprox for i8   {}
-impl SemigroupMultiplicativeApprox for i16  {}
-impl SemigroupMultiplicativeApprox for i32  {}
-impl SemigroupMultiplicativeApprox for i64  {}
-
-/// A type that is closed over an associative multiplication operator.
-///
-/// The multiplication operator must satisfy:
-///
-/// ~~~notrust
-/// (a * b) * c = a * (b * c)           ∀ a, b, c ∈ Self
-/// ~~~
-pub trait SemigroupMultiplicative
-    : MagmaMultiplicative
-    + SemigroupMultiplicativeApprox
-{
-    /// Returns `true` if associativity over multiplication holds for the given
-    /// arguments.
-    fn prop_mul_is_associative(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = args;
-        (a.clone() * b.clone()) * c.clone() == a * (b * c)
-    }
-}
-
-impl SemigroupMultiplicative for u8   {}
-impl SemigroupMultiplicative for u16  {}
-impl SemigroupMultiplicative for u32  {}
-impl SemigroupMultiplicative for u64  {}
-impl SemigroupMultiplicative for i8   {}
-impl SemigroupMultiplicative for i16  {}
-impl SemigroupMultiplicative for i32  {}
-impl SemigroupMultiplicative for i64  {}
+impl_marker!(Semigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(Semigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
 #[cfg(test)]
 mod tests {
     macro_rules! check_int {
-        ($T:ident) => {
-            mod $T {
-                use structure::SemigroupAdditiveApprox;
-                use structure::SemigroupAdditive;
-                use structure::SemigroupMultiplicativeApprox;
-                use structure::SemigroupMultiplicative;
+        ($($T:ident),* $(,)*) => {
+            $(mod $T {
+                use ops::{Additive, Multiplicative};
+                use structure::SemigroupApprox;
+                use structure::Semigroup;
 
                 #[quickcheck]
                 fn prop_add_is_associative_approx(args: ($T, $T, $T)) -> bool {
-                    SemigroupAdditiveApprox::prop_add_is_associative_approx(args)
+                    SemigroupApprox::<Additive>::prop_is_associative_approx(args)
                 }
+
                 #[quickcheck]
                 fn prop_add_is_associative(args: ($T, $T, $T)) -> bool {
-                    SemigroupAdditive::prop_add_is_associative(args)
+                    Semigroup::<Additive>::prop_is_associative(args)
                 }
 
                 #[quickcheck]
                 fn prop_mul_is_associative_approx(args: ($T, $T, $T)) -> bool {
-                    SemigroupMultiplicativeApprox::prop_mul_is_associative_approx(args)
+                    SemigroupApprox::<Multiplicative>::prop_is_associative_approx(args)
                 }
                 #[quickcheck]
                 fn prop_mul_is_associative(args: ($T, $T, $T)) -> bool {
-                    SemigroupMultiplicative::prop_mul_is_associative(args)
+                    Semigroup::<Multiplicative>::prop_is_associative(args)
                 }
-            }
+            })+
         }
     }
-    check_int!(u8);
-    check_int!(u16);
-    check_int!(u32);
-    check_int!(u64);
-    check_int!(i8);
-    check_int!(i16);
-    check_int!(i32);
-    check_int!(i64);
+    check_int!(u8, u16, u32, u64, i8, i16, i32, i64);
 }

@@ -14,70 +14,68 @@
 
 use std::ops::{Add, Mul};
 
+use ops::{Op, Additive, Multiplicative};
 use cmp::ApproxEq;
 
-/// An additive closure that forms a partial equivalence relation.
+/// A closure that forms a partial equivalence relation.
 ///
 /// ~~~notrust
 /// a = b               ∃ a, b ∈ Self
-/// a + b ∈ Self        ∀ a, b ∈ Self
+/// a ∘ b ∈ Self        ∀ a, b ∈ Self
 /// ~~~
-pub trait MagmaAdditiveApprox
-    : Add<Self, Output=Self>
-    + ApproxEq
+pub trait MagmaApprox<O: Op>
+    : Sized
     + PartialEq
-    + Sized
+    + ApproxEq
     + Clone
-{}
+{
+    /// Performs an operation.
+    fn approx(self, Self) -> Self;
+    /// Performs specific operation.
+    fn ap(self, _: O, lhs: Self) -> Self {
+        self.approx(lhs)
+    }
+}
 
-impl<T> MagmaAdditiveApprox for T where
-    T: Add<T, Output=T> + ApproxEq + PartialEq + Clone,
-{}
-
-/// An additive closure that forms an equivalence relation.
+/// A closure that forms an equivalence relation.
 ///
 /// ~~~notrust
 /// a = b               ∀ a, b ∈ Self
-/// a + b ∈ Self        ∀ a, b ∈ Self
-/// ~~~
-pub trait MagmaAdditive
-    : MagmaAdditiveApprox
-    + Eq
+/// a ∘ b ∈ Self        ∀ a, b ∈ Self
+pub trait Magma<O: Op>
+    : Eq
+    + MagmaApprox<O>
+{
+    /// Performs an operation.
+    fn operate(self, lhs: Self) -> Self {
+        self.approx(lhs)
+    }
+    /// Performs specific operation.
+    fn op(self, _: O, lhs: Self) -> Self {
+        self.operate(lhs)
+    }
+}
+
+impl<T> MagmaApprox<Additive> for T
+where T: Add<T, Output=T> + PartialEq + ApproxEq + Clone,
+{
+    fn approx(self, lhs: Self) -> Self {
+        self + lhs
+    }
+}
+
+impl<T> Magma<Additive> for T
+where T: MagmaApprox<Additive> + Eq,
 {}
 
-impl<T> MagmaAdditive for T where
-    T: MagmaAdditiveApprox + Eq,
-{}
+impl<T> MagmaApprox<Multiplicative> for T
+where T: Mul<T, Output=T> + PartialEq + ApproxEq + Clone,
+{
+    fn approx(self, lhs: Self) -> Self {
+        self * lhs
+    }
+}
 
-/// A multiplicative closure that forms a partial equivalence relation.
-///
-/// ~~~notrust
-/// a = b               ∃ a, b ∈ Self
-/// a * b ∈ Self        ∀ a, b ∈ Self
-/// ~~~
-pub trait MagmaMultiplicativeApprox
-    : Mul<Self, Output=Self>
-    + ApproxEq
-    + PartialEq
-    + Sized
-    + Clone
-{}
-
-impl<T> MagmaMultiplicativeApprox for T where
-    T: Mul<T, Output=T> + ApproxEq + PartialEq + Clone,
-{}
-
-/// A multiplicative closure that forms an equivalence relation.
-///
-/// ~~~notrust
-/// a = b               ∀ a, b ∈ Self
-/// a * b ∈ Self        ∀ a, b ∈ Self
-/// ~~~
-pub trait MagmaMultiplicative
-    : MagmaMultiplicativeApprox
-    + Eq
-{}
-
-impl<T> MagmaMultiplicative for T where
-    T: MagmaMultiplicativeApprox + Eq,
+impl<T> Magma<Multiplicative> for T
+where T: MagmaApprox<Multiplicative> + Eq,
 {}

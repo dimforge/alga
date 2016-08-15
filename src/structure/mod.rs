@@ -143,43 +143,26 @@
 //! }
 //! ~~~
 
-pub use self::ident::{IdentityAdditive, zero};
-pub use self::ident::{IdentityMultiplicative, unit};
+pub use self::magma::MagmaApprox;
+pub use self::magma::Magma;
 
-pub use self::magma::MagmaAdditiveApprox;
-pub use self::magma::MagmaMultiplicativeApprox;
-pub use self::magma::MagmaAdditive;
-pub use self::magma::MagmaMultiplicative;
+pub use self::quasigroup::QuasigroupApprox;
+pub use self::quasigroup::Quasigroup;
 
-pub use self::quasigroup::QuasigroupAdditiveApprox;
-pub use self::quasigroup::QuasigroupMultiplicativeApprox;
-pub use self::quasigroup::QuasigroupAdditive;
-pub use self::quasigroup::QuasigroupMultiplicative;
+pub use self::loop_::LoopApprox;
+pub use self::loop_::Loop;
 
-pub use self::loop_::LoopAdditiveApprox;
-pub use self::loop_::LoopMultiplicativeApprox;
-pub use self::loop_::LoopAdditive;
-pub use self::loop_::LoopMultiplicative;
+pub use self::semigroup::SemigroupApprox;
+pub use self::semigroup::Semigroup;
 
-pub use self::semigroup::SemigroupAdditiveApprox;
-pub use self::semigroup::SemigroupMultiplicativeApprox;
-pub use self::semigroup::SemigroupAdditive;
-pub use self::semigroup::SemigroupMultiplicative;
+pub use self::monoid::MonoidApprox;
+pub use self::monoid::Monoid;
 
-pub use self::monoid::MonoidAdditiveApprox;
-pub use self::monoid::MonoidMultiplicativeApprox;
-pub use self::monoid::MonoidAdditive;
-pub use self::monoid::MonoidMultiplicative;
+pub use self::group::GroupApprox;
+pub use self::group::Group;
 
-pub use self::group::GroupAdditiveApprox;
-pub use self::group::GroupMultiplicativeApprox;
-pub use self::group::GroupAdditive;
-pub use self::group::GroupMultiplicative;
-
-pub use self::abelian::GroupAdditiveAbelianApprox;
-pub use self::abelian::GroupMultiplicativeAbelianApprox;
-pub use self::abelian::GroupAdditiveAbelian;
-pub use self::abelian::GroupMultiplicativeAbelian;
+pub use self::abelian::GroupAbelianApprox;
+pub use self::abelian::GroupAbelian;
 
 pub use self::ring::RingApprox;
 pub use self::ring::Ring;
@@ -192,8 +175,6 @@ pub use self::module::ModuleApprox;
 pub use self::module::Module;
 pub use self::module::VectorApprox;
 pub use self::module::Vector;
-
-mod ident;
 
 mod magma;
 mod quasigroup;

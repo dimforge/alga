@@ -16,10 +16,57 @@
 pub use std::ops::{Add, Sub, Neg};
 pub use std::ops::{Mul, Div, Rem};
 
-/// The multiplicative inverse operation
-pub trait Recip<Result> {
-    fn recip(&self) -> Result;
+pub trait Inverse<O: Op> {
+    fn inv(self) -> Self;
 }
 
-impl Recip<f32> for f32 { #[inline] fn recip(&self) -> f32 { 1.0 / *self } }
-impl Recip<f64> for f64 { #[inline] fn recip(&self) -> f64 { 1.0 / *self } }
+pub fn inv<O: Op, M: Inverse<O>>(_: O, m: M) -> M {
+    m.inv()
+}
+
+impl<T> Inverse<Additive> for T
+where T: Neg<Output=T>
+{
+    fn inv(self) -> Self {
+        -self
+    }
+}
+
+impl<T> Inverse<Multiplicative> for T
+where T: Recip<Result=T>
+{
+    fn inv(self) -> Self {
+        self.recip()
+    }
+}
+
+/// The multiplicative inverse operation
+pub trait Recip {
+    type Result;
+    fn recip(self) -> Self::Result;
+}
+
+impl Recip for f32 { type Result = Self; #[inline] fn recip(self) -> f32 { 1.0 / self } }
+impl Recip for f64 { type Result = Self; #[inline] fn recip(self) -> f64 { 1.0 / self } }
+
+pub trait Op: Copy {
+    fn oper() -> Self;
+}
+
+#[derive(Clone, Copy)]
+pub struct Additive;
+
+impl Op for Additive {
+    fn oper() -> Self {
+        Additive
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct Multiplicative;
+
+impl Op for Multiplicative {
+    fn oper() -> Self {
+        Multiplicative
+    }
+}

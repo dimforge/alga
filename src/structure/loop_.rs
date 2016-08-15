@@ -12,51 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use structure::QuasigroupAdditiveApprox;
-use structure::QuasigroupAdditive;
-use structure::QuasigroupMultiplicativeApprox;
-use structure::QuasigroupMultiplicative;
-use structure::IdentityAdditive;
-use structure::IdentityMultiplicative;
+use ops::{Op, Additive};
+use ident::Identity;
 
-/// An aproximate additive quasigroup with a corresponding identity.
-pub trait LoopAdditiveApprox
-    : QuasigroupAdditiveApprox
-    + IdentityAdditive
+use structure::Quasigroup;
+use structure::QuasigroupApprox;
+
+/// An aproximate quasigroup with a corresponding identity.
+pub trait LoopApprox<O: Op>
+    : QuasigroupApprox<O>
+    + Identity<O>
 {}
 
-//impl LoopAdditiveApprox for u8   {}
-//impl LoopAdditiveApprox for u16  {}
-//impl LoopAdditiveApprox for u32  {}
-//impl LoopAdditiveApprox for u64  {}
-impl LoopAdditiveApprox for i8   {}
-impl LoopAdditiveApprox for i16  {}
-impl LoopAdditiveApprox for i32  {}
-impl LoopAdditiveApprox for i64  {}
+impl_marker!(LoopApprox<Additive>; i8, i16, i32, i64);
 
-/// An additive quasigroup with a corresponding identity.
-pub trait LoopAdditive
-    : LoopAdditiveApprox
-    + QuasigroupAdditive
+/// A quasigroup with a corresponding identity.
+pub trait Loop<O: Op>
+    : LoopApprox<O>
+    + Quasigroup<O>
 {}
 
-//impl LoopAdditive for u8   {}
-//impl LoopAdditive for u16  {}
-//impl LoopAdditive for u32  {}
-//impl LoopAdditive for u64  {}
-impl LoopAdditive for i8   {}
-impl LoopAdditive for i16  {}
-impl LoopAdditive for i32  {}
-impl LoopAdditive for i64  {}
-
-/// An aproximate multiplicative quasigroup with a corresponding identity.
-pub trait LoopMultiplicativeApprox
-    : QuasigroupMultiplicativeApprox
-    + IdentityMultiplicative
-{}
-
-/// An aproximate multiplicative quasigroup with a corresponding identity.
-pub trait LoopMultiplicative
-    : LoopMultiplicativeApprox
-    + QuasigroupMultiplicative
-{}
+impl_marker!(Loop<Additive>; i8, i16, i32, i64);

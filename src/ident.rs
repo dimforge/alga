@@ -12,24 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Operators with specific properties
+//! Identities for binary operators
 
-pub use self::associative::ApproxAssociativeAdd;
-pub use self::associative::AssociativeAdd;
-pub use self::associative::ApproxAssociativeMul;
-pub use self::associative::AssociativeMul;
+use ops::{Op, Additive, Multiplicative};
 
-pub use self::commutative::ApproxCommutativeAdd;
-pub use self::commutative::CommutativeAdd;
-pub use self::commutative::ApproxCommutativeMul;
-pub use self::commutative::CommutativeMul;
+/// A type that is equipped with identity.
+pub trait Identity<O: Op> {
+    /// The identity element.
+    fn id() -> Self;
+}
 
-pub use self::distributive::ApproxDistributiveMulAdd;
-pub use self::distributive::DistributiveMulAdd;
+/// The identity element.
+pub fn id<T: Identity<O>, O: Op>(_: O) -> T {
+    Identity::id()
+}
 
-pub use self::recip::Recip;
-
-mod associative;
-mod commutative;
-mod distributive;
-mod recip;
+impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_ident!(Additive; 0.; f32, f64,);
+impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64,);
+impl_ident!(Multiplicative; 1.; f32, f64,);

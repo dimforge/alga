@@ -14,51 +14,24 @@
 
 #![allow(missing_docs)]
 
-use structure::LoopAdditiveApprox;
-use structure::LoopAdditive;
-use structure::LoopMultiplicativeApprox;
-use structure::LoopMultiplicative;
-use structure::MonoidAdditiveApprox;
-use structure::MonoidAdditive;
-use structure::MonoidMultiplicativeApprox;
-use structure::MonoidMultiplicative;
+use ops::{Op, Additive};
 
-pub trait GroupAdditiveApprox
-    : LoopAdditiveApprox
-    + MonoidAdditiveApprox
+use structure::LoopApprox;
+use structure::Loop;
+use structure::MonoidApprox;
+use structure::Monoid;
+
+pub trait GroupApprox<O: Op>
+    : LoopApprox<O>
+    + MonoidApprox<O>
 {}
 
-//impl GroupAdditiveApprox for u8   {}
-//impl GroupAdditiveApprox for u16  {}
-//impl GroupAdditiveApprox for u32  {}
-//impl GroupAdditiveApprox for u64  {}
-impl GroupAdditiveApprox for i8   {}
-impl GroupAdditiveApprox for i16  {}
-impl GroupAdditiveApprox for i32  {}
-impl GroupAdditiveApprox for i64  {}
+impl_marker!(GroupApprox<Additive>; i8, i16, i32, i64);
 
-pub trait GroupAdditive
-    : GroupAdditiveApprox
-    + LoopAdditive
-    + MonoidAdditive
+pub trait Group<O: Op>
+    : GroupApprox<O>
+    + Loop<O>
+    + Monoid<O>
 {}
 
-//impl GroupAdditive for u8   {}
-//impl GroupAdditive for u16  {}
-//impl GroupAdditive for u32  {}
-//impl GroupAdditive for u64  {}
-impl GroupAdditive for i8   {}
-impl GroupAdditive for i16  {}
-impl GroupAdditive for i32  {}
-impl GroupAdditive for i64  {}
-
-pub trait GroupMultiplicativeApprox
-    : LoopMultiplicativeApprox
-    + MonoidMultiplicativeApprox
-{}
-
-pub trait GroupMultiplicative
-    : GroupMultiplicativeApprox
-    + LoopMultiplicative
-    + MonoidMultiplicative
-{}
+impl_marker!(Group<Additive>; i8, i16, i32, i64);
