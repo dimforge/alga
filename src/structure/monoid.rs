@@ -36,8 +36,8 @@ pub trait MonoidApprox<O: Op>
     }
 }
 
-impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
-impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
 /// A semigroup equipped with an identity element.
 ///

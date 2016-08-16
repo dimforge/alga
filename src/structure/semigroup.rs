@@ -33,8 +33,8 @@ pub trait SemigroupApprox<O: Op>
     }
 }
 
-impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
-impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
 /// An associative magma.
 ///

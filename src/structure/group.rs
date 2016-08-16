@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Additive};
+use ops::{Op, Additive, Multiplicative};
 
 use structure::LoopApprox;
 use structure::Loop;
@@ -25,7 +25,8 @@ pub trait GroupApprox<O: Op>
     + MonoidApprox<O>
 {}
 
-impl_marker!(GroupApprox<Additive>; i8, i16, i32, i64);
+impl_marker!(GroupApprox<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(GroupApprox<Multiplicative>; f32, f64);
 
 /// A group is a loop and a monoid at the same time.
 pub trait Group<O: Op>

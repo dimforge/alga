@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Inverse, Additive};
+use ops::{Op, Inverse, Additive, Multiplicative};
 
 use structure::MagmaApprox;
 use structure::Magma;
@@ -40,7 +40,8 @@ pub trait QuasigroupApprox<O: Op>
     }
 }
 
-impl_marker!(QuasigroupApprox<Additive>; i8, i16, i32, i64);
+impl_marker!(QuasigroupApprox<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(QuasigroupApprox<Multiplicative>; f32, f64);
 
 /// A magma with the divisibility property.
 ///

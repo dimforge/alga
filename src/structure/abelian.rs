@@ -14,7 +14,7 @@
 
 #![allow(missing_docs)]
 
-use ops::{Op, Additive};
+use ops::{Op, Additive, Multiplicative};
 
 use structure::GroupApprox;
 use structure::Group;
@@ -35,7 +35,8 @@ pub trait GroupAbelianApprox<O: Op>
     }
 }
 
-impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64);
+impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(GroupAbelianApprox<Multiplicative>; f32, f64);
 
 /// A commutative group.
 ///

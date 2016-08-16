@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Additive};
+use ops::{Op, Additive, Multiplicative};
 use ident::Identity;
 
 use structure::Quasigroup;
@@ -31,7 +31,8 @@ pub trait LoopApprox<O: Op>
     + Identity<O>
 {}
 
-impl_marker!(LoopApprox<Additive>; i8, i16, i32, i64);
+impl_marker!(LoopApprox<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(LoopApprox<Multiplicative>; f32, f64);
 
 /// A quasigroup with an unique identity element.
 ///
