@@ -79,7 +79,7 @@ impl<Scalar: FieldApprox> GroupApprox<Additive> for Vec2<Scalar> {}
 impl<Scalar: FieldApprox> GroupAbelianApprox<Additive> for Vec2<Scalar> {}
 
 impl<Scalar: FieldApprox> ModuleApprox<Scalar> for Vec2<Scalar> {}
-impl<Scalar: FieldApprox> VectorApprox<Scalar> for Vec2<Scalar> {}
+impl<Scalar: FieldApprox> VectorSpaceApprox<Scalar> for Vec2<Scalar> {}
 
 impl<Scalar: FieldApprox> MagmaApprox<Multiplicative> for Vec2<Scalar> {
     fn approx(mut self, lhs: Self) -> Self {
@@ -124,13 +124,9 @@ fn gcd_works() {
     assert_eq!(3, gcd(6, 15));
     assert_eq!(1, gcd(17, 12345));
     assert_eq!(1, gcd(42312, 17));
-    println!("1");
     assert_eq!(5, gcd(15, -35));
-    println!("2");
     assert_eq!(5, gcd(-15, 35));
-    println!("3");
     assert_eq!(5, gcd(-15, -35));
-    println!("4");
 }
 
 #[derive(Clone)]
