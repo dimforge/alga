@@ -1,6 +1,6 @@
 [package]
 name = "algebra"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Brendan Zabarauskas", "Darin Morrison"]
 description = "Abstract algebra for Rust"
 keywords = ["algebra", "monoids", "math"]

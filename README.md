@@ -1,6 +1,6 @@
 # Abstract algebra for Rust
 
-[![Build Status](https://travis-ci.org/bjz/algebra.png?branch=master)](https://travis-ci.org/bjz/algebra)
+[![Build Status](https://travis-ci.org/brendanzab/algebra.png?branch=master)](https://travis-ci.org/brendanzab/algebra)
 
 ~~~
 |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"

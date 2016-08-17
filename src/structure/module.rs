@@ -49,13 +49,13 @@ pub trait Module<S: RingCommutative>
 {}
 
 /// A approximate vector space has an approx. module structure over an approx. field.
-pub trait VectorApprox<S: FieldApprox>
+pub trait VectorSpaceApprox<S: FieldApprox>
     : ModuleApprox<S>
 {}
 
 
 /// A vector space has a module structure over a field instead of a ring.
-pub trait Vector<S: Field>
-    : VectorApprox<S>
+pub trait VectorSpace<S: Field>
+    : VectorSpaceApprox<S>
     + Module<S>
 {}
