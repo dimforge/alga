@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(missing_docs)]
-
 use ops::{Additive, Multiplicative};
 use cmp::ApproxEq;
 
@@ -24,6 +22,13 @@ use structure::Monoid;
 use structure::GroupAbelianApprox;
 use structure::GroupAbelian;
 
+
+/// An approximate ring is given the approximate version of the ring's properties.
+///
+/// An approximate ring is equipped with:
+///
+/// * An addition operator `+` that fulfills the constraints of an approximate abelian group.
+/// * A multiplication operator `×` that fulfills the constraints of an approximate monoid.
 pub trait RingApprox
     : GroupAbelianApprox<Additive>
     + MonoidApprox<Multiplicative>
@@ -41,6 +46,13 @@ pub trait RingApprox
 
 impl_marker!(RingApprox; i8, i16, i32, i64);
 
+
+/// A ring is the combination of an abelian group and a multiplicative monoid structure.
+///
+/// A ring is equipped with:
+///
+/// * An addition operator `+` that fulfills the constraints of an abelian group.
+/// * A multiplication operator `×` that fulfills the constraints of a monoid.
 pub trait Ring
     : RingApprox
     + GroupAbelian<Additive>
@@ -59,6 +71,11 @@ pub trait Ring
 
 impl_marker!(Ring; i8, i16, i32, i64);
 
+/// An approximative ring with an approximately commutative multiplication.
+///
+/// ```notrust
+/// ∀ a, b ∈ Self, a × b ≈ b × a
+/// ```
 pub trait RingCommutativeApprox
     : RingApprox
 {
@@ -72,6 +89,12 @@ pub trait RingCommutativeApprox
 
 impl_marker!(RingCommutativeApprox; i8, i16, i32, i64);
 
+
+/// An ring with a commutative multiplication.
+///
+/// ```notrust
+/// ∀ a, b ∈ Self, a × b = b × a
+/// ```
 pub trait RingCommutative
     : RingCommutativeApprox
     + Ring
@@ -86,11 +109,14 @@ pub trait RingCommutative
 
 impl_marker!(RingCommutative; i8, i16, i32, i64);
 
+/// An approximate field is an approx. commutative ring, and an  approx. abelian group under the multiplication operator.
 pub trait FieldApprox
     : RingCommutativeApprox
     + GroupAbelianApprox<Multiplicative>
 {}
 
+
+/// A field is a commutative ring, and an abelian group under the multiplication operator.
 pub trait Field
     : FieldApprox
     + RingCommutative

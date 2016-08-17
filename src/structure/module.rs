@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(missing_docs)]
-
-use ops::{Additive};
+use ops::Additive;
 
 use structure::GroupAbelianApprox;
 use structure::GroupAbelian;
@@ -23,19 +21,40 @@ use structure::RingCommutative;
 use structure::FieldApprox;
 use structure::Field;
 
+
+/// A module with approximate operators.
 pub trait ModuleApprox<S: RingCommutativeApprox>
     : GroupAbelianApprox<Additive>
 {}
 
+
+/// A module combines two sets: one with an additive abelian group structure and another with a
+/// commutative ring structure.
+///
+/// In addition, and external multiplicative law `∘` is defined. Let `S` be the ring with
+/// multiplicative operator noted `×` and multiplicative identity element noted `1`. Then:
+///
+/// ```notrust
+/// ∀ a, b ∈ S
+/// ∀ x, y ∈ Self
+///
+/// a ∘ (x + y) = (a ∘ x) + (a ∘ y)
+/// (a + b) ∘ x = (a ∘ x) + (b ∘ x)
+/// (a × b) ∘ x = a ∘ (b ∘ x)
+/// 1 ∘ x       = x
+/// ```
 pub trait Module<S: RingCommutative>
     : ModuleApprox<S>
     + GroupAbelian<Additive>
 {}
 
+/// A approximate vector space has an approx. module structure over an approx. field.
 pub trait VectorApprox<S: FieldApprox>
     : ModuleApprox<S>
 {}
 
+
+/// A vector space has a module structure over a field instead of a ring.
 pub trait Vector<S: Field>
     : VectorApprox<S>
     + Module<S>

@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(missing_docs)]
-
 use ops::{Op, Additive};
 
 use structure::LoopApprox;
@@ -21,6 +19,7 @@ use structure::Loop;
 use structure::MonoidApprox;
 use structure::Monoid;
 
+/// An approximate group is an approx. loop and an approx. monoid simultaneously.
 pub trait GroupApprox<O: Op>
     : LoopApprox<O>
     + MonoidApprox<O>
@@ -28,6 +27,7 @@ pub trait GroupApprox<O: Op>
 
 impl_marker!(GroupApprox<Additive>; i8, i16, i32, i64);
 
+/// A group is a loop and a monoid at the same time.
 pub trait Group<O: Op>
     : GroupApprox<O>
     + Loop<O>

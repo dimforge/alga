@@ -1,4 +1,6 @@
-// Copyright 2013-2014 The Num-rs Developers.
+//! Order and equivalence relations.
+
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +16,7 @@
 
 /// A type with an approximate equivalence relation.
 pub trait ApproxEq {
+    /// The epsilon type used measure an error.
     type Eps: Sized;
 
     /// The default epsilon value to use in `ApproxEq::approx_eq`.

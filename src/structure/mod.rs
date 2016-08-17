@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,52 @@
 
 #![deny(missing_docs)]
 
-//! Fundamental algebraic structures
+//! Fundamental algebraic structures.
 //!
 //! ~~~notrust
 //! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
 //! ~~~
 //!
 //! For most applications requiring an abstraction over the reals, `FieldApprox`
-//! should be suffient.
+//! should be sufficient.
 //!
 //! # Fundamental algebraic structures
 //!
 //! Most of these traits also come in an approximate flavor for types that do
 //! not satisfy the required properties exactly, but would still benefit from
 //! abstractions over the structure in question.
+//!
+//! ## Algebraic properties
+//!
+//! The goal of algebraic structures is to allow elements of sets to be combined together using one
+//! or several operators. The number and properties of those operators characterize the algebraic
+//! structure. Abstract operators are usually noted `∘`, `+`, or `×`. The last two are preferred
+//! when their behavior conform with the usual meaning of addition and multiplication of reals.
+//! Let `Self` be a set. Here is a list of the most common properties those operator may fulfill:
+//!
+//! ~~~notrust
+//! (Closure)       a, b ∈ Self ⇒ a ∘ b ∈ Self, 
+//! (Divisibility)  ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
+//! (Invertibility) ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
+//!                 If the right and left inverse are equal they are usually noted r = l = a⁻¹.
+//! (Associativity) ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)       
+//! (Neutral Elt.)  ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
+//! (Commutativity) ∀ a, b ∈ Self, a ∘ b = b ∘ a
+//! ~~~
+//!
+//! When one works with inexact arithmetic, e.g. using floating point numbers, those properties
+//! cannot possibly be satisfied due to the discrete nature of our computing tools. Thus a looser,
+//! *approximate*, version is available. Note that fulfilling a property listed above implies that
+//! its approximate version is fulfilled as well.
+//!
+//! ```notrust
+//! (Approx. Closure) a, b ∈ Self ⇒ ∃ c ≈ a ∘ b such that c ∈ Self, 
+//! (Approx. Div.)    ∀ a, b ∈ Self, ∃ r, l ∈ Self such that l ∘ a ≈ b and a ∘ r ≈ b
+//! (Approx. Inv.)    ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a ≈ e and a ∘ r ≈ e
+//! (Approx. Assoc.)  ∀ a, b, c ∈ Self, (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)       
+//! (Approx. Neutr.)  ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a ≈ a and a ∘ e ≈ a
+//! (Approx. Commut.) ∀ a, b ∈ Self, a ∘ b ≈ b ∘ a
+//! ```
 //!
 //! ## Identity elements
 //!
@@ -46,7 +78,7 @@
 //!                 |
 //!         _______/ \______
 //!        /                \
-//!   divisiblity      associativity
+//!  divisibility      associativity
 //!       |                  |
 //!       V                  V
 //!  Quasigroup          Semigroup
@@ -56,7 +88,7 @@
 //!       V                  V
 //!     Loop               Monoid
 //!       |                  |
-//!  associative     invertablility
+//!  associativity     invertibility
 //!        \______   _______/
 //!               \ /
 //!                |

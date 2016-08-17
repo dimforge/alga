@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@ use ops::{Op, Additive};
 use structure::GroupApprox;
 use structure::Group;
 
+/// An approximately commutative group.
+///
+/// ```notrust
+/// ∀ a, b ∈ Self, a ∘ b ≈ b ∘ a
+/// ```
 pub trait GroupAbelianApprox<O: Op>
     : GroupApprox<O>
 {
@@ -32,6 +37,11 @@ pub trait GroupAbelianApprox<O: Op>
 
 impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64);
 
+/// A commutative group.
+///
+/// ```notrust
+/// ∀ a, b ∈ Self, a ∘ b = b ∘ a
+/// ```
 pub trait GroupAbelian<O: Op>
     : GroupAbelianApprox<O>
     + Group<O>

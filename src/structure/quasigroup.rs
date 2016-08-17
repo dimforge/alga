@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,13 @@ use ops::{Op, Inverse, Additive};
 use structure::MagmaApprox;
 use structure::Magma;
 
-/// A magma that for which approximated inverse is always possible.
+/// A magma with the approximate divisibility property.
+///
+/// Approximate divisibility is a weak form of approximate right and left invertibility:
+///
+/// ```notrust
+/// ∀ a, b ∈ Self, ∃ r, l ∈ Self such that l ∘ a ≈ b and a ∘ r ≈ b
+/// ```
 pub trait QuasigroupApprox<O: Op>
     : MagmaApprox<O>
     + Inverse<O>
@@ -36,12 +42,18 @@ pub trait QuasigroupApprox<O: Op>
 
 impl_marker!(QuasigroupApprox<Additive>; i8, i16, i32, i64);
 
-/// A magma that for which inverse is always possible.
+/// A magma with the divisibility property.
+///
+/// Divisibility is a weak form of right and left invertibility:
+///
+/// ```notrust
+/// ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
+/// ```
 pub trait Quasigroup<O: Op>
     : QuasigroupApprox<O>
     + Magma<O>
 {
-    /// Returns `true` if latin squareness holdsy for
+    /// Returns `true` if latin squareness holds for
     /// the given arguments.
     fn prop_inv_is_latin_square(args: (Self, Self)) -> bool {
         let (a, b) = (|| args.0.clone(), || args.1.clone());

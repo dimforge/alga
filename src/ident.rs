@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Identities for binary operators
+//! Identities for binary operators.
 
 use ops::{Op, Additive, Multiplicative};
 
@@ -27,7 +27,7 @@ pub fn id<T: Identity<O>, O: Op>(_: O) -> T {
     Identity::id()
 }
 
-impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64,);
-impl_ident!(Additive; 0.; f32, f64,);
-impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64,);
-impl_ident!(Multiplicative; 1.; f32, f64,);
+impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_ident!(Additive; 0.; f32, f64);
+impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_ident!(Multiplicative; 1.; f32, f64);

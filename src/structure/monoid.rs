@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,20 +18,18 @@ use ident::Identity;
 use structure::SemigroupApprox;
 use structure::Semigroup;
 
-/// A type that is equipped with an approximately associative operator
-/// and a corresponding identity. This should satisfy:
+/// An approximate semigroup equipped with an identity element.
 ///
 /// ~~~notrust
-/// a + e ≈ a       ∀ a ∈ Self
-/// e + a ≈ a       ∀ a ∈ Self
+/// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a ≈ a and a ∘ e ≈ a
 /// ~~~
 pub trait MonoidApprox<O: Op>
     : SemigroupApprox<O>
     + Identity<O>
 {
-    /// Checks whether operating with identity is approximately a no-op for the given
+    /// Checks whether operating with the identity element is approximately a no-op for the given
     /// argument.
-    fn prop_operating_identity_is_noop_approx(a: Self) -> bool {
+    fn prop_operating_identity_element_is_noop_approx(a: Self) -> bool {
         let a = || a.clone();
         (a().approx(Identity::id())).approx_eq(&a()) &&
         (Self::id().approx(a())).approx_eq(&a())
@@ -41,19 +39,17 @@ pub trait MonoidApprox<O: Op>
 impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
 impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
-/// A type that is equipped with an associative operator and a
-/// corresponding identity. This should satisfy:
+/// A semigroup equipped with an identity element.
 ///
 /// ~~~notrust
-/// a + e = a                           ∀ a ∈ Self
-/// e + a = a                           ∀ a ∈ Self
+/// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 /// ~~~
 pub trait Monoid<O: Op>
     : MonoidApprox<O>
     + Semigroup<O>
 {
-    /// Checks whether operating with identity is a no-op for the given argument.
-    fn prop_operating_identity_is_noop(a: Self) -> bool {
+    /// Checks whether operating with the identity element is a no-op for the given argument.
+    fn prop_operating_identity_element_is_noop(a: Self) -> bool {
         let a = || a.clone();
         a().operate(Identity::id()) == a() &&
         Self::id().operate(a()) == a()
@@ -74,20 +70,20 @@ mod tests {
 
                 #[quickcheck]
                 fn prop_zero_is_noop_approx(args: $T) -> bool {
-                    MonoidApprox::<Additive>::prop_operating_identity_is_noop_approx(args)
+                    MonoidApprox::<Additive>::prop_operating_identity_element_is_noop_approx(args)
                 }
                 #[quickcheck]
                 fn prop_add_zero_is_noop(args: $T) -> bool {
-                    Monoid::<Additive>::prop_operating_identity_is_noop(args)
+                    Monoid::<Additive>::prop_operating_identity_element_is_noop(args)
                 }
 
                 #[quickcheck]
                 fn prop_mul_unit_is_noop_approx(args: $T) -> bool {
-                    MonoidApprox::<Multiplicative>::prop_operating_identity_is_noop_approx(args)
+                    MonoidApprox::<Multiplicative>::prop_operating_identity_element_is_noop_approx(args)
                 }
                 #[quickcheck]
                 fn prop_mul_unit_is_noop(args: $T) -> bool {
-                    Monoid::<Multiplicative>::prop_operating_identity_is_noop(args)
+                    Monoid::<Multiplicative>::prop_operating_identity_element_is_noop(args)
                 }
             })+
         }

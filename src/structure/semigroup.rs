@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@ use ops::{Op, Additive, Multiplicative};
 use structure::MagmaApprox;
 use structure::Magma;
 
-/// A type that is closed over an approximately associative operator.
-///
-/// The operator must satisfy:
+/// An approximately associative magma.
 ///
 /// ~~~notrust
-/// (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)           ∀ a, b, c ∈ Self
+/// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)       
 /// ~~~
 pub trait SemigroupApprox<O: Op>
     : MagmaApprox<O>
@@ -38,12 +36,10 @@ pub trait SemigroupApprox<O: Op>
 impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
 impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
 
-/// A type that is closed over an associative operator.
-/// The operator must satisfy:
-///
+/// An associative magma.
 ///
 /// ~~~notrust
-/// (a ∘ b) ∘ c = a ∘ (b ∘ c)           ∀ a, b, c ∈ Self
+/// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)       
 /// ~~~
 pub trait Semigroup<O: Op>
     : SemigroupApprox<O>

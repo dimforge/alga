@@ -1,3 +1,5 @@
+//! Wrappers that attach an algebraic structure with a value type.
+
 use std::ops::{Add, Neg, Sub, Mul, Div};
 use std::fmt::{Display, Formatter, Error};
 

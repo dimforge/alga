@@ -1,4 +1,4 @@
-// Copyright 2013-2014 The Num-rs Developers.
+// Copyright 2013-2014 The Algebra Developers.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@ use std::ops::{Add, Mul};
 use ops::{Op, Additive, Multiplicative};
 use cmp::ApproxEq;
 
-/// A closure that forms a partial equivalence relation.
+/// Types that are approximately closed under a given operator.
 ///
 /// ~~~notrust
-/// a = b               ∃ a, b ∈ Self
-/// a ∘ b ∈ Self        ∀ a, b ∈ Self
+/// a, b ∈ Self ⇒ ∃ c ≈ a ∘ b such that c ∈ Self
 /// ~~~
 pub trait MagmaApprox<O: Op>
     : Sized
@@ -37,11 +36,11 @@ pub trait MagmaApprox<O: Op>
     }
 }
 
-/// A closure that forms an equivalence relation.
+/// Types that are closed under a given operator.
 ///
 /// ~~~notrust
-/// a = b               ∀ a, b ∈ Self
-/// a ∘ b ∈ Self        ∀ a, b ∈ Self
+/// a, b ∈ Self ⇒ a ∘ b ∈ Self
+/// ~~~
 pub trait Magma<O: Op>
     : Eq
     + MagmaApprox<O>
