@@ -152,13 +152,13 @@
 //!                           \       /
 //!                            |     |
 //!                            V     V
-//!                         Vector<Scalar>
+//!                         VectorSpace<Scalar>
 //! ~~~
 //!
 //! The following traits are provided:
 //!
 //! - `Module`(`Approx`)?
-//! - `Vector`(`Approx`)?
+//! - `VectorSpace`(`Approx`)?
 //!
 //! # Quickcheck properties
 //!
@@ -205,8 +205,8 @@ pub use self::ring::Field;
 
 pub use self::module::ModuleApprox;
 pub use self::module::Module;
-pub use self::module::VectorApprox;
-pub use self::module::Vector;
+pub use self::module::VectorSpaceApprox;
+pub use self::module::VectorSpace;
 
 mod magma;
 mod quasigroup;
