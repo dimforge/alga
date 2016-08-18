@@ -27,6 +27,8 @@
 #[cfg(test)]
 extern crate quickcheck;
 
+extern crate num;
+
 #[macro_use]
 mod macros;
 pub mod cmp;

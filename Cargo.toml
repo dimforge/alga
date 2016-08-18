@@ -11,6 +11,9 @@ license = "Apache-2.0"
 [lib]
 name = "algebra"
 
+[dependencies]
+num = "0.1.*"
+
 [dev-dependencies]
 quickcheck = "0.2"
 quickcheck_macros = "0.2"

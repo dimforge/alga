@@ -20,6 +20,8 @@ use structure::RingCommutativeApprox;
 use structure::RingCommutative;
 use structure::FieldApprox;
 use structure::Field;
+use structure::RealApprox;
+use ident;
 
 
 /// A module with approximate operators.
@@ -59,3 +61,77 @@ pub trait VectorSpace<S: Field>
     : VectorSpaceApprox<S>
     + Module<S>
 {}
+
+
+/// A normed approximate vector space.
+pub trait NormedSpaceApprox<S: FieldApprox>
+    : VectorSpaceApprox<S> {
+    /// The squared norm of this vector.
+    fn squared_norm(&self) -> S;
+
+    /// The norm of this vector.
+    fn norm(&self) -> S;
+
+    /// Returns a normalized version of this vector.
+    fn normalize(&self) -> Self;
+
+    /// Normalizes this vector in-place and returns its norm.
+    fn normalize_mut(&mut self) -> S;
+
+    /// Returns a normalized version of this vector unless its norm as smaller or equal to `eps`.
+    fn try_normalize(&self, eps: &S) -> Option<Self>;
+
+    /// Normalizes this vector in-place or does nothing if its norm is smaller or equal to `eps`.
+    ///
+    /// If the normalization succeded, returns the old normal of this vector.
+    fn try_normalize_mut(&mut self, eps: &S) -> Option<S>;
+}
+
+
+/// An approximate vector space aquipped with an inner product.
+///
+/// It must be a normed space as well and the norm must agree with the inner product.
+/// The inner product must be symmetric, linear in its first agurment, and positive definite.
+pub trait InnerProductSpaceApprox<S: RealApprox>
+    : NormedSpaceApprox<S> {
+    /// Computes the inner product of `self` with `other`.
+    fn inner_product(&self, other: &Self) -> S;
+
+    /// Measures the angle between two vectors.
+    #[inline]
+    fn angle(&self, other: &Self) -> S {
+        let prod = self.inner_product(other);
+        let n1   = self.norm();
+        let n2   = self.norm();
+
+        let zero: S = ident::id(Additive);
+
+        if n1 == zero || n2 == zero {
+            zero
+        }
+        else {
+            let cang = prod / (n1 * n2);
+
+            cang.acos()
+        }
+    }
+}
+
+/// An approximate finite-dimensional vector space.
+pub trait FiniteDimVectorSpaceApprox<S: FieldApprox>
+    : VectorSpaceApprox<S> {
+
+    /// The vector space dimension.
+    fn dimension() -> usize;
+
+    /// The vector space canonical basis.
+    fn canonical_basis() -> &'static [Self];
+
+    /// Retrieves the i-th component of `Self` wrt. the canonical basis.
+    ///
+    /// As usual, indexing starts with 0.
+    fn component(&self, i: usize) -> S;
+
+    /// Retrieves the i-th component of `Self` wrt. the canonical basis without bound checking.
+    unsafe fn component_unchecked(&self, i: usize)  -> S;
+}

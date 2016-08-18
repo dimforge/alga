@@ -152,7 +152,7 @@
 //!                           \       /
 //!                            |     |
 //!                            V     V
-//!                         VectorSpace<Scalar>
+//!                      VectorSpace<Scalar>
 //! ~~~
 //!
 //! The following traits are provided:
@@ -203,10 +203,16 @@ pub use self::ring::RingCommutative;
 pub use self::ring::FieldApprox;
 pub use self::ring::Field;
 
+pub use self::real::RealApprox;
+
 pub use self::module::ModuleApprox;
 pub use self::module::Module;
 pub use self::module::VectorSpaceApprox;
 pub use self::module::VectorSpace;
+// pub use self::module::FiniteDimVectorSpaceApprox;
+pub use self::module::NormedSpaceApprox;
+// pub use self::module::InnerProductSpaceApprox;
+// pub use self::module::FiniteDimInnerProductSpaceApprox;
 
 mod magma;
 mod quasigroup;
@@ -217,3 +223,4 @@ mod group;
 mod abelian;
 mod ring;
 mod module;
+mod real;

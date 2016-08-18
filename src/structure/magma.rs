@@ -31,6 +31,7 @@ pub trait MagmaApprox<O: Op>
     /// Performs an operation.
     fn approx(self, Self) -> Self;
     /// Performs specific operation.
+    #[inline]
     fn ap(self, _: O, lhs: Self) -> Self {
         self.approx(lhs)
     }
@@ -46,10 +47,12 @@ pub trait Magma<O: Op>
     + MagmaApprox<O>
 {
     /// Performs an operation.
+    #[inline]
     fn operate(self, lhs: Self) -> Self {
         self.approx(lhs)
     }
     /// Performs specific operation.
+    #[inline]
     fn op(self, _: O, lhs: Self) -> Self {
         self.operate(lhs)
     }
@@ -58,6 +61,7 @@ pub trait Magma<O: Op>
 impl<T> MagmaApprox<Additive> for T
 where T: Add<T, Output=T> + PartialEq + ApproxEq + Clone,
 {
+    #[inline]
     fn approx(self, lhs: Self) -> Self {
         self + lhs
     }
@@ -70,6 +74,7 @@ where T: MagmaApprox<Additive> + Eq,
 impl<T> MagmaApprox<Multiplicative> for T
 where T: Mul<T, Output=T> + PartialEq + ApproxEq + Clone,
 {
+    #[inline]
     fn approx(self, lhs: Self) -> Self {
         self * lhs
     }

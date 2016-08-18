@@ -15,13 +15,12 @@
 use ops::{Additive, Multiplicative};
 use cmp::ApproxEq;
 
-use wrapper::Wrapper as W;
-
 use structure::MonoidApprox;
 use structure::Monoid;
 use structure::GroupAbelianApprox;
 use structure::GroupAbelian;
 
+use wrapper::Wrapper as W;
 
 /// An approximate ring is given the approximate version of the ring's properties.
 ///
