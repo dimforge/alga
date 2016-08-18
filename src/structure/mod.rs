@@ -192,6 +192,10 @@ pub use self::monoid::Monoid;
 
 pub use self::group::GroupApprox;
 pub use self::group::Group;
+pub use self::group::OrthogonalGroupApprox;
+pub use self::group::SpecialOrthogonalGroupApprox;
+pub use self::group::EuclideanGroupApprox;
+pub use self::group::SpecialEuclideanGroupApprox;
 
 pub use self::abelian::GroupAbelianApprox;
 pub use self::abelian::GroupAbelian;
@@ -209,10 +213,13 @@ pub use self::module::ModuleApprox;
 pub use self::module::Module;
 pub use self::module::VectorSpaceApprox;
 pub use self::module::VectorSpace;
-// pub use self::module::FiniteDimVectorSpaceApprox;
+pub use self::module::FiniteDimVectorSpaceApprox;
 pub use self::module::NormedSpaceApprox;
-// pub use self::module::InnerProductSpaceApprox;
-// pub use self::module::FiniteDimInnerProductSpaceApprox;
+pub use self::module::InnerSpaceApprox;
+pub use self::module::FiniteDimInnerSpaceApprox;
+pub use self::module::AffineSpaceApprox;
+pub use self::module::FiniteDimAffineSpaceApprox;
+pub use self::module::EuclideanSpaceApprox;
 
 mod magma;
 mod quasigroup;

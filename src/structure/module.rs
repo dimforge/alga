@@ -21,6 +21,8 @@ use structure::RingCommutative;
 use structure::FieldApprox;
 use structure::Field;
 use structure::RealApprox;
+use structure::EuclideanGroupApprox;
+
 use ident;
 
 
@@ -92,7 +94,7 @@ pub trait NormedSpaceApprox<S: FieldApprox>
 ///
 /// It must be a normed space as well and the norm must agree with the inner product.
 /// The inner product must be symmetric, linear in its first agurment, and positive definite.
-pub trait InnerProductSpaceApprox<S: RealApprox>
+pub trait InnerSpaceApprox<S: RealApprox>
     : NormedSpaceApprox<S> {
     /// Computes the inner product of `self` with `other`.
     fn inner_product(&self, other: &Self) -> S;
@@ -134,4 +136,45 @@ pub trait FiniteDimVectorSpaceApprox<S: FieldApprox>
 
     /// Retrieves the i-th component of `Self` wrt. the canonical basis without bound checking.
     unsafe fn component_unchecked(&self, i: usize)  -> S;
+}
+
+/// A finite-dimensional inner space.
+pub trait FiniteDimInnerSpaceApprox<S: RealApprox>
+    : FiniteDimVectorSpaceApprox<S> +
+      InnerSpaceApprox<S> {
+}
+
+
+/// A set of elements called "points" associated with a vector space and a transitive and free
+/// additive group action called a "translation".
+///
+/// The group action is commonly called 
+pub trait AffineSpaceApprox<S: FieldApprox> {
+    /// The associated vector space.
+    type Vector: VectorSpaceApprox<S>;
+
+    /// Applies the additive group action of this affine space's associated vector space on `self`.
+    fn translate_by(vector: &Self::Vector) -> Self;
+
+    /// Returns the unique element `v` of the associated vector space such that `self = other + v`.
+    fn subtract(&self, other: &Self) -> Self::Vector;
+}
+
+// XXX: because of the associated type, we cannot make this inherit from `AffineSpaceApprox<S>`.
+/// A finite-dimensional affine space.
+pub trait FiniteDimAffineSpaceApprox<S: FieldApprox> {
+    /// The associated finite-dimensionale vector space.
+    type Vector: FiniteDimVectorSpaceApprox<S>;
+
+    /// Applies the additive group action of this affine space's associated vector space on `self`.
+    fn translate_by(vector: &Self::Vector) -> Self;
+
+    /// Returns the unique element `v` of the associated vector space such that `self = other + v`.
+    fn subtract(&self, other: &Self) -> Self::Vector;
+}
+
+/// A space that equips an affine space with isometries.
+pub trait EuclideanSpaceApprox<S: RealApprox>: Sized + FiniteDimAffineSpaceApprox<S> {
+    /// The type of isometries.
+    type Isometry: EuclideanGroupApprox<S, Self>;
 }
