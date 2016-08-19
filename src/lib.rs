@@ -27,7 +27,7 @@
 #[cfg(test)]
 extern crate quickcheck;
 
-extern crate num;
+extern crate num_traits as num;
 
 #[macro_use]
 mod macros;
