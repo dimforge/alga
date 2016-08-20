@@ -55,8 +55,22 @@ pub trait Recip {
     fn recip(self) -> Self::Result;
 }
 
-impl Recip for f32 { type Result = Self; #[inline] fn recip(self) -> f32 { 1.0 / self } }
-impl Recip for f64 { type Result = Self; #[inline] fn recip(self) -> f64 { 1.0 / self } }
+impl Recip for f32 {
+    type Result = Self;
+
+    #[inline]
+    fn recip(self) -> f32 {
+        1.0 / self
+    }
+}
+
+impl Recip for f64 {
+    type Result = Self;
+    #[inline]
+    fn recip(self) -> f64 {
+        1.0 / self
+    }
+}
 
 /// Trait implemented by types representing operators.
 pub trait Op: Copy {

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use num::Zero;
+
 use ops::Additive;
 
 use structure::GroupAbelianApprox;
@@ -21,7 +23,6 @@ use structure::RingCommutative;
 use structure::FieldApprox;
 use structure::Field;
 use structure::RealApprox;
-use structure::EuclideanGroupApprox;
 
 use ident;
 
@@ -69,7 +70,7 @@ pub trait VectorSpace<S: Field>
 pub trait NormedSpaceApprox<S: FieldApprox>
     : VectorSpaceApprox<S> {
     /// The squared norm of this vector.
-    fn squared_norm(&self) -> S;
+    fn norm_squared(&self) -> S;
 
     /// The norm of this vector.
     fn norm(&self) -> S;
@@ -108,7 +109,7 @@ pub trait InnerSpaceApprox<S: RealApprox>
 
         let zero: S = ident::id(Additive);
 
-        if n1 == zero || n2 == zero {
+        if n1 == Zero::zero() || n2 == Zero::zero() {
             zero
         }
         else {
@@ -127,23 +128,18 @@ pub trait FiniteDimVectorSpaceApprox<S: FieldApprox>
     fn dimension() -> usize;
 
     /// The vector space canonical basis.
-    fn canonical_basis() -> &'static [Self];
+    fn canonical_basis<F: FnOnce(&[Self])>(f: F);
 
-    /// Retrieves the i-th component of `Self` wrt. the canonical basis.
+    /// Retrieves the i-th component of `Self` wrt. some basis.
     ///
-    /// As usual, indexing starts with 0.
+    /// As usual, indexing starts with 0. The actual choice of basis is usually context-dependent
+    /// and is not specified to this method. It is up to the user to assume the provided component
+    /// will by wrt. the suitable basis for his application.
     fn component(&self, i: usize) -> S;
 
-    /// Retrieves the i-th component of `Self` wrt. the canonical basis without bound checking.
-    unsafe fn component_unchecked(&self, i: usize)  -> S;
+    /// Same as `.component(i)` but without bound-checking.
+    unsafe fn component_unchecked(&self, i: usize) -> S;
 }
-
-/// A finite-dimensional inner space.
-pub trait FiniteDimInnerSpaceApprox<S: RealApprox>
-    : FiniteDimVectorSpaceApprox<S> +
-      InnerSpaceApprox<S> {
-}
-
 
 /// A set of elements called "points" associated with a vector space and a transitive and free
 /// additive group action called a "translation".
@@ -151,30 +147,32 @@ pub trait FiniteDimInnerSpaceApprox<S: RealApprox>
 /// The group action is commonly called 
 pub trait AffineSpaceApprox<S: FieldApprox> {
     /// The associated vector space.
-    type Vector: VectorSpaceApprox<S>;
+    type Translation: VectorSpaceApprox<S>;
 
     /// Applies the additive group action of this affine space's associated vector space on `self`.
-    fn translate_by(vector: &Self::Vector) -> Self;
+    fn translate_by(&self, t: &Self::Translation) -> Self;
 
     /// Returns the unique element `v` of the associated vector space such that `self = other + v`.
-    fn subtract(&self, other: &Self) -> Self::Vector;
+    fn subtract(&self, other: &Self) -> Self::Translation;
 }
 
-// XXX: because of the associated type, we cannot make this inherit from `AffineSpaceApprox<S>`.
-/// A finite-dimensional affine space.
-pub trait FiniteDimAffineSpaceApprox<S: FieldApprox> {
-    /// The associated finite-dimensionale vector space.
-    type Vector: FiniteDimVectorSpaceApprox<S>;
 
-    /// Applies the additive group action of this affine space's associated vector space on `self`.
-    fn translate_by(vector: &Self::Vector) -> Self;
+/// A finite-dimensional affine space based on the field of reals.
+pub trait EuclideanSpaceApprox<S: RealApprox>: Sized + AffineSpaceApprox<S, Translation = <Self as EuclideanSpaceApprox<S>>::Vector> {
+    /// The associated finite-dimensional inner vector space space.
+    type Vector: InnerSpaceApprox<S> + FiniteDimVectorSpaceApprox<S>;
 
-    /// Returns the unique element `v` of the associated vector space such that `self = other + v`.
-    fn subtract(&self, other: &Self) -> Self::Vector;
-}
+    /// The distance between two points.
+    #[inline]
+    fn distance_squared(&self, b: &Self) -> S {
+        let ab = self.subtract(b);
+        ab.norm_squared()
+    }
 
-/// A space that equips an affine space with isometries.
-pub trait EuclideanSpaceApprox<S: RealApprox>: Sized + FiniteDimAffineSpaceApprox<S> {
-    /// The type of isometries.
-    type Isometry: EuclideanGroupApprox<S, Self>;
+    /// The distance between two points.
+    #[inline]
+    fn distance(&self, b: &Self) -> S {
+        let ab = self.subtract(b);
+        ab.norm()
+    }
 }

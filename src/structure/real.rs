@@ -1,5 +1,6 @@
 use num::{Float, Num, FromPrimitive};
 use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
+use cmp::ApproxEq;
 use structure::FieldApprox;
 
 #[allow(missing_docs)]
@@ -10,7 +11,8 @@ use structure::FieldApprox;
 /// reals. The results of those functions only have to be approximately equal to the actual
 /// theoretical values.
 pub trait RealApprox: Copy + Num + FieldApprox + FromPrimitive +
-                      Neg + AddAssign + MulAssign + SubAssign + DivAssign {
+                      Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
+                      ApproxEq<Eps = Self> + Ord {
     fn floor(self) -> Self;
     fn ceil(self) -> Self;
     fn round(self) -> Self;
@@ -56,7 +58,8 @@ pub trait RealApprox: Copy + Num + FieldApprox + FromPrimitive +
 
 impl<S> RealApprox for S
 where S: Float + FieldApprox + FromPrimitive + Neg +
-         AddAssign + MulAssign + SubAssign + DivAssign {
+         AddAssign + MulAssign + SubAssign + DivAssign +
+         ApproxEq<Eps = S> + Ord {
     fn floor(self) -> Self {
         self.floor()
     }

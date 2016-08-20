@@ -48,12 +48,13 @@ impl_marker!(Group<Additive>; i8, i16, i32, i64);
 /// The group `E(n)` of isometries, i.e., rotations, reflexions, and translations.
 pub trait EuclideanGroupApprox<S: RealApprox, E: EuclideanSpaceApprox<S>>: GroupApprox<Multiplicative> {
     /// Applies this group's action on a point from the euclidean space.
-    fn transform_point(&self, pt: &E);
+    fn transform_point(&self, pt: &E) -> E;
+
     /// Applies this group's action on a vector from the euclidean space.
     ///
-    /// If `v` is a vector and `a, b` two point such that `v = a - b` the action `∘` on a vector is
-    /// defined as `self ∘ v = (self × a) - (self × b)`.
-    fn transform_vector(&self, v: &E::Vector);
+    /// If `v` is a vector and `a, b` two point such that `v = a - b`, the action `∘` on a vector
+    /// is defined as `self ∘ v = (self × a) - (self × b)`.
+    fn transform_vector(&self, v: &E::Vector) -> E::Vector;
 }
 
 /// The group `SE(n)` of orientation-preserving isometries, i.e., rotations and translations.

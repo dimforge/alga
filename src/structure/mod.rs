@@ -20,7 +20,7 @@
 //! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
 //! ~~~
 //!
-//! For most applications requiring an abstraction over the reals, `FieldApprox`
+//! For most applications requiring an abstraction over the reals, `RealApprox`
 //! should be sufficient.
 //!
 //! # Fundamental algebraic structures
@@ -216,9 +216,7 @@ pub use self::module::VectorSpace;
 pub use self::module::FiniteDimVectorSpaceApprox;
 pub use self::module::NormedSpaceApprox;
 pub use self::module::InnerSpaceApprox;
-pub use self::module::FiniteDimInnerSpaceApprox;
 pub use self::module::AffineSpaceApprox;
-pub use self::module::FiniteDimAffineSpaceApprox;
 pub use self::module::EuclideanSpaceApprox;
 
 mod magma;
