@@ -7,7 +7,7 @@ use structure::FieldApprox;
 
 /// Trait shared by all approximate reals.
 ///
-/// Approximate reals are approximate fields aquipped with funtinos that are commonly used on
+/// Approximate reals are approximate fields aquipped with functions that are commonly used on
 /// reals. The results of those functions only have to be approximately equal to the actual
 /// theoretical values.
 pub trait RealApprox: Copy + Num + FieldApprox + FromPrimitive +
