@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Additive, Multiplicative};
-
-use structure::Magma;
+use general::{Magma, Op, Additive, Multiplicative};
+use cmp::ApproxEq;
 
 /// An associative magma.
 ///
@@ -25,7 +24,8 @@ pub trait Semigroup<O: Op>
     : Magma<O>
 {
     /// Returns `true` if associativity holds for the given arguments.
-    fn prop_is_associative(args: (Self, Self, Self)) -> bool {
+    fn prop_is_associative(args: (Self, Self, Self)) -> bool
+        where Self: ApproxEq {
         let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
         (a().operate(b()).operate(c())).approx_eq(&a().operate(b().operate(c())))
     }
@@ -40,7 +40,7 @@ mod tests {
         ($($T:ident),* $(,)*) => {
             $(mod $T {
                 use ops::{Additive, Multiplicative};
-                use structure::Semigroup;
+                use general::Semigroup;
 
                 #[quickcheck]
                 fn prop_add_is_associative(args: ($T, $T, $T)) -> bool {

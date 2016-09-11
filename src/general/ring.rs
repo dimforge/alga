@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Additive, Multiplicative};
+use general::{Monoid, GroupAbelian, Additive, Multiplicative};
+use general::Wrapper as W;
 use cmp::ApproxEq;
-
-use structure::Monoid;
-use structure::GroupAbelian;
-
-use wrapper::Wrapper as W;
 
 /// A ring is the combination of an abelian group and a multiplicative monoid structure.
 ///
@@ -32,7 +28,8 @@ pub trait Ring
 {
     /// Returns `true` if the multiplication and addition operators are distributive for
     /// the given argument tuple.
-    fn prop_mul_and_add_are_distributive(args: (Self, Self, Self)) -> bool {
+    fn prop_mul_and_add_are_distributive(args: (Self, Self, Self)) -> bool
+        where Self: ApproxEq {
         let (a, b, c) = (|| W(args.0.clone()), || W(args.1.clone()), || W(args.2.clone()));
         // Left distributivity
         ((a() * b()) + c()).approx_eq(&((a() * b()) + (a() * c()))) &&
@@ -49,11 +46,11 @@ impl_marker!(Ring; i8, i16, i32, i64, f32, f64);
 /// ```notrust
 /// ∀ a, b ∈ Self, a × b ≈ b × a
 /// ```
-pub trait RingCommutative
-    : Ring
+pub trait RingCommutative : Ring
 {
     /// Returns `true` if the multiplication operator is commutative for the given argument tuple.
-    fn prop_mul_is_commutative(args: (Self, Self)) -> bool {
+    fn prop_mul_is_commutative(args: (Self, Self)) -> bool
+        where Self: ApproxEq {
         let (a, b) = (|| W(args.0.clone()), || W(args.1.clone()));
         (a() * b()).approx_eq(&(b() * a()))
     }

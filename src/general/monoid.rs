@@ -12,10 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Additive, Multiplicative};
-use ident::Identity;
-
-use structure::Semigroup;
+use general::{Semigroup, Op, Additive, Identity, Multiplicative};
+use cmp::ApproxEq;
 
 /// A semigroup equipped with an identity element.
 ///
@@ -28,7 +26,8 @@ pub trait Monoid<O: Op>
 {
     /// Checks whether operating with the identity element is a no-op for the given
     /// argument.
-    fn prop_operating_identity_element_is_noop(a: Self) -> bool {
+    fn prop_operating_identity_element_is_noop(a: Self) -> bool
+        where Self: ApproxEq {
         let a = || a.clone();
         (a().operate(Identity::id())).approx_eq(&a()) &&
         (Self::id().operate(a())).approx_eq(&a())
@@ -44,7 +43,7 @@ mod tests {
         ($($T:ident),* $(,)*) => {
             $(mod $T {
                 use ops::{Additive, Multiplicative};
-                use structure::Monoid;
+                use general::Monoid;
 
                 #[quickcheck]
                 fn prop_zero_is_noop(args: $T) -> bool {

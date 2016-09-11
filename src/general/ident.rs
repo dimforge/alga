@@ -12,23 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Additive, Multiplicative};
-use ident::Identity;
+//! Identities for binary operators.
 
-use structure::Quasigroup;
+use general::{Op, Additive, Multiplicative};
 
-/// A quasigroup with an unique identity element.
-///
-/// The left inverse `r` and right inverse `l` are not required to be equal.
-/// The following property is added to the quasigroup structure:
-///
-/// ~~~notrust
-/// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
-/// ~~~
-pub trait Loop<O: Op>
-    : Quasigroup<O>
-    + Identity<O>
-{}
+/// A type that is equipped with identity.
+pub trait Identity<O: Op> {
+    /// The identity element.
+    fn id() -> Self;
+}
 
-impl_marker!(Loop<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(Loop<Multiplicative>; f32, f64);
+impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_ident!(Additive; 0.; f32, f64);
+impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_ident!(Multiplicative; 1.; f32, f64);

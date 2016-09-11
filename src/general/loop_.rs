@@ -12,25 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Traits for algebra.
+use general::{Quasigroup, Identity, Op, Additive, Multiplicative};
 
-#![deny(non_camel_case_types)]
-#![deny(unused_parens)]
-#![deny(non_upper_case_globals)]
-#![deny(unused_qualifications)]
-// #![deny(unused_results)]
-// #![deny(missing_docs)]
+/// A quasigroup with an unique identity element.
+///
+/// The left inverse `r` and right inverse `l` are not required to be equal.
+/// The following property is added to the quasigroup structure:
+///
+/// ~~~notrust
+/// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
+/// ~~~
+pub trait Loop<O: Op>
+    : Quasigroup<O>
+    + Identity<O>
+{}
 
-#![cfg_attr(test, feature(plugin))]
-#![cfg_attr(test, plugin(quickcheck_macros))]
-
-#[cfg(test)]
-extern crate quickcheck;
-
-extern crate num_traits as num;
-
-#[macro_use]
-mod macros;
-pub mod cmp;
-pub mod linear;
-pub mod general;
+impl_marker!(Loop<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(Loop<Multiplicative>; f32, f64);

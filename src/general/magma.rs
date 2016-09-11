@@ -14,8 +14,7 @@
 
 use std::ops::{Add, Mul};
 
-use ops::{Op, Additive, Multiplicative};
-use cmp::ApproxEq;
+use general::{Op, Additive, Multiplicative};
 
 /// Types that are closed under a given operator.
 ///
@@ -23,10 +22,7 @@ use cmp::ApproxEq;
 /// a, b ∈ Self ⇒ a ∘ b ∈ Self
 /// ~~~
 pub trait Magma<O: Op>
-    : Sized
-    + PartialEq
-    + ApproxEq
-    + Clone
+    : Sized + Clone
 {
     /// Performs an operation.
     fn operate(self, Self) -> Self;
@@ -39,7 +35,7 @@ pub trait Magma<O: Op>
 
 
 impl<T> Magma<Additive> for T
-where T: Add<T, Output=T> + PartialEq + ApproxEq + Clone,
+where T: Add<T, Output = T> + Clone,
 {
     #[inline]
     fn operate(self, lhs: Self) -> Self {
@@ -48,7 +44,7 @@ where T: Add<T, Output=T> + PartialEq + ApproxEq + Clone,
 }
 
 impl<T> Magma<Multiplicative> for T
-where T: Mul<T, Output=T> + PartialEq + ApproxEq + Clone,
+where T: Mul<T, Output = T> + Clone,
 {
     #[inline]
     fn operate(self, lhs: Self) -> Self {

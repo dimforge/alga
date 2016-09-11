@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Additive, Multiplicative};
-
-use structure::Group;
+use general::{Group, Op, Additive, Multiplicative};
+use cmp::ApproxEq;
 
 /// An commutative group.
 ///
@@ -24,7 +23,8 @@ use structure::Group;
 pub trait GroupAbelian<O: Op>
     : Group<O> {
     /// Returns `true` if the operator is commutative for the given argument tuple.
-    fn prop_is_commutative(args: (Self, Self)) -> bool {
+    fn prop_is_commutative(args: (Self, Self)) -> bool
+        where Self: ApproxEq {
         let (a, b) = (|| args.0.clone(), || args.1.clone());
         (a().operate(b())).approx_eq(&b().operate(a()))
     }

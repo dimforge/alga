@@ -1,7 +1,7 @@
 use num::{Float, Num, FromPrimitive};
 use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
 use cmp::ApproxEq;
-use structure::Field;
+use general::Field;
 
 #[allow(missing_docs)]
 
@@ -11,7 +11,7 @@ use structure::Field;
 /// functions only have to be approximately equal to the actual theoretical values.
 pub trait Real: Copy + Num + Field + FromPrimitive +
                 Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
-                ApproxEq<Eps = Self> + Ord {
+                ApproxEq + Ord {
     fn floor(self) -> Self;
     fn ceil(self) -> Self;
     fn round(self) -> Self;
@@ -58,7 +58,7 @@ pub trait Real: Copy + Num + Field + FromPrimitive +
 impl<S> Real for S
 where S: Float + Field + FromPrimitive + Neg +
          AddAssign + MulAssign + SubAssign + DivAssign +
-         ApproxEq<Eps = S> + Ord {
+         ApproxEq + Ord {
     #[inline]
     fn floor(self) -> Self {
         self.floor()

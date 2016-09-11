@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ops::{Op, Inverse, Additive, Multiplicative};
-
-use structure::Magma;
+use general::{Magma, Op, Inverse, Additive, Multiplicative};
+use cmp::ApproxEq;
 
 /// A magma with the divisibility property.
 ///
@@ -24,11 +23,11 @@ use structure::Magma;
 /// ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
 /// ```
 pub trait Quasigroup<O: Op>
-    : Magma<O>
-    + Inverse<O>
+    : Magma<O> + Inverse<O>
 {
     /// Returns `true` if latin squareness holds for the given arguments.
-    fn prop_inv_is_latin_square(args: (Self, Self)) -> bool {
+    fn prop_inv_is_latin_square(args: (Self, Self)) -> bool
+        where Self: ApproxEq {
         let (a, b) = (|| args.0.clone(), || args.1.clone());
 
         a().approx_eq(&(a().operate(b().inv()).operate(b()))) &&
@@ -48,7 +47,7 @@ mod tests {
         ($($T:ident),* $(,)*) => {
             $(mod $T {
                 use ops::Additive;
-                use structure::Quasigroup;
+                use general::Quasigroup;
 
                 #[quickcheck]
                 fn prop_inv_is_latin_square(args: ($T, $T)) -> bool {

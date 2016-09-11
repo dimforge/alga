@@ -14,12 +14,6 @@
 
 //! Fundamental algebraic structures.
 //!
-//! ~~~notrust
-//! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
-//! ~~~
-//!
-//! # Fundamental algebraic structures
-//!
 //! For most applications requiring an abstraction over the reals, `Real`
 //! should be sufficient.
 //!
@@ -148,12 +142,16 @@
 //! For example:
 //!
 //! ~~~
-//! # use algebra::structure::SemigroupMultiplicative;
+//! # use algebra::general::SemigroupMultiplicative;
 //! #[quickcheck]
 //! fn prop_mul_is_associative(args: (i32, i32, i32)) -> bool {
 //!     SemigroupMultiplicative::prop_mul_is_associative(args)
 //! }
 //! ~~~
+
+pub use self::ops::{Inverse, Recip, Op, Multiplicative, Additive, inv};
+pub use self::ident::Identity;
+pub use self::wrapper::{Wrapper, id};
 
 pub use self::magma::Magma;
 pub use self::quasigroup::Quasigroup;
@@ -162,12 +160,6 @@ pub use self::semigroup::Semigroup;
 pub use self::monoid::Monoid;
 
 pub use self::group::Group;
-pub use self::group::Isometry;
-pub use self::group::DirectIsometry;
-pub use self::group::Translation;
-pub use self::group::OrthogonalGroup;
-pub use self::group::Rotation;
-
 pub use self::abelian::GroupAbelian;
 
 pub use self::ring::Ring;
@@ -177,13 +169,10 @@ pub use self::ring::Field;
 pub use self::real::Real;
 
 pub use self::module::Module;
-pub use self::module::VectorSpace;
-pub use self::module::FiniteDimVectorSpace;
-pub use self::module::NormedSpace;
-pub use self::module::InnerSpace;
-pub use self::module::AffineSpace;
-pub use self::module::EuclideanSpace;
 
+mod ops;
+mod ident;
+mod wrapper;
 mod magma;
 mod quasigroup;
 mod loop_;

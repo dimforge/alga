@@ -3,12 +3,11 @@
 use std::ops::{Add, Neg, Sub, Mul, Div};
 use std::fmt::{Display, Formatter, Error};
 
-use ops::{Op, Inverse, Recip, Additive, Multiplicative};
+use general::{Op, Inverse, Recip, Additive, Identity, Multiplicative};
 use cmp::ApproxEq;
-use ident::Identity;
 
-use structure::Magma;
-use structure::Quasigroup;
+use general::Magma;
+use general::Quasigroup;
 
 /// Wrapper that allows to use operators on algebraic types.
 #[derive(Clone, Copy, PartialOrd, PartialEq, Debug)]

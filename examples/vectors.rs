@@ -31,7 +31,7 @@ impl<Scalar: Field + Display> Display for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: Field> ApproxEq for Vec2<Scalar> {
+impl<Scalar: Field + ApproxEq> ApproxEq for Vec2<Scalar> {
     type Eps = Scalar::Eps;
 
     fn default_epsilon() -> Self::Eps {
@@ -78,8 +78,13 @@ impl<Scalar: Field> Monoid<Additive> for Vec2<Scalar> {}
 impl<Scalar: Field> Group<Additive> for Vec2<Scalar> {}
 impl<Scalar: Field> GroupAbelian<Additive> for Vec2<Scalar> {}
 
-impl<Scalar: Field> Module<Scalar> for Vec2<Scalar> {}
-impl<Scalar: Field> VectorSpace<Scalar> for Vec2<Scalar> {}
+impl<Scalar: Field> Module for Vec2<Scalar> {
+    type Ring = Scalar;
+}
+
+impl<Scalar: Field> VectorSpace for Vec2<Scalar> {
+    type Field = Scalar;
+}
 
 impl<Scalar: Field> Magma<Multiplicative> for Vec2<Scalar> {
     fn operate(mut self, lhs: Self) -> Self {

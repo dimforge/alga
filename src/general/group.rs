@@ -12,22 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Identities for binary operators.
+use general::{Loop, Monoid, Op, Additive, Multiplicative};
 
-use ops::{Op, Additive, Multiplicative};
+/// A group is a loop and a monoid at the same time.
+pub trait Group<O: Op>
+    : Loop<O> + Monoid<O>
+{}
 
-/// A type that is equipped with identity.
-pub trait Identity<O: Op> {
-    /// The identity element.
-    fn id() -> Self;
-}
-
-/// The identity element.
-pub fn id<T: Identity<O>, O: Op>(_: O) -> T {
-    Identity::id()
-}
-
-impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64);
-impl_ident!(Additive; 0.; f32, f64);
-impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64);
-impl_ident!(Multiplicative; 1.; f32, f64);
+impl_marker!(Group<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(Group<Multiplicative>; f32, f64);
