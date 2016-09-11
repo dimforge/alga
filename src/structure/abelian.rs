@@ -12,47 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(missing_docs)]
-
 use ops::{Op, Additive, Multiplicative};
 
-use structure::GroupApprox;
 use structure::Group;
 
-/// An approximately commutative group.
-///
-/// ```notrust
-/// ∀ a, b ∈ Self, a ∘ b ≈ b ∘ a
-/// ```
-pub trait GroupAbelianApprox<O: Op>
-    : GroupApprox<O>
-{
-    /// Returns `true` if the operator is approximately commutative for
-    /// the given argument tuple.
-    fn prop_is_commutative_approx(args: (Self, Self)) -> bool {
-        let (a, b) = (|| args.0.clone(), || args.1.clone());
-        (a().approx(b())).approx_eq(&b().approx(a()))
-    }
-}
-
-impl_marker!(GroupAbelianApprox<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(GroupAbelianApprox<Multiplicative>; f32, f64);
-
-/// A commutative group.
+/// An commutative group.
 ///
 /// ```notrust
 /// ∀ a, b ∈ Self, a ∘ b = b ∘ a
 /// ```
 pub trait GroupAbelian<O: Op>
-    : GroupAbelianApprox<O>
-    + Group<O>
-{
-    /// Returns `true` if the operator is commutative for
-    /// the given argument tuple.
+    : Group<O> {
+    /// Returns `true` if the operator is commutative for the given argument tuple.
     fn prop_is_commutative(args: (Self, Self)) -> bool {
         let (a, b) = (|| args.0.clone(), || args.1.clone());
-        a().operate(b()) == b().operate(a())
+        (a().operate(b())).approx_eq(&b().operate(a()))
     }
 }
 
-impl_marker!(GroupAbelian<Additive>; i8, i16, i32, i64);
+impl_marker!(GroupAbelian<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(GroupAbelian<Multiplicative>; f32, f64);

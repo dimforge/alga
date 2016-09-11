@@ -16,23 +16,6 @@ use ops::{Op, Additive, Multiplicative};
 use ident::Identity;
 
 use structure::Quasigroup;
-use structure::QuasigroupApprox;
-
-/// An approximate quasigroup with an unique identity element.
-///
-/// The left inverse `r` and right inverse `l` are not required to be equal.
-/// The following property is added to the approximate quasigroup structure:
-///
-/// ~~~notrust
-/// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a ≈ e and a ∘ r ≈ e
-/// ~~~
-pub trait LoopApprox<O: Op>
-    : QuasigroupApprox<O>
-    + Identity<O>
-{}
-
-impl_marker!(LoopApprox<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(LoopApprox<Multiplicative>; f32, f64);
 
 /// A quasigroup with an unique identity element.
 ///
@@ -43,8 +26,9 @@ impl_marker!(LoopApprox<Multiplicative>; f32, f64);
 /// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
 /// ~~~
 pub trait Loop<O: Op>
-    : LoopApprox<O>
-    + Quasigroup<O>
+    : Quasigroup<O>
+    + Identity<O>
 {}
 
-impl_marker!(Loop<Additive>; i8, i16, i32, i64);
+impl_marker!(Loop<Additive>; i8, i16, i32, i64, f32, f64);
+impl_marker!(Loop<Multiplicative>; f32, f64);

@@ -15,29 +15,7 @@
 use ops::{Op, Additive, Multiplicative};
 use ident::Identity;
 
-use structure::SemigroupApprox;
 use structure::Semigroup;
-
-/// An approximate semigroup equipped with an identity element.
-///
-/// ~~~notrust
-/// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a ≈ a and a ∘ e ≈ a
-/// ~~~
-pub trait MonoidApprox<O: Op>
-    : SemigroupApprox<O>
-    + Identity<O>
-{
-    /// Checks whether operating with the identity element is approximately a no-op for the given
-    /// argument.
-    fn prop_operating_identity_element_is_noop_approx(a: Self) -> bool {
-        let a = || a.clone();
-        (a().approx(Identity::id())).approx_eq(&a()) &&
-        (Self::id().approx(a())).approx_eq(&a())
-    }
-}
-
-impl_marker!(MonoidApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
-impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
 /// A semigroup equipped with an identity element.
 ///
@@ -45,19 +23,20 @@ impl_marker!(MonoidApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64,
 /// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 /// ~~~
 pub trait Monoid<O: Op>
-    : MonoidApprox<O>
-    + Semigroup<O>
+    : Semigroup<O>
+    + Identity<O>
 {
-    /// Checks whether operating with the identity element is a no-op for the given argument.
+    /// Checks whether operating with the identity element is a no-op for the given
+    /// argument.
     fn prop_operating_identity_element_is_noop(a: Self) -> bool {
         let a = || a.clone();
-        a().operate(Identity::id()) == a() &&
-        Self::id().operate(a()) == a()
+        (a().operate(Identity::id())).approx_eq(&a()) &&
+        (Self::id().operate(a())).approx_eq(&a())
     }
 }
 
-impl_marker!(Monoid<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
-impl_marker!(Monoid<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(Monoid<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+impl_marker!(Monoid<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
 #[cfg(test)]
 mod tests {
@@ -65,22 +44,13 @@ mod tests {
         ($($T:ident),* $(,)*) => {
             $(mod $T {
                 use ops::{Additive, Multiplicative};
-                use structure::MonoidApprox;
                 use structure::Monoid;
 
                 #[quickcheck]
-                fn prop_zero_is_noop_approx(args: $T) -> bool {
-                    MonoidApprox::<Additive>::prop_operating_identity_element_is_noop_approx(args)
-                }
-                #[quickcheck]
-                fn prop_add_zero_is_noop(args: $T) -> bool {
+                fn prop_zero_is_noop(args: $T) -> bool {
                     Monoid::<Additive>::prop_operating_identity_element_is_noop(args)
                 }
 
-                #[quickcheck]
-                fn prop_mul_unit_is_noop_approx(args: $T) -> bool {
-                    MonoidApprox::<Multiplicative>::prop_operating_identity_element_is_noop_approx(args)
-                }
                 #[quickcheck]
                 fn prop_mul_unit_is_noop(args: $T) -> bool {
                     Monoid::<Multiplicative>::prop_operating_identity_element_is_noop(args)

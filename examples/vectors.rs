@@ -11,12 +11,12 @@ use algebra::wrapper::id as wrap_id;
 use algebra::ident::{Identity, id};
 
 #[derive(PartialEq, Clone)]
-struct Vec2<Scalar: FieldApprox> {
+struct Vec2<Scalar: Field> {
     x: Scalar,
     y: Scalar,
 }
 
-impl<Scalar: FieldApprox> Vec2<Scalar> {
+impl<Scalar: Field> Vec2<Scalar> {
     fn new(x: Scalar, y: Scalar) -> Vec2<Scalar> {
         Vec2 {
             x: x,
@@ -25,13 +25,13 @@ impl<Scalar: FieldApprox> Vec2<Scalar> {
     }
 }
 
-impl<Scalar: FieldApprox + Display> Display for Vec2<Scalar> {
+impl<Scalar: Field + Display> Display for Vec2<Scalar> {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
         fmt.write_fmt(format_args!("({}, {})", self.x, self.y))
     }
 }
 
-impl<Scalar: FieldApprox> ApproxEq for Vec2<Scalar> {
+impl<Scalar: Field> ApproxEq for Vec2<Scalar> {
     type Eps = Scalar::Eps;
 
     fn default_epsilon() -> Self::Eps {
@@ -44,15 +44,15 @@ impl<Scalar: FieldApprox> ApproxEq for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: FieldApprox> MagmaApprox<Additive> for Vec2<Scalar> {
-    fn approx(mut self, lhs: Self) -> Self {
-        self.x = self.x.ap(Additive, lhs.x);
-        self.y = self.y.ap(Additive, lhs.y);
+impl<Scalar: Field> Magma<Additive> for Vec2<Scalar> {
+    fn operate(mut self, lhs: Self) -> Self {
+        self.x = self.x.op(Additive, lhs.x);
+        self.y = self.y.op(Additive, lhs.y);
         self
     }
 }
 
-impl<Scalar: FieldApprox> Inverse<Additive> for Vec2<Scalar> {
+impl<Scalar: Field> Inverse<Additive> for Vec2<Scalar> {
     fn inv(mut self) -> Self {
         self.x = inv(Additive, self.x);
         self.y = inv(Additive, self.y);
@@ -60,7 +60,7 @@ impl<Scalar: FieldApprox> Inverse<Additive> for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: FieldApprox> Identity<Additive> for Vec2<Scalar> {
+impl<Scalar: Field> Identity<Additive> for Vec2<Scalar> {
     fn id() -> Self {
         Vec2 {
             x: id(Additive),
@@ -69,27 +69,27 @@ impl<Scalar: FieldApprox> Identity<Additive> for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: FieldApprox> QuasigroupApprox<Additive> for Vec2<Scalar> {}
-impl<Scalar: FieldApprox> LoopApprox<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> Quasigroup<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> Loop<Additive> for Vec2<Scalar> {}
 
-impl<Scalar: FieldApprox> SemigroupApprox<Additive> for Vec2<Scalar> {}
-impl<Scalar: FieldApprox> MonoidApprox<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> Semigroup<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> Monoid<Additive> for Vec2<Scalar> {}
 
-impl<Scalar: FieldApprox> GroupApprox<Additive> for Vec2<Scalar> {}
-impl<Scalar: FieldApprox> GroupAbelianApprox<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> Group<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> GroupAbelian<Additive> for Vec2<Scalar> {}
 
-impl<Scalar: FieldApprox> ModuleApprox<Scalar> for Vec2<Scalar> {}
-impl<Scalar: FieldApprox> VectorSpaceApprox<Scalar> for Vec2<Scalar> {}
+impl<Scalar: Field> Module<Scalar> for Vec2<Scalar> {}
+impl<Scalar: Field> VectorSpace<Scalar> for Vec2<Scalar> {}
 
-impl<Scalar: FieldApprox> MagmaApprox<Multiplicative> for Vec2<Scalar> {
-    fn approx(mut self, lhs: Self) -> Self {
-        self.x = self.x.ap(Multiplicative, lhs.x);
-        self.y = self.y.ap(Multiplicative, lhs.y);
+impl<Scalar: Field> Magma<Multiplicative> for Vec2<Scalar> {
+    fn operate(mut self, lhs: Self) -> Self {
+        self.x = self.x.op(Multiplicative, lhs.x);
+        self.y = self.y.op(Multiplicative, lhs.y);
         self
     }
 }
 
-impl<Scalar: FieldApprox> Identity<Multiplicative> for Vec2<Scalar> {
+impl<Scalar: Field> Identity<Multiplicative> for Vec2<Scalar> {
     fn id() -> Self {
         Vec2 {
             x: id(Multiplicative),
@@ -98,7 +98,7 @@ impl<Scalar: FieldApprox> Identity<Multiplicative> for Vec2<Scalar> {
     }
 }
 
-fn gcd<T: RingCommutativeApprox + PartialOrd>(a: T, b: T) -> T {
+fn gcd<T: RingCommutative + PartialOrd>(a: T, b: T) -> T {
     let (mut a, mut b) = (W(a), W(b));
     if a < wrap_id(Additive) {
         a = -a;
@@ -182,8 +182,8 @@ impl ApproxEq for Rational {
     }
 }
 
-impl MagmaApprox<Additive> for Rational {
-    fn approx(mut self, lhs: Self) -> Self {
+impl Magma<Additive> for Rational {
+    fn operate(mut self, lhs: Self) -> Self {
         self.a = self.a * lhs.b + lhs.a * self.b;
         self.b *= lhs.b;
         let gcd = gcd(self.a, self.b);
@@ -210,17 +210,17 @@ impl Identity<Additive> for Rational {
     }
 }
 
-impl QuasigroupApprox<Additive> for Rational {}
-impl LoopApprox<Additive> for Rational {}
+impl Quasigroup<Additive> for Rational {}
+impl Loop<Additive> for Rational {}
 
-impl SemigroupApprox<Additive> for Rational {}
-impl MonoidApprox<Additive> for Rational {}
+impl Semigroup<Additive> for Rational {}
+impl Monoid<Additive> for Rational {}
 
-impl GroupApprox<Additive> for Rational {}
-impl GroupAbelianApprox<Additive> for Rational {}
+impl Group<Additive> for Rational {}
+impl GroupAbelian<Additive> for Rational {}
 
-impl MagmaApprox<Multiplicative> for Rational {
-    fn approx(mut self, lhs: Self) -> Self {
+impl Magma<Multiplicative> for Rational {
+    fn operate(mut self, lhs: Self) -> Self {
         self.a *= lhs.a;
         self.b *= lhs.b;
         let gcd = gcd(self.a, self.b);
@@ -246,18 +246,18 @@ impl Identity<Multiplicative> for Rational {
     }
 }
 
-impl QuasigroupApprox<Multiplicative> for Rational {}
-impl LoopApprox<Multiplicative> for Rational {}
+impl Quasigroup<Multiplicative> for Rational {}
+impl Loop<Multiplicative> for Rational {}
 
-impl SemigroupApprox<Multiplicative> for Rational {}
-impl MonoidApprox<Multiplicative> for Rational {}
+impl Semigroup<Multiplicative> for Rational {}
+impl Monoid<Multiplicative> for Rational {}
 
-impl GroupApprox<Multiplicative> for Rational {}
-impl GroupAbelianApprox<Multiplicative> for Rational {}
+impl Group<Multiplicative> for Rational {}
+impl GroupAbelian<Multiplicative> for Rational {}
 
-impl RingApprox for Rational {}
-impl RingCommutativeApprox for Rational {}
-impl FieldApprox for Rational {}
+impl Ring for Rational {}
+impl RingCommutative for Rational {}
+impl Field for Rational {}
 
 fn main() {
     let vec = || W(Vec2::new(Rational::new(1, 2), Rational::whole(3)));

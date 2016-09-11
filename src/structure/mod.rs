@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![deny(missing_docs)]
-
-//! Fundamental algebraic structures.
-//!
 //! ~~~notrust
 //! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
 //! ~~~
 //!
-//! For most applications requiring an abstraction over the reals, `RealApprox`
-//! should be sufficient.
-//!
 //! # Fundamental algebraic structures
 //!
-//! Most of these traits also come in an approximate flavor for types that do
-//! not satisfy the required properties exactly, but would still benefit from
-//! abstractions over the structure in question.
+//! For most applications requiring an abstraction over the reals, `Real`
+//! should be sufficient.
 //!
 //! ## Algebraic properties
 //!
@@ -46,20 +38,6 @@
 //! (Neutral Elt.)  ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 //! (Commutativity) ∀ a, b ∈ Self, a ∘ b = b ∘ a
 //! ~~~
-//!
-//! When one works with inexact arithmetic, e.g. using floating point numbers, those properties
-//! cannot possibly be satisfied due to the discrete nature of our computing tools. Thus a looser,
-//! *approximate*, version is available. Note that fulfilling a property listed above implies that
-//! its approximate version is fulfilled as well.
-//!
-//! ```notrust
-//! (Approx. Closure) a, b ∈ Self ⇒ ∃ c ≈ a ∘ b such that c ∈ Self, 
-//! (Approx. Div.)    ∀ a, b ∈ Self, ∃ r, l ∈ Self such that l ∘ a ≈ b and a ∘ r ≈ b
-//! (Approx. Inv.)    ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a ≈ e and a ∘ r ≈ e
-//! (Approx. Assoc.)  ∀ a, b, c ∈ Self, (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)       
-//! (Approx. Neutr.)  ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a ≈ a and a ∘ e ≈ a
-//! (Approx. Commut.) ∀ a, b ∈ Self, a ∘ b ≈ b ∘ a
-//! ```
 //!
 //! ## Identity elements
 //!
@@ -103,14 +81,14 @@
 //!
 //! The following traits are provided:
 //!
-//! -      `Closure`(`Additive`|`Multiplicative`)(`Approx`)?
-//! -        `Magma`(`Additive`|`Multiplicative`)(`Approx`)?
-//! -   `Quasigroup`(`Additive`|`Multiplicative`)(`Approx`)?
-//! -         `Loop`(`Additive`|`Multiplicative`)(`Approx`)?
-//! -    `Semigroup`(`Additive`|`Multiplicative`)(`Approx`)?
-//! -       `Monoid`(`Additive`|`Multiplicative`)(`Approx`)?
-//! -        `Group`(`Additive`|`Multiplicative`)(`Approx`)?
-//! - `AbelianGroup`(`Additive`|`Multiplicative`)(`Approx`)?
+//! -      `Closure`(`Additive`|`Multiplicative`)
+//! -        `Magma`(`Additive`|`Multiplicative`)
+//! -   `Quasigroup`(`Additive`|`Multiplicative`)
+//! -         `Loop`(`Additive`|`Multiplicative`)
+//! -    `Semigroup`(`Additive`|`Multiplicative`)
+//! -       `Monoid`(`Additive`|`Multiplicative`)
+//! -        `Group`(`Additive`|`Multiplicative`)
+//! - `AbelianGroup`(`Additive`|`Multiplicative`)
 //!
 //! ## Ring-like structures
 //!
@@ -135,9 +113,9 @@
 //!
 //! The following traits are provided:
 //!
-//! -            `Ring`(`Approx`)?
-//! - `RingCommutative`(`Approx`)?
-//! -           `Field`(`Approx`)?
+//! -            `Ring`
+//! - `RingCommutative`
+//! -           `Field`
 //!
 //! ## Module-like structures
 //!
@@ -157,8 +135,8 @@
 //!
 //! The following traits are provided:
 //!
-//! - `Module`(`Approx`)?
-//! - `VectorSpace`(`Approx`)?
+//! - `Module`
+//! - `VectorSpace`
 //!
 //! # Quickcheck properties
 //!
@@ -168,56 +146,40 @@
 //! For example:
 //!
 //! ~~~
-//! # use algebra::structure::SemigroupMultiplicativeApprox;
+//! # use algebra::structure::SemigroupMultiplicative;
 //! #[quickcheck]
-//! fn prop_mul_is_associative_approx(args: (i32, i32, i32)) -> bool {
-//!     SemigroupMultiplicativeApprox::prop_mul_is_associative_approx(args)
+//! fn prop_mul_is_associative(args: (i32, i32, i32)) -> bool {
+//!     SemigroupMultiplicative::prop_mul_is_associative(args)
 //! }
 //! ~~~
 
-pub use self::magma::MagmaApprox;
 pub use self::magma::Magma;
-
-pub use self::quasigroup::QuasigroupApprox;
 pub use self::quasigroup::Quasigroup;
-
-pub use self::loop_::LoopApprox;
 pub use self::loop_::Loop;
-
-pub use self::semigroup::SemigroupApprox;
 pub use self::semigroup::Semigroup;
-
-pub use self::monoid::MonoidApprox;
 pub use self::monoid::Monoid;
 
-pub use self::group::GroupApprox;
 pub use self::group::Group;
-pub use self::group::OrthogonalGroupApprox;
-pub use self::group::SpecialOrthogonalGroupApprox;
-pub use self::group::EuclideanGroupApprox;
-pub use self::group::SpecialEuclideanGroupApprox;
+pub use self::group::OrthogonalGroup;
+pub use self::group::SpecialOrthogonalGroup;
+pub use self::group::EuclideanGroup;
+pub use self::group::SpecialEuclideanGroup;
 
-pub use self::abelian::GroupAbelianApprox;
 pub use self::abelian::GroupAbelian;
 
-pub use self::ring::RingApprox;
 pub use self::ring::Ring;
-pub use self::ring::RingCommutativeApprox;
 pub use self::ring::RingCommutative;
-pub use self::ring::FieldApprox;
 pub use self::ring::Field;
 
-pub use self::real::RealApprox;
+pub use self::real::Real;
 
-pub use self::module::ModuleApprox;
 pub use self::module::Module;
-pub use self::module::VectorSpaceApprox;
 pub use self::module::VectorSpace;
-pub use self::module::FiniteDimVectorSpaceApprox;
-pub use self::module::NormedSpaceApprox;
-pub use self::module::InnerSpaceApprox;
-pub use self::module::AffineSpaceApprox;
-pub use self::module::EuclideanSpaceApprox;
+pub use self::module::FiniteDimVectorSpace;
+pub use self::module::NormedSpace;
+pub use self::module::InnerSpace;
+pub use self::module::AffineSpace;
+pub use self::module::EuclideanSpace;
 
 mod magma;
 mod quasigroup;

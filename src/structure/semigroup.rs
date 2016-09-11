@@ -14,27 +14,7 @@
 
 use ops::{Op, Additive, Multiplicative};
 
-use structure::MagmaApprox;
 use structure::Magma;
-
-/// An approximately associative magma.
-///
-/// ~~~notrust
-/// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c ≈ a ∘ (b ∘ c)       
-/// ~~~
-pub trait SemigroupApprox<O: Op>
-    : MagmaApprox<O>
-{
-    /// Returns `true` if associativity holds approximately for
-    /// the given arguments.
-    fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool {
-        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
-        (a().approx(b()).approx(c())).approx_eq(&a().approx(b().approx(c())))
-    }
-}
-
-impl_marker!(SemigroupApprox<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
-impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
 /// An associative magma.
 ///
@@ -42,19 +22,17 @@ impl_marker!(SemigroupApprox<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i
 /// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)       
 /// ~~~
 pub trait Semigroup<O: Op>
-    : SemigroupApprox<O>
-    + Magma<O>
+    : Magma<O>
 {
-    /// Returns `true` if associativity holds for the given
-    /// arguments.
+    /// Returns `true` if associativity holds for the given arguments.
     fn prop_is_associative(args: (Self, Self, Self)) -> bool {
         let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
-        a().operate(b()).operate(c()) == a().operate(b().operate(c()))
+        (a().operate(b()).operate(c())).approx_eq(&a().operate(b().operate(c())))
     }
 }
 
-impl_marker!(Semigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64);
-impl_marker!(Semigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_marker!(Semigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+impl_marker!(Semigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
 #[cfg(test)]
 mod tests {
@@ -62,23 +40,13 @@ mod tests {
         ($($T:ident),* $(,)*) => {
             $(mod $T {
                 use ops::{Additive, Multiplicative};
-                use structure::SemigroupApprox;
                 use structure::Semigroup;
-
-                #[quickcheck]
-                fn prop_add_is_associative_approx(args: ($T, $T, $T)) -> bool {
-                    SemigroupApprox::<Additive>::prop_is_associative_approx(args)
-                }
 
                 #[quickcheck]
                 fn prop_add_is_associative(args: ($T, $T, $T)) -> bool {
                     Semigroup::<Additive>::prop_is_associative(args)
                 }
 
-                #[quickcheck]
-                fn prop_mul_is_associative_approx(args: ($T, $T, $T)) -> bool {
-                    SemigroupApprox::<Multiplicative>::prop_is_associative_approx(args)
-                }
                 #[quickcheck]
                 fn prop_mul_is_associative(args: ($T, $T, $T)) -> bool {
                     Semigroup::<Multiplicative>::prop_is_associative(args)

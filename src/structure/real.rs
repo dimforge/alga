@@ -1,18 +1,17 @@
 use num::{Float, Num, FromPrimitive};
 use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
 use cmp::ApproxEq;
-use structure::FieldApprox;
+use structure::Field;
 
 #[allow(missing_docs)]
 
-/// Trait shared by all approximate reals.
+/// Trait shared by all reals.
 ///
-/// Approximate reals are approximate fields aquipped with functions that are commonly used on
-/// reals. The results of those functions only have to be approximately equal to the actual
-/// theoretical values.
-pub trait RealApprox: Copy + Num + FieldApprox + FromPrimitive +
-                      Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
-                      ApproxEq<Eps = Self> + Ord {
+/// Reals are fields aquipped with functions that are commonly used on reals. The results of those
+/// functions only have to be approximately equal to the actual theoretical values.
+pub trait Real: Copy + Num + Field + FromPrimitive +
+                Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
+                ApproxEq<Eps = Self> + Ord {
     fn floor(self) -> Self;
     fn ceil(self) -> Self;
     fn round(self) -> Self;
@@ -56,8 +55,8 @@ pub trait RealApprox: Copy + Num + FieldApprox + FromPrimitive +
     fn atanh(self) -> Self;
 }
 
-impl<S> RealApprox for S
-where S: Float + FieldApprox + FromPrimitive + Neg +
+impl<S> Real for S
+where S: Float + Field + FromPrimitive + Neg +
          AddAssign + MulAssign + SubAssign + DivAssign +
          ApproxEq<Eps = S> + Ord {
     #[inline]

@@ -16,21 +16,12 @@ use num::Zero;
 
 use ops::Additive;
 
-use structure::GroupAbelianApprox;
 use structure::GroupAbelian;
-use structure::RingCommutativeApprox;
 use structure::RingCommutative;
-use structure::FieldApprox;
 use structure::Field;
-use structure::RealApprox;
+use structure::Real;
 
 use ident;
-
-
-/// A module with approximate operators.
-pub trait ModuleApprox<S: RingCommutativeApprox>
-    : GroupAbelianApprox<Additive>
-{}
 
 
 /// A module combines two sets: one with an additive abelian group structure and another with a
@@ -49,26 +40,20 @@ pub trait ModuleApprox<S: RingCommutativeApprox>
 /// 1 ∘ x       = x
 /// ```
 pub trait Module<S: RingCommutative>
-    : ModuleApprox<S>
-    + GroupAbelian<Additive>
-{}
-
-/// A approximate vector space has an approx. module structure over an approx. field.
-pub trait VectorSpaceApprox<S: FieldApprox>
-    : ModuleApprox<S>
+    : GroupAbelian<Additive>
 {}
 
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace<S: Field>
-    : VectorSpaceApprox<S>
-    + Module<S>
+    : Module<S>
 {}
 
 
-/// A normed approximate vector space.
-pub trait NormedSpaceApprox<S: FieldApprox>
-    : VectorSpaceApprox<S> {
+
+/// A normed vector space.
+pub trait NormedSpace<S: Field>
+    : VectorSpace<S> {
     /// The squared norm of this vector.
     fn norm_squared(&self) -> S;
 
@@ -91,12 +76,12 @@ pub trait NormedSpaceApprox<S: FieldApprox>
 }
 
 
-/// An approximate vector space aquipped with an inner product.
+/// A vector space aquipped with an inner product.
 ///
 /// It must be a normed space as well and the norm must agree with the inner product.
 /// The inner product must be symmetric, linear in its first agurment, and positive definite.
-pub trait InnerSpaceApprox<S: RealApprox>
-    : NormedSpaceApprox<S> {
+pub trait InnerSpace<S: Real>
+    : NormedSpace<S> {
     /// Computes the inner product of `self` with `other`.
     fn inner_product(&self, other: &Self) -> S;
 
@@ -120,9 +105,9 @@ pub trait InnerSpaceApprox<S: RealApprox>
     }
 }
 
-/// An approximate finite-dimensional vector space.
-pub trait FiniteDimVectorSpaceApprox<S: FieldApprox>
-    : VectorSpaceApprox<S> {
+/// A finite-dimensional vector space.
+pub trait FiniteDimVectorSpace<S: Field>
+    : VectorSpace<S> {
 
     /// The vector space dimension.
     fn dimension() -> usize;
@@ -145,9 +130,9 @@ pub trait FiniteDimVectorSpaceApprox<S: FieldApprox>
 /// additive group action called a "translation".
 ///
 /// The group action is commonly called 
-pub trait AffineSpaceApprox<S: FieldApprox> {
+pub trait AffineSpace<S: Field> {
     /// The associated vector space.
-    type Translation: VectorSpaceApprox<S>;
+    type Translation: VectorSpace<S>;
 
     /// Applies the additive group action of this affine space's associated vector space on `self`.
     fn translate_by(&self, t: &Self::Translation) -> Self;
@@ -158,9 +143,9 @@ pub trait AffineSpaceApprox<S: FieldApprox> {
 
 
 /// A finite-dimensional affine space based on the field of reals.
-pub trait EuclideanSpaceApprox<S: RealApprox>: Sized + AffineSpaceApprox<S, Translation = <Self as EuclideanSpaceApprox<S>>::Vector> {
+pub trait EuclideanSpace<S: Real>: Sized + AffineSpace<S, Translation = <Self as EuclideanSpace<S>>::Vector> {
     /// The associated finite-dimensional inner vector space space.
-    type Vector: InnerSpaceApprox<S> + FiniteDimVectorSpaceApprox<S>;
+    type Vector: InnerSpace<S> + FiniteDimVectorSpace<S>;
 
     /// The distance between two points.
     #[inline]
