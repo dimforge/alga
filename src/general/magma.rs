@@ -33,21 +33,16 @@ pub trait Magma<O: Op>
     }
 }
 
-
-impl<T> Magma<Additive> for T
-where T: Add<T, Output = T> + Clone,
-{
-    #[inline]
-    fn operate(self, lhs: Self) -> Self {
-        self + lhs
+macro_rules! impl_magma(
+    ($M:ty; $op: ident; $($T:ty),* $(,)*) => {
+        $(impl Magma<$M> for $T {
+            #[inline]
+            fn operate(self, lhs: Self) -> Self {
+                self.$op(lhs)
+            }
+        })*
     }
-}
+);
 
-impl<T> Magma<Multiplicative> for T
-where T: Mul<T, Output = T> + Clone,
-{
-    #[inline]
-    fn operate(self, lhs: Self) -> Self {
-        self * lhs
-    }
-}
+impl_magma!(Additive; add; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
+impl_magma!(Multiplicative; mul; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
