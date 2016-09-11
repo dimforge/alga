@@ -39,6 +39,7 @@ pub trait NormedSpace: VectorSpace {
 /// It must be a normed space as well and the norm must agree with the inner product.
 /// The inner product must be symmetric, linear in its first agurment, and positive definite.
 pub trait InnerSpace : NormedSpace<Field = <Self as InnerSpace>::Real> {
+    /// The result of inner product (same as the field used by this vector space).
     type Real: Real;
 
     /// Computes the inner product of `self` with `other`.
@@ -93,7 +94,7 @@ where T: InnerSpace + FiniteDimVectorSpace<Field = <T as InnerSpace>::Real> {
 
 /// A set points associated with a vector space and a transitive and free additive group action
 /// (the translation).
-pub trait AffineSpace {
+pub trait AffineSpace: Sized + Clone {
     /// The associated vector space.
     type Translation: VectorSpace;
 
@@ -106,11 +107,11 @@ pub trait AffineSpace {
 
 
 /// A finite-dimensional affine space based on the field of reals.
-pub trait EuclideanSpace: Sized + AffineSpace<Translation = <Self as EuclideanSpace>::Vector> {
+pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Vector> {
     /// The underlying finite vector space.
     type Vector: FiniteDimInnerSpace<Real = Self::Real>;
 
-    // XXX: we can't write this =( :
+    // XXX: we can't write the following =( :
     // The compiler won't recognize that VectorSpace::Field = Self::Real.
     // Though it will work if only one bound is used… looks like a compiler bug.
     // type Vector: FiniteDimInnerSpace<Field = Self::Real> + InnerSpace<Real = Self::Real>;

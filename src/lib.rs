@@ -18,8 +18,8 @@
 #![deny(unused_parens)]
 #![deny(non_upper_case_globals)]
 #![deny(unused_qualifications)]
-// #![deny(unused_results)]
-// #![deny(missing_docs)]
+#![deny(unused_results)]
+#![deny(missing_docs)]
 
 #![cfg_attr(test, feature(plugin))]
 #![cfg_attr(test, plugin(quickcheck_macros))]

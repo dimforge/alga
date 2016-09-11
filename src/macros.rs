@@ -15,7 +15,7 @@
 
 macro_rules! impl_marker {
     ($M:ty; $($T:ty),* $(,)*) => {
-        $(impl $M for $T {})+
+        $(impl $M for $T { })+
     }
 }
 
