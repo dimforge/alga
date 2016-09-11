@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use general::{Magma, Op, Inverse, Additive, Multiplicative};
-use cmp::ApproxEq;
+use numeric::ApproxEq;
 
 /// A magma with the divisibility property.
 ///
@@ -25,13 +25,25 @@ use cmp::ApproxEq;
 pub trait Quasigroup<O: Op>
     : Magma<O> + Inverse<O>
 {
-    /// Returns `true` if latin squareness holds for the given arguments.
-    fn prop_inv_is_latin_square(args: (Self, Self)) -> bool
+    /// Returns `true` if latin squareness holds for the given arguments. Approximate
+    /// equality is used for verifications.
+    fn prop_inv_is_latin_square_approx(args: (Self, Self)) -> bool
         where Self: ApproxEq {
         let (a, b) = (|| args.0.clone(), || args.1.clone());
 
-        a().approx_eq(&(a().operate(b().inv()).operate(b()))) &&
-        a().approx_eq(&(a().operate(b().operate(b().inv()))))
+        relative_eq!(a(), a().operate(b().inv()).operate(b())) &&
+        relative_eq!(a(), a().operate(b().operate(b().inv())))
+
+        // TODO: pseudo inverse?
+    }
+
+    /// Returns `true` if latin squareness holds for the given arguments.
+    fn prop_inv_is_latin_square(args: (Self, Self)) -> bool
+        where Self: Eq {
+        let (a, b) = (|| args.0.clone(), || args.1.clone());
+
+        a() == a().operate(b().inv()).operate(b()) &&
+        a() == a().operate(b().operate(b().inv()))
 
         // TODO: pseudo inverse?
     }

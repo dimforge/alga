@@ -28,9 +28,11 @@
 extern crate quickcheck;
 
 extern crate num_traits as num;
+#[macro_use]
+extern crate approx;
 
 #[macro_use]
 mod macros;
-pub mod cmp;
 pub mod linear;
 pub mod general;
+pub mod numeric;

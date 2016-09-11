@@ -4,7 +4,7 @@ use std::ops::{Add, Neg, Sub, Mul, Div};
 use std::fmt::{Display, Formatter, Error};
 
 use general::{Op, Inverse, Recip, Additive, Identity, Multiplicative};
-use cmp::ApproxEq;
+use numeric::ApproxEq;
 
 use general::Magma;
 use general::Quasigroup;
@@ -29,13 +29,26 @@ where M: Identity<O>
 impl<M> ApproxEq for Wrapper<M>
 where M: ApproxEq
 {
-    type Eps = M::Eps;
-    fn default_epsilon() -> Self::Eps {
+    type Epsilon = M::Epsilon;
+
+    fn default_epsilon() -> Self::Epsilon {
         M::default_epsilon()
     }
 
-    fn approx_eq_eps(&self, b: &Self, epsilon: &Self::Eps) -> bool {
-        M::approx_eq_eps(&self.0, &b.0, epsilon)
+    fn default_max_relative() -> Self::Epsilon {
+        M::default_max_relative()
+    }
+
+    fn default_max_ulps() -> u32 {
+        M::default_max_ulps()
+    }
+
+    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, epsilon, max_relative)
+    }
+
+    fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
+        self.0.ulps_eq(&other.0, epsilon, max_ulps)
     }
 }
 

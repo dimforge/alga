@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use general::{Group, Op, Additive, Multiplicative};
-use cmp::ApproxEq;
+use numeric::ApproxEq;
 
 /// An commutative group.
 ///
@@ -22,11 +22,19 @@ use cmp::ApproxEq;
 /// ```
 pub trait GroupAbelian<O: Op>
     : Group<O> {
-    /// Returns `true` if the operator is commutative for the given argument tuple.
-    fn prop_is_commutative(args: (Self, Self)) -> bool
+    /// Returns `true` if the operator is commutative for the given argument tuple. Approximate
+    /// equality is used for verifications.
+    fn prop_is_commutative_approx(args: (Self, Self)) -> bool
         where Self: ApproxEq {
         let (a, b) = (|| args.0.clone(), || args.1.clone());
-        (a().operate(b())).approx_eq(&b().operate(a()))
+        relative_eq!(a().operate(b()), b().operate(a()))
+    }
+
+    /// Returns `true` if the operator is commutative for the given argument tuple.
+    fn prop_is_commutative(args: (Self, Self)) -> bool
+        where Self: Eq {
+        let (a, b) = (|| args.0.clone(), || args.1.clone());
+        a().operate(b()) == b().operate(a())
     }
 }
 

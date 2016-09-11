@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use general::{Semigroup, Op, Additive, Identity, Multiplicative};
-use cmp::ApproxEq;
+use numeric::ApproxEq;
 
 /// A semigroup equipped with an identity element.
 ///
@@ -25,12 +25,21 @@ pub trait Monoid<O: Op>
     + Identity<O>
 {
     /// Checks whether operating with the identity element is a no-op for the given
-    /// argument.
-    fn prop_operating_identity_element_is_noop(a: Self) -> bool
+    /// argument. Approximate equality is used for verifications.
+    fn prop_operating_identity_element_is_noop_approx(a: Self) -> bool
         where Self: ApproxEq {
         let a = || a.clone();
-        (a().operate(Identity::id())).approx_eq(&a()) &&
-        (Self::id().operate(a())).approx_eq(&a())
+        relative_eq!(a().operate(Identity::id()), a()) &&
+        relative_eq!(Self::id().operate(a()), a())
+    }
+
+    /// Checks whether operating with the identity element is a no-op for the given
+    /// argument.
+    fn prop_operating_identity_element_is_noop(a: Self) -> bool
+        where Self: Eq {
+        let a = || a.clone();
+        a().operate(Identity::id()) == a() &&
+        Self::id().operate(a())     == a()
     }
 }
 

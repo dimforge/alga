@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use general::{Magma, Op, Additive, Multiplicative};
-use cmp::ApproxEq;
+use numeric::ApproxEq;
 
 /// An associative magma.
 ///
@@ -23,11 +23,19 @@ use cmp::ApproxEq;
 pub trait Semigroup<O: Op>
     : Magma<O>
 {
-    /// Returns `true` if associativity holds for the given arguments.
-    fn prop_is_associative(args: (Self, Self, Self)) -> bool
+    /// Returns `true` if associativity holds for the given arguments. Approximate equality is used
+    /// for verifications.
+    fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool
         where Self: ApproxEq {
         let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
-        (a().operate(b()).operate(c())).approx_eq(&a().operate(b().operate(c())))
+        relative_eq!(a().operate(b()).operate(c()), a().operate(b().operate(c())))
+    }
+
+    /// Returns `true` if associativity holds for the given arguments.
+    fn prop_is_associative(args: (Self, Self, Self)) -> bool
+        where Self: Eq {
+        let (a, b, c) = (|| args.0.clone(), || args.1.clone(), || args.2.clone());
+        a().operate(b()).operate(c()) == a().operate(b().operate(c()))
     }
 }
 

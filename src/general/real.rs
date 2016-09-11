@@ -1,6 +1,6 @@
 use num::{Float, Num, FromPrimitive};
 use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
-use cmp::ApproxEq;
+use numeric::ApproxEq;
 use general::Field;
 
 #[allow(missing_docs)]
