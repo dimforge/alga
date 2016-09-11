@@ -1,26 +1,38 @@
-# Abstract algebra for Rust
+<p align="center">
+    <a href="https://crates.io/crates/alga">
+         <img src="http://meritbadge.herokuapp.com/alga?style=flat-square" alt="crates.io">
+    </a>
+    <a href="https://travis-ci.org/sebcrozet/alga">
+        <img src="https://travis-ci.org/sebcrozet/alga.svg?branch=master" alt="Build status">
+    </a>
+</p>
+<p align = "center">
+    <strong>
+        <a href="https://docs.rs/alga">Documentation</a>
+    </strong>
+</p>
 
-[![Build Status](https://travis-ci.org/brendanzab/algebra.png?branch=master)](https://travis-ci.org/brendanzab/algebra)
+alga − abstract algebra for Rust
+========
 
-~~~
-|(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
-~~~
+**alga** aim to provide solid mathematical abstractions to algebra-focused
+applications. It defines and organize through trait inheritance the basic
+building blocks of general algebraic structures. Specific implementation of
+algebraic structure traits is is left to other crates. Higher-level traits for
+specilazied domain of algebra (like linear algebra) are also provided and will
+prove useful for applications that include code that is generic wrt. the
+algebraic entity types.
 
-Abstract algebra organises organises a wide range of structures into
-a logically consistent framework. These classifications can be incredibly useful
-for creating composable libraries and APIs.
-
-Examples of types that could be included under the algebraic framework:
+Examples of types that could derive from traits defined in **alga**:
 
 - Integers, reals and rationals numbers
 - Complex numbers
 - Polynomials
-- Boolean values
 - Matrices and vectors
 - Quaternions and octonians
 - Strings under concatenation
 
-## Research
+## References
 
 ### Interesting papers
 
