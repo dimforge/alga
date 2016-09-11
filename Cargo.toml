@@ -1,0 +1,19 @@
+[package]
+name = "alga"
+version = "0.1.0"
+authors = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet"]
+description = "Abstract algebra for Rust"
+keywords = ["algebra", "monoids", "math"]
+readme = "README.md"
+repository = "https://github.com/sebcrozet/alga"
+license = "Apache-2.0"
+
+[lib]
+name = "alga"
+
+[dependencies]
+num-traits = "0.1.*"
+
+[dev-dependencies]
+quickcheck = "0.2"
+quickcheck_macros = "0.2"
