@@ -32,6 +32,8 @@ Examples of types that could derive from traits defined in **alga**:
 - Quaternions and octonians
 - Strings under concatenation
 
+**alga** started as a fork of [algebra](https://crates.io/crates/algebra).
+
 ## References
 
 ### Interesting papers
