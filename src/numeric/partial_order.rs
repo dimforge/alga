@@ -142,3 +142,54 @@ pub trait PartialOrder: Sized {
         }
     }
 }
+
+macro_rules! impl_partial_order_float(
+    ($($t: ty),*) => ($(
+        impl PartialOrder for $t {
+            /// Returns the infimum of this value and another or `None` if they don't have any.
+            #[inline]
+            fn inf(&self, other: &Self) -> Option<Self> {
+                if !self.is_nan() && !other.is_nan() {
+                    if *self < *other {
+                        Some(*self)
+                    }
+                    else { // *self >= *other
+                        Some(*other)
+                    }
+                }
+                else {
+                    None
+                }
+            }
+        
+            /// Returns the supremum of this value and another or `None` if they don't have any
+            #[inline]
+            fn sup(&self, other: &Self) -> Option<Self> {
+                if !self.is_nan() && !other.is_nan() {
+                    if *self > *other {
+                        Some(*self)
+                    }
+                    else { // *self <= *other
+                        Some(*other)
+                    }
+                }
+                else {
+                    None
+                }
+            }
+        
+            /// Compare `self` and `other` using a partial ordering relation.
+            #[inline]
+            fn partial_cmp(&self, other: &Self) -> PartialOrdering {
+                match (self <= other, self >= other) {
+                    (false, false) => PartialOrdering::NotComparable,
+                    (false, true)  => PartialOrdering::PartialGreater,
+                    (true, false)  => PartialOrdering::PartialLess,
+                    (true, true)   => PartialOrdering::PartialEqual
+                }
+            }
+        }
+    )*)
+);
+
+impl_partial_order_float!(f32, f64);
