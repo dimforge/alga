@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//! Fundamental algebraic structures.
+//!
 //! ~~~notrust
 //! |(• ◡•)|ノ〵(❍ᴥ❍⋃)     - "ALGEBRAIC!!!"
 //! ~~~
@@ -160,10 +162,11 @@ pub use self::semigroup::Semigroup;
 pub use self::monoid::Monoid;
 
 pub use self::group::Group;
+pub use self::group::Isometry;
+pub use self::group::DirectIsometry;
+pub use self::group::Translation;
 pub use self::group::OrthogonalGroup;
-pub use self::group::SpecialOrthogonalGroup;
-pub use self::group::EuclideanGroup;
-pub use self::group::SpecialEuclideanGroup;
+pub use self::group::Rotation;
 
 pub use self::abelian::GroupAbelian;
 

@@ -35,7 +35,7 @@ impl_marker!(Group<Multiplicative>; f32, f64);
  */
 
 /// The group `E(n)` of isometries, i.e., rotations, reflexions, and translations.
-pub trait EuclideanGroup<S: Real, E: EuclideanSpace<S>>: Group<Multiplicative> {
+pub trait Isometry<S: Real, E: EuclideanSpace<S>>: Group<Multiplicative> {
     /// Applies this group's action on a point from the euclidean space.
     fn transform_point(&self, pt: &E) -> E;
 
@@ -49,23 +49,23 @@ pub trait EuclideanGroup<S: Real, E: EuclideanSpace<S>>: Group<Multiplicative> {
 /// The group `SE(n)` of orientation-preserving isometries, i.e., rotations and translations.
 ///
 /// This is a subgroup of `E(n)`.
-pub trait SpecialEuclideanGroup<S: Real, E: EuclideanSpace<S>>: EuclideanGroup<S, E> {
+pub trait DirectIsometry<S: Real, E: EuclideanSpace<S>>: Isometry<S, E> {
 }
 
 /// The group `T(n)` of translations.
 ///
 /// This is a subgroup of `SE(n)`.
-pub trait TranslationGroup<S: Real, E: EuclideanSpace<S>>: SpecialEuclideanGroup<S, E> {
+pub trait Translation<S: Real, E: EuclideanSpace<S>>: DirectIsometry<S, E> {
 }
 
 /// The group `O(n)` of n-dimensional rotations and reflexions.
 ///
 /// This is a subgroup of `E(n)`.
-pub trait OrthogonalGroup<S: Real, E: EuclideanSpace<S>>: EuclideanGroup<S, E> {
+pub trait OrthogonalGroup<S: Real, E: EuclideanSpace<S>>: Isometry<S, E> {
 }
 
 /// The group `SO(n)` of n-dimensional of rotations.
 ///
 /// This is a subgroup of `O(n)`.
-pub trait SpecialOrthogonalGroup<S: Real, E: EuclideanSpace<S>>: OrthogonalGroup<S, E> {
+pub trait Rotation<S: Real, E: EuclideanSpace<S>>: OrthogonalGroup<S, E> + DirectIsometry<S, E> {
 }

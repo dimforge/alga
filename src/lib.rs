@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Traits for generic mathematics.
+//! Traits for generic algebra.
 
 #![deny(non_camel_case_types)]
 #![deny(unused_parens)]
