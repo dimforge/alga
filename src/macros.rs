@@ -17,100 +17,100 @@
 macro_rules! impl_marker(
     // Finds the generic parameters of the type and implements the trait for it
     (@para_rec
-        [$M:ty, ($($G:tt)+), ($($F:tt)*)]
-        (< $($R:tt)*)
+        [$tra1t:ty, ($($clause:tt)+), ($($type_constr:tt)*)]
+        (< $($params:tt)*)
     ) => {
-        impl< $($R)* $M for $($F)*< $($R)*
-            where $($G)+
+        impl< $($params)* $tra1t for $($type_constr)*< $($params)*
+            where $($clause)+
         {}
     };
     // Munches some token trees for searching generic parameters of the type
     (@para_rec
-        [$M:ty, ($($G:tt)+), ($($F:tt)*)]
-        ($C:tt $($R:tt)*)
+        [$tra1t:ty, ($($clause:tt)+), ($($prev:tt)*)]
+        ($cur:tt $($rest:tt)*)
     ) => {
         impl_marker!(@para_rec
-            [$M, ($($G)+), ($($F)* $C)]
-            ($($R)*)
+            [$tra1t, ($($clause)+), ($($prev)* $cur)]
+            ($($rest)*)
         );
     };
     // Handles the trailing separator after where clause
     (@where_rec
-        [$M:ty, ($($P:tt)+), ($($G:tt)+)]
+        [$tra1t:ty, ($($typ3:tt)+), ($($clause:tt)+)]
         ($(;)*)
     ) => {
         impl_marker!(@para_rec
-            [$M, ($($G)+), ()]
-            ($($P)+)
+            [$tra1t, ($($clause)+), ()]
+            ($($typ3)+)
         );
     };
     // Implements the trait for the generic type and continues searching other types
     (@where_rec
-        [$M:ty, ($($P:tt)+), ($($G:tt)+)]
-        (; $($R:tt)+)
+        [$tra1t:ty, ($($typ3:tt)+), ($($clause:tt)+)]
+        (; $($rest:tt)+)
     ) => {
         impl_marker!(@para_rec
-            [$M, ($($G)+), ()]
-            ($($P)+)
+            [$tra1t, ($($clause)+), ()]
+            ($($typ3)+)
         );
         impl_marker!(@rec
-            [$M, ()]
-            ($($R)+)
+            [$tra1t, ()]
+            ($($rest)+)
         );
     };
     // Munches some token trees for searching the end of the where clause
     (@where_rec
-        [$M:ty, ($($P:tt)+), ($($F:tt)*)]
-        ($C:tt $($R:tt)*)
+        [$tra1t:ty, ($($typ3:tt)+), ($($prev:tt)*)]
+        ($cur:tt $($rest:tt)*)
     ) => {
         impl_marker!(@where_rec
-            [$M, ($($P)+), ($($F)* $C)]
-            ($($R)*)
+            [$tra1t, ($($typ3)+), ($($prev)* $cur)]
+            ($($rest)*)
         );
     };
     // Handles the trailing separator for non-generic type and implements the trait
     (@rec
-        [$M:ty, ($($F:tt)*)]
+        [$tra1t:ty, ($($typ3:tt)*)]
         ($(;)*)
     ) => {
-        impl $M for $($F)* { }
+        impl $tra1t for $($typ3)* { }
     };
     // Implements the trait for the non-generic type and continues searching other types
     (@rec
-        [$M:ty, ($($F:tt)*)]
-        (; $($R:tt)+)
+        [$tra1t:ty, ($($typ3:tt)*)]
+        (; $($rest:tt)+)
     ) => {
-        impl $M for $($F)* { }
+        impl $tra1t for $($typ3)* { }
         impl_marker!(@rec
-            [$M, ()]
-            ($($R)+)
+            [$tra1t, ()]
+            ($($rest)+)
         );
     };
     // Detects that there is indeed a where clause for the type and tries to find where it ends.
     (@rec
-        [$M:ty, ($($F:tt)+)]
-        (where $($G:tt)+)
+        [$tra1t:ty, ($($prev:tt)+)]
+        (where $($rest:tt)+)
     ) => {
         impl_marker!(@where_rec
-            [$M, ($($F)+), ()]
-            ($($G)+)
+            [$tra1t, ($($prev)+), ()]
+            ($($rest)+)
         );
     };
     // Munches some token trees for detecting if we have where clause or not
     (@rec
-        [$M:ty, ($($F:tt)*)]
-        ($C:tt $($R:tt)*)
+        [$tra1t:ty, ($($prev:tt)*)]
+        ($cur:tt $($rest:tt)*)
     ) => {
         impl_marker!(@rec
-            [$M, ($($F)* $C)]
-            ($($R)*)
+            [$tra1t, ($($prev)* $cur)]
+            ($($rest)*)
         );
     };
     // Entry point to the macro
-    ($M:ty; $($R:tt)+) => {
+    ($tra1t:ty; $($rest:tt)+) => {
         impl_marker!(@rec
-            [$M, ()]
-            ($($R)+)
+            [$tra1t, ()]
+            ($($rest)+)
         );
     };
 );
