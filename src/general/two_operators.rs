@@ -45,6 +45,15 @@ pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
     }
 }
 
+#[macro_export]
+macro_rules! impl_ring(
+    ($($T:ty),* $(,)*) => {
+        impl_abelian!($crate::general::Additive; $($T),*);
+        impl_monoid!($crate::general::Multiplicative; $($T),*);
+        impl_marker!($crate::general::AbstractRing; $($T),*);
+    }
+);
+
 /// A ring with a commutative multiplication.
 ///
 /// ```notrust
@@ -75,18 +84,37 @@ pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multipli
     }
 }
 
+#[macro_export]
+macro_rules! impl_ring_commutative(
+    ($($T:ty);* $(;)*) => {
+        impl_ring!($($T);*);
+        impl_marker!($crate::general::AbstractRingCommutative; $($T);*);
+    }
+);
+
 /// A field is a commutative ring, and an abelian group under both operators.
 pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>
     : AbstractRingCommutative<A, M>
     + AbstractGroupAbelian<M>
 { }
 
+#[macro_export]
+macro_rules! impl_field(
+    ($($T:ty);* $(;)*) => {
+        impl_ring_commutative!($($T);*);
+        impl_marker!($crate::general::AbstractQuasigroup<Multiplicative>; $($T);*);
+        impl_marker!($crate::general::AbstractLoop<Multiplicative>; $($T);*);
+        impl_marker!($crate::general::AbstractGroup<Multiplicative>; $($T);*);
+        impl_marker!($crate::general::AbstractGroupAbelian<Multiplicative>; $($T);*);
+        impl_marker!($crate::general::AbstractField; $($T);*);
+    }
+);
 
 /*
  *
  * Implementations.
  *
  */
-impl_marker!(AbstractRing<Additive, Multiplicative>; i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractRingCommutative<Additive, Multiplicative>; i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractField<Additive, Multiplicative>; f32, f64);
+impl_marker!(AbstractRing<Additive, Multiplicative>; i8; i16; i32; i64; f32; f64);
+impl_marker!(AbstractRingCommutative<Additive, Multiplicative>; i8; i16; i32; i64; f32; f64);
+impl_marker!(AbstractField<Additive, Multiplicative>; f32; f64);

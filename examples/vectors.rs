@@ -1,22 +1,22 @@
-extern crate algebra;
+#[macro_use]
+extern crate alga;
+#[macro_use]
+extern crate approx;
 
-use std::mem::swap;
 use std::fmt::{Display, Formatter, Error};
 
-use algebra::ops::{Additive, Multiplicative, Inverse, inv};
-use algebra::cmp::ApproxEq;
-use algebra::structure::*;
-use algebra::wrapper::Wrapper as W;
-use algebra::wrapper::id as wrap_id;
-use algebra::ident::{Identity, id};
+use alga::general::*;
+use alga::general::wrapper::Wrapper as W;
+
+use approx::ApproxEq;
 
 #[derive(PartialEq, Clone)]
-struct Vec2<Scalar: Field> {
+struct Vec2<Scalar: AbstractField> {
     x: Scalar,
     y: Scalar,
 }
 
-impl<Scalar: Field> Vec2<Scalar> {
+impl<Scalar: AbstractField> Vec2<Scalar> {
     fn new(x: Scalar, y: Scalar) -> Vec2<Scalar> {
         Vec2 {
             x: x,
@@ -25,90 +25,91 @@ impl<Scalar: Field> Vec2<Scalar> {
     }
 }
 
-impl<Scalar: Field + Display> Display for Vec2<Scalar> {
+impl<Scalar: AbstractField + Display> Display for Vec2<Scalar> {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
         fmt.write_fmt(format_args!("({}, {})", self.x, self.y))
     }
 }
 
-impl<Scalar: Field + ApproxEq> ApproxEq for Vec2<Scalar> {
-    type Eps = Scalar::Eps;
+impl<Scalar: AbstractField + ApproxEq> ApproxEq for Vec2<Scalar>
+where Scalar::Epsilon: Clone
+{
+    type Epsilon = Scalar::Epsilon;
 
-    fn default_epsilon() -> Self::Eps {
+    fn default_epsilon() -> Self::Epsilon {
         Scalar::default_epsilon()
     }
 
-    fn approx_eq_eps(&self, b: &Self, epsilon: &Self::Eps) -> bool {
-        self.x.approx_eq_eps(&b.x, epsilon) &&
-        self.y.approx_eq_eps(&b.y, epsilon)
+    fn default_max_relative() -> Self::Epsilon {
+        Scalar::default_max_relative()
+    }
+
+    fn default_max_ulps() -> u32 {
+        Scalar::default_max_ulps()
+    }
+
+    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.x.relative_eq(&other.x, epsilon.clone(), max_relative.clone()) &&
+        self.y.relative_eq(&other.y, epsilon, max_relative)
+    }
+
+    fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
+        self.x.ulps_eq(&other.x, epsilon.clone(), max_ulps) &&
+        self.y.ulps_eq(&other.y, epsilon, max_ulps)
     }
 }
 
-impl<Scalar: Field> AbstractMagma<Additive> for Vec2<Scalar> {
-    fn operate(mut self, lhs: Self) -> Self {
-        self.x = self.x.op(Additive, lhs.x);
-        self.y = self.y.op(Additive, lhs.y);
-        self
+impl<Scalar: AbstractField> AbstractMagma<Additive> for Vec2<Scalar> {
+    fn operate(&self, lhs: &Self) -> Self {
+        Vec2::new(self.x.op(Additive, &lhs.x), self.y.op(Additive, &lhs.y))
     }
 }
 
-impl<Scalar: Field> Inverse<Additive> for Vec2<Scalar> {
-    fn inv(mut self) -> Self {
-        self.x = inv(Additive, self.x);
-        self.y = inv(Additive, self.y);
-        self
+impl<Scalar: AbstractField> Inverse<Additive> for Vec2<Scalar> {
+    fn inverse(&self) -> Self {
+        Vec2::new(Inverse::<Additive>::inverse(&self.x), Inverse::<Additive>::inverse(&self.y))
     }
 }
 
-impl<Scalar: Field> Identity<Additive> for Vec2<Scalar> {
-    fn id() -> Self {
+impl<Scalar: AbstractField> Identity<Additive> for Vec2<Scalar> {
+    fn identity() -> Self {
         Vec2 {
-            x: id(Additive),
-            y: id(Additive),
+            x: Identity::<Additive>::identity(),
+            y: Identity::<Additive>::identity(),
         }
     }
 }
 
-impl<Scalar: Field> AbstractQuasigroup<Additive> for Vec2<Scalar> {}
-impl<Scalar: Field> AbstractLoop<Additive> for Vec2<Scalar> {}
+impl_abelian!(Additive; Vec2<Scalar> where Scalar: AbstractField);
 
-impl<Scalar: Field> AbstractSemigroup<Additive> for Vec2<Scalar> {}
-impl<Scalar: Field> AbstractMonoid<Additive> for Vec2<Scalar> {}
-
-impl<Scalar: Field> AbstractGroup<Additive> for Vec2<Scalar> {}
-impl<Scalar: Field> AbstractGroupAbelian<Additive> for Vec2<Scalar> {}
-
-impl<Scalar: Field> Module for Vec2<Scalar> {
-    type Ring = Scalar;
-}
-
-impl<Scalar: Field> VectorSpace for Vec2<Scalar> {
-    type Field = Scalar;
-}
-
-impl<Scalar: Field> AbstractMagma<Multiplicative> for Vec2<Scalar> {
-    fn operate(mut self, lhs: Self) -> Self {
-        self.x = self.x.op(Multiplicative, lhs.x);
-        self.y = self.y.op(Multiplicative, lhs.y);
-        self
+impl<Scalar: AbstractField> AbstractModule for Vec2<Scalar> {
+    type AbstractRing = Scalar;
+    fn multiply_by(&self, r: Self::AbstractRing) -> Self {
+        self.op(Multiplicative, &Vec2::new(r.clone(), r))
     }
 }
 
-impl<Scalar: Field> Identity<Multiplicative> for Vec2<Scalar> {
-    fn id() -> Self {
+impl<Scalar: AbstractField> AbstractMagma<Multiplicative> for Vec2<Scalar> {
+    fn operate(&self, lhs: &Self) -> Self {
+        Vec2::new(self.x.op(Multiplicative, &lhs.x), self.y.op(Multiplicative, &lhs.y))
+    }
+}
+
+impl<Scalar: AbstractField> Identity<Multiplicative> for Vec2<Scalar> {
+    fn identity() -> Self {
         Vec2 {
-            x: id(Multiplicative),
-            y: id(Multiplicative),
+            x: Identity::<Multiplicative>::identity(),
+            y: Identity::<Multiplicative>::identity(),
         }
     }
 }
 
-fn gcd<T: RingCommutative + PartialOrd>(a: T, b: T) -> T {
-    let (mut a, mut b) = (W(a), W(b));
-    if a < wrap_id(Additive) {
+fn gcd<T: AbstractRingCommutative + PartialOrd>(a: T, b: T) -> T {
+    let (mut a, mut b) = (W::<_, _, Multiplicative>::new(a), W::new(b));
+    if a < W::new(Identity::<Additive>::identity()) {
         a = -a;
     }
-    if b < wrap_id(Multiplicative) {
+    if b < W::new(Identity::<Additive>::identity()) {
         b = -b;
     }
     while a != b {
@@ -118,7 +119,7 @@ fn gcd<T: RingCommutative + PartialOrd>(a: T, b: T) -> T {
             b = b - a.clone();
         }
     }
-    a.0
+    a.val
 }
 
 #[test]
@@ -174,40 +175,50 @@ impl PartialEq for Rational {
 }
 
 impl ApproxEq for Rational {
-    type Eps = f64;
+    type Epsilon = f64;
 
-    fn default_epsilon() -> Self::Eps {
-        0.
+    fn default_epsilon() -> Self::Epsilon {
+        ::std::f64::EPSILON
     }
 
-    fn approx_eq_eps(&self, b: &Self, epsilon: &Self::Eps) -> bool {
+    fn default_max_relative() -> Self::Epsilon {
+        ::std::f64::EPSILON
+    }
+
+    fn default_max_ulps() -> u32 {
+        4
+    }
+
+    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         let us = self.a as f64 / self.b as f64;
-        let them = b.a as f64 / b.b as f64;
-        (us - them).abs() <= *epsilon
+        let them = other.a as f64 / other.b as f64;
+        us.relative_eq(&them, epsilon, max_relative)
+    }
+
+    fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
+        let us = self.a as f64 / self.b as f64;
+        let them = other.a as f64 / other.b as f64;
+        us.ulps_eq(&them, epsilon, max_ulps)
     }
 }
 
 impl AbstractMagma<Additive> for Rational {
-    fn operate(mut self, lhs: Self) -> Self {
-        self.a = self.a * lhs.b + lhs.a * self.b;
-        self.b *= lhs.b;
-        let gcd = gcd(self.a, self.b);
-        self.a /= gcd;
-        self.b /= gcd;
-        self
+    fn operate(&self, lhs: &Self) -> Self {
+        let a = self.a * lhs.b + lhs.a * self.b;
+        let b = self.b * lhs.b;
+        let gcd = gcd(a, b);
+        Rational::new(a / gcd, b / gcd)
     }
 }
 
 impl Inverse<Additive> for Rational {
-    fn inv(mut self) -> Self {
-        self.a = -self.a;
-        self.b = self.b;
-        self
+    fn inverse(&self) -> Self {
+        Rational::new(-self.a, self.b)
     }
 }
 
 impl Identity<Additive> for Rational {
-    fn id() -> Self {
+    fn identity() -> Self {
         Rational {
             a: 0,
             b: 1,
@@ -215,35 +226,24 @@ impl Identity<Additive> for Rational {
     }
 }
 
-impl AbstractQuasigroup<Additive> for Rational {}
-impl AbstractLoop<Additive> for Rational {}
-
-impl AbstractSemigroup<Additive> for Rational {}
-impl AbstractMonoid<Additive> for Rational {}
-
-impl AbstractGroup<Additive> for Rational {}
-impl AbstractGroupAbelian<Additive> for Rational {}
 
 impl AbstractMagma<Multiplicative> for Rational {
-    fn operate(mut self, lhs: Self) -> Self {
-        self.a *= lhs.a;
-        self.b *= lhs.b;
-        let gcd = gcd(self.a, self.b);
-        self.a /= gcd;
-        self.b /= gcd;
-        self
+    fn operate(&self, lhs: &Self) -> Self {
+        let a = self.a * lhs.a;
+        let b = self.b * lhs.b;
+        let gcd = gcd(a, b);
+        Rational::new(a / gcd, b / gcd)
     }
 }
 
 impl Inverse<Multiplicative> for Rational {
-    fn inv(mut self) -> Self {
-        swap(&mut self.a, &mut self.b);
-        self
+    fn inverse(&self) -> Self {
+        Rational::new(self.b, self.a)
     }
 }
 
 impl Identity<Multiplicative> for Rational {
-    fn id() -> Self {
+    fn identity() -> Self {
         Rational {
             a: 1,
             b: 1,
@@ -251,27 +251,16 @@ impl Identity<Multiplicative> for Rational {
     }
 }
 
-impl AbstractQuasigroup<Multiplicative> for Rational {}
-impl AbstractLoop<Multiplicative> for Rational {}
-
-impl AbstractSemigroup<Multiplicative> for Rational {}
-impl AbstractMonoid<Multiplicative> for Rational {}
-
-impl AbstractGroup<Multiplicative> for Rational {}
-impl AbstractGroupAbelian<Multiplicative> for Rational {}
-
-impl Ring for Rational {}
-impl RingCommutative for Rational {}
-impl Field for Rational {}
+impl_field!(Rational);
 
 fn main() {
-    let vec = || W(Vec2::new(Rational::new(1, 2), Rational::whole(3)));
-    let vec2 = || W(Vec2::new(Rational::whole(5), Rational::new(11, 7)));
-    let vec3 = || W(Vec2::new(Rational::new(7, 11), Rational::whole(17)));
+    let vec = || W::<_, Additive, Multiplicative>::new(Vec2::new(Rational::new(1, 2), Rational::whole(3)));
+    let vec2 = || W::new(Vec2::new(Rational::whole(5), Rational::new(11, 7)));
+    let vec3 = || W::new(Vec2::new(Rational::new(7, 11), Rational::whole(17)));
 
     let vec4 = (vec() * vec2()) + (vec() * vec3());
     let vec5 = vec() * (vec2() + vec3());
-    if vec4.approx_eq(&vec5) {
+    if relative_eq!(vec4, vec5) {
         println!("{} == {}", vec4, vec5);
     } else {
         println!("{} != {}", vec4, vec5);
