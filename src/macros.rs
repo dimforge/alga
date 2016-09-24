@@ -15,6 +15,7 @@
 
 #[macro_export]
 macro_rules! impl_marker(
+    // Finds the generic parameters of the type and implements the trait for it
     (@para_rec
         [$M:ty, ($($G:tt)+), ($($F:tt)*)]
         (< $($R:tt)*)
@@ -23,6 +24,7 @@ macro_rules! impl_marker(
             where $($G)+
         {}
     };
+    // Munches some token trees for searching generic parameters of the type
     (@para_rec
         [$M:ty, ($($G:tt)+), ($($F:tt)*)]
         ($C:tt $($R:tt)*)
@@ -32,6 +34,7 @@ macro_rules! impl_marker(
             ($($R)*)
         );
     };
+    // Handles the trailing separator after where clause
     (@where_rec
         [$M:ty, ($($P:tt)+), ($($G:tt)+)]
         ($(;)*)
@@ -41,6 +44,7 @@ macro_rules! impl_marker(
             ($($P)+)
         );
     };
+    // Implements the trait for the generic type and continues searching other types
     (@where_rec
         [$M:ty, ($($P:tt)+), ($($G:tt)+)]
         (; $($R:tt)+)
@@ -54,6 +58,7 @@ macro_rules! impl_marker(
             ($($R)+)
         );
     };
+    // Munches some token trees for searching the end of the where clause
     (@where_rec
         [$M:ty, ($($P:tt)+), ($($F:tt)*)]
         ($C:tt $($R:tt)*)
@@ -63,12 +68,14 @@ macro_rules! impl_marker(
             ($($R)*)
         );
     };
+    // Handles the trailing separator for non-generic type and implements the trait
     (@rec
         [$M:ty, ($($F:tt)*)]
         ($(;)*)
     ) => {
         impl $M for $($F)* { }
     };
+    // Implements the trait for the non-generic type and continues searching other types
     (@rec
         [$M:ty, ($($F:tt)*)]
         (; $($R:tt)+)
@@ -79,6 +86,7 @@ macro_rules! impl_marker(
             ($($R)+)
         );
     };
+    // Detects that there is indeed a where clause for the type and tries to find where it ends.
     (@rec
         [$M:ty, ($($F:tt)+)]
         (where $($G:tt)+)
@@ -88,6 +96,7 @@ macro_rules! impl_marker(
             ($($G)+)
         );
     };
+    // Munches some token trees for detecting if we have where clause or not
     (@rec
         [$M:ty, ($($F:tt)*)]
         ($C:tt $($R:tt)*)
@@ -97,6 +106,7 @@ macro_rules! impl_marker(
             ($($R)*)
         );
     };
+    // Entry point to the macro
     ($M:ty; $($R:tt)+) => {
         impl_marker!(@rec
             [$M, ()]
