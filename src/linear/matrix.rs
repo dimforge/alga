@@ -1,8 +1,11 @@
+use std::ops::Mul;
+
 use general::{Field, MultiplicativeMonoid, MultiplicativeGroup};
 use linear::FiniteDimVectorSpace;
 
 /// The space of all matrices.
-pub trait Matrix: Sized + Clone {
+pub trait Matrix: Sized + Clone +
+                  Mul<<Self as Matrix>::Row, Output = <Self as Matrix>::Column> {
     /// The underlying field.
     type Field: Field;
 

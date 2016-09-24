@@ -9,9 +9,7 @@ use general::{Operator, Additive, Multiplicative, Inverse, Identity};
 /// ~~~notrust
 /// a, b ∈ Self ⇒ a ∘ b ∈ Self
 /// ~~~
-pub trait AbstractMagma<O: Operator>
-    : Sized + Clone
-{
+pub trait AbstractMagma<O: Operator>: Sized + Clone {
     /// Performs an operation.
     fn operate(&self, right: &Self) -> Self;
 

@@ -68,8 +68,19 @@ pub trait FiniteDimVectorSpace: VectorSpace {
     /// The vector space dimension.
     fn dimension() -> usize;
 
-    /// The vector space canonical basis.
-    fn canonical_basis<F: FnOnce(&[Self])>(f: F);
+    /// Applies the given closule to each element of this vector space's canonical basis. Stops if
+    /// `f` returns `false`.
+    // XXX: return an iterator instead when `-> impl Iterator` will be supported by Rust.
+    fn canonical_basis<F: FnMut(&Self) -> bool>(mut f: F) {
+        for i in 0 .. Self::dimension() {
+            if !f(&Self::canonical_basis_element(i)) {
+                break;
+            }
+        }
+    }
+
+    /// The i-the canonical basis element.
+    fn canonical_basis_element(i: usize) -> Self;
 
     /// Retrieves the i-th component of `Self` wrt. some basis.
     ///
@@ -85,18 +96,21 @@ pub trait FiniteDimVectorSpace: VectorSpace {
     unsafe fn component_unchecked(&self, i: usize) -> Self::Field;
 }
 
-/// [Alias] a finite-dimenisonal vector space equipped with an inner product that must coincide
+/// A finite-dimenisonal vector space equipped with an inner product that must coincide
 /// with the dot product.
 pub trait FiniteDimInnerSpace: InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real> {
-}
+    /// Applies the given closure to each element of the orthonormal basis of the subspace
+    /// orthogonal to free family of vectors `vs`. If `vs` is not a free family, the result is
+    /// unspecified.
+    // XXX: return an iterator instead when `-> impl Iterator` will be supported by Rust.
+    fn orthonormal_subspace_basis<F: FnMut(&Self) -> bool>(vs: &[Self], f: F);
 
-impl<T> FiniteDimInnerSpace for T
-where T: InnerSpace + FiniteDimVectorSpace<Field = <T as InnerSpace>::Real> {
+    // FIXME: add another method to orthogonalize a non-free family of vector?
 }
 
 /// A set points associated with a vector space and a transitive and free additive group action
 /// (the translation).
-pub trait AffineSpace: Sized + Clone +
+pub trait AffineSpace: Sized + Clone + PartialEq +
                        Sub<Self, Output = <Self as AffineSpace>::Translation> +
                        Add<<Self as AffineSpace>::Translation, Output = Self> {
     /// The associated vector space.

@@ -3,6 +3,8 @@ use std::marker::PhantomData;
 use std::cmp::{PartialOrd, Ordering};
 use std::fmt;
 
+use num::{Zero, One};
+
 use approx::ApproxEq;
 
 use general::{AbstractMagma, AbstractGroup, AbstractLoop, AbstractMonoid, AbstractQuasigroup,
@@ -182,6 +184,25 @@ impl<O: Operator> AbstractMonoid<O>       for Id<O> { }
 impl<O: Operator> AbstractLoop<O>         for Id<O> { }
 impl<O: Operator> AbstractGroup<O>        for Id<O> { }
 impl<O: Operator> AbstractGroupAbelian<O> for Id<O> { }
+
+impl One for Id {
+    #[inline]
+    fn one() -> Id {
+        Id::new()
+    }
+}
+
+impl Zero for Id {
+    #[inline]
+    fn zero() -> Id {
+        Id::new()
+    }
+
+    #[inline]
+    fn is_zero(&self) -> bool {
+        true
+    }
+}
 
 /*
  *

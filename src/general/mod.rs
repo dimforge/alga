@@ -48,7 +48,7 @@
 //! These structures are provided for both the addition and multiplication.
 //!
 //! ~~~notrust
-//!               AbstractMagma
+//!            AbstractMagma
 //!                 |
 //!         _______/ \______
 //!        /                \
@@ -67,7 +67,7 @@
 //!               \ /
 //!                |
 //!                V
-//!              AbstractGroup
+//!          AbstractGroup
 //!                |
 //!          commutativity
 //!                |

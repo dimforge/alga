@@ -4,7 +4,7 @@ use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
 
 use approx::ApproxEq;
 
-use general::{Field, SubsetOf};
+use general::{Field, SubsetOf, SupersetOf};
 
 #[allow(missing_docs)]
 
@@ -14,7 +14,7 @@ use general::{Field, SubsetOf};
 /// functions only have to be approximately equal to the actual theoretical values.
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
 // allow a blancket impl: impl<T: Clone> SubsetOf<T> for T { ... }
-pub trait Real: SubsetOf<Self> + Field + Copy + Num + FromPrimitive +
+pub trait Real: SubsetOf<Self> + SupersetOf<f64> + Field + Copy + Num + FromPrimitive +
                 Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
                 ApproxEq + PartialOrd {
     fn floor(self) -> Self;

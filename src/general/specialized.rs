@@ -1,3 +1,4 @@
+use num::{Zero, One};
 use general::{AbstractMagma, AbstractQuasigroup, AbstractLoop, AbstractSemigroup,
               AbstractMonoid, AbstractGroup, AbstractGroupAbelian, Multiplicative, Additive,
               AbstractRing, AbstractRingCommutative, AbstractField, AbstractModule,
@@ -21,18 +22,18 @@ macro_rules! specialize_structures(
 
 specialize_structures!(AdditiveMagma,        AbstractMagma<Additive>        : );
 specialize_structures!(AdditiveQuasigroup,   AbstractQuasigroup<Additive>   : AdditiveMagma ClosedSub);
-specialize_structures!(AdditiveLoop,         AbstractLoop<Additive>         : AdditiveQuasigroup ClosedNeg);
+specialize_structures!(AdditiveLoop,         AbstractLoop<Additive>         : AdditiveQuasigroup ClosedNeg Zero);
 specialize_structures!(AdditiveSemigroup,    AbstractSemigroup<Additive>    : AdditiveMagma ClosedAdd);
-specialize_structures!(AdditiveMonoid,       AbstractMonoid<Additive>       : AdditiveSemigroup);
+specialize_structures!(AdditiveMonoid,       AbstractMonoid<Additive>       : AdditiveSemigroup Zero);
 specialize_structures!(AdditiveGroup,        AbstractGroup<Additive>        : AdditiveLoop AdditiveMonoid);
 specialize_structures!(AdditiveGroupAbelian, AbstractGroupAbelian<Additive> : AdditiveGroup);
 
 
 specialize_structures!(MultiplicativeMagma,      AbstractMagma<Multiplicative>      : );
 specialize_structures!(MultiplicativeQuasigroup, AbstractQuasigroup<Multiplicative> : MultiplicativeMagma ClosedDiv);
-specialize_structures!(MultiplicativeLoop,       AbstractLoop<Multiplicative>       : MultiplicativeQuasigroup);
+specialize_structures!(MultiplicativeLoop,       AbstractLoop<Multiplicative>       : MultiplicativeQuasigroup One);
 specialize_structures!(MultiplicativeSemigroup,  AbstractSemigroup<Multiplicative>  : MultiplicativeMagma ClosedMul);
-specialize_structures!(MultiplicativeMonoid,     AbstractMonoid<Multiplicative>     : MultiplicativeSemigroup);
+specialize_structures!(MultiplicativeMonoid,     AbstractMonoid<Multiplicative>     : MultiplicativeSemigroup One);
 specialize_structures!(MultiplicativeGroup,      AbstractGroup<Multiplicative>      : MultiplicativeLoop MultiplicativeMonoid);
 specialize_structures!(MultiplicativeGroupAbelian, AbstractGroupAbelian<Multiplicative> : MultiplicativeGroup);
 
