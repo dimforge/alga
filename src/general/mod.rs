@@ -43,53 +43,52 @@
 //! - `IdentityAdditive`
 //! - `IdentityMultiplicative`
 //!
-//! ## Group-like structures
+//! ## AbstractGroup-like structures
 //!
 //! These structures are provided for both the addition and multiplication.
 //!
 //! ~~~notrust
-//!               Magma
+//!               AbstractMagma
 //!                 |
 //!         _______/ \______
 //!        /                \
-//!  divisibility      associativity
+//!  divisibility       associativity
 //!       |                  |
 //!       V                  V
-//!  Quasigroup          Semigroup
+//! AbstractQuasigroup AbstractSemigroup
 //!       |                  |
 //!   identity            identity
 //!       |                  |
 //!       V                  V
-//!     Loop               Monoid
+//!  AbstractLoop       AbstractMonoid
 //!       |                  |
 //!  associativity     invertibility
 //!        \______   _______/
 //!               \ /
 //!                |
 //!                V
-//!              Group
+//!              AbstractGroup
 //!                |
 //!          commutativity
 //!                |
 //!                V
-//!           AbelianGroup
+//!           AbstractGroupAbelian
 //! ~~~
 //!
 //! The following traits are provided:
 //!
-//! -      `Closure`(`Additive`|`Multiplicative`)
-//! -        `Magma`(`Additive`|`Multiplicative`)
-//! -   `Quasigroup`(`Additive`|`Multiplicative`)
-//! -         `Loop`(`Additive`|`Multiplicative`)
-//! -    `Semigroup`(`Additive`|`Multiplicative`)
-//! -       `Monoid`(`Additive`|`Multiplicative`)
-//! -        `Group`(`Additive`|`Multiplicative`)
-//! - `AbelianGroup`(`Additive`|`Multiplicative`)
+//! - (`Abstract`|`Additive`|`Multiplicative`)`Magma`
+//! - (`Abstract`|`Additive`|`Multiplicative`)`Quasigroup`
+//! - (`Abstract`|`Additive`|`Multiplicative`)`Loop`
+//! - (`Abstract`|`Additive`|`Multiplicative`)`Semigroup`
+//! - (`Abstract`|`Additive`|`Multiplicative`)`Monoid`
+//! - (`Abstract`|`Additive`|`Multiplicative`)`Group`
+//! - (`Abstract`|`Additive`|`Multiplicative`)`GroupAbelian`
 //!
 //! ## Ring-like structures
 //!
 //! ~~~notrust
-//! GroupAdditiveAbelian     MonoidMultiplicative
+//!      GroupAbelian           Monoid              
 //!           \________   ________/
 //!                    \ /
 //!                     |
@@ -99,7 +98,7 @@
 //!            commutativity_of_mul
 //!                     |
 //!                     V
-//!              RingCommutative     GroupMultiplicativeAbelian
+//!              RingCommutative           GroupAbelian
 //!                      \_______   ___________/
 //!                              \ /
 //!                               |
@@ -116,7 +115,7 @@
 //! ## Module-like structures
 //!
 //! ~~~notrust
-//! GroupAdditiveAbelian     RingCommutative
+//!     GroupAbelian         RingCommutative
 //!           \______         _____/
 //!                  \       /
 //!                   |     |
@@ -149,37 +148,32 @@
 //! }
 //! ~~~
 
-pub use self::ops::{Inverse, Recip, Op, Multiplicative, Additive, inv};
-pub use self::ident::Identity;
-pub use self::wrapper::{Wrapper, id};
+pub use self::operator::{Inverse, Operator, Multiplicative, Additive,
+                         ClosedAdd, ClosedMul, ClosedSub, ClosedNeg, ClosedDiv};
+pub use self::identity::{Identity, Id};
+pub use self::subset::{SubsetOf, SupersetOf};
 
-pub use self::magma::Magma;
-pub use self::quasigroup::Quasigroup;
-pub use self::loop_::Loop;
-pub use self::semigroup::Semigroup;
-pub use self::monoid::Monoid;
-
-pub use self::group::Group;
-pub use self::abelian::GroupAbelian;
-
-pub use self::ring::Ring;
-pub use self::ring::RingCommutative;
-pub use self::ring::Field;
-
+pub use self::one_operator::{AbstractMagma, AbstractQuasigroup, AbstractLoop, AbstractSemigroup,
+                             AbstractMonoid, AbstractGroup, AbstractGroupAbelian};
+pub use self::two_operators::{AbstractRing, AbstractRingCommutative, AbstractField};
+pub use self::module::AbstractModule;
+pub use self::lattice::{MeetSemilattice, JoinSemilattice, Lattice};
+pub use self::specialized::{
+    AdditiveMagma, AdditiveQuasigroup, AdditiveLoop, AdditiveSemigroup,
+    AdditiveMonoid, AdditiveGroup, AdditiveGroupAbelian,
+    MultiplicativeMagma, MultiplicativeQuasigroup, MultiplicativeLoop, MultiplicativeSemigroup,
+    MultiplicativeMonoid, MultiplicativeGroup, MultiplicativeGroupAbelian,
+    Ring, RingCommutative, Field, Module};
 pub use self::real::Real;
 
-pub use self::module::Module;
-
-mod ops;
-mod ident;
-mod wrapper;
-mod magma;
-mod quasigroup;
-mod loop_;
-mod semigroup;
-mod monoid;
-mod group;
-mod abelian;
-mod ring;
+mod one_operator;
+mod two_operators;
 mod module;
+mod identity;
+mod operator;
 mod real;
+mod lattice;
+mod subset;
+mod specialized;
+#[doc(hidden)]
+pub mod wrapper;

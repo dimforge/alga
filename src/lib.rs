@@ -33,6 +33,5 @@ extern crate approx;
 
 #[macro_use]
 mod macros;
-pub mod linear;
 pub mod general;
-pub mod numeric;
+pub mod linear;

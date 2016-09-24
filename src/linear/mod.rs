@@ -2,8 +2,11 @@
 
 pub use self::vector::{VectorSpace, NormedSpace, InnerSpace, FiniteDimVectorSpace, FiniteDimInnerSpace,
                        AffineSpace, EuclideanSpace};
-pub use self::transformation::{Transformation, Similarity, Isometry, DirectIsometry, Translation,
-                               OrthogonalGroup, Rotation};
+pub use self::transformation::{Transformation, AffineTransformation, Scaling, Similarity, Isometry,
+                               DirectIsometry, Translation, OrthogonalTransformation, Rotation};
+pub use self::matrix::{Matrix, MatrixMut, SquareMatrix, SquareMatrixMut, InversibleSquareMatrix};
 
 mod vector;
 mod transformation;
+mod matrix;
+mod id;

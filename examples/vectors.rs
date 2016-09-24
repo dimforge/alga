@@ -44,7 +44,7 @@ impl<Scalar: Field + ApproxEq> ApproxEq for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: Field> Magma<Additive> for Vec2<Scalar> {
+impl<Scalar: Field> AbstractMagma<Additive> for Vec2<Scalar> {
     fn operate(mut self, lhs: Self) -> Self {
         self.x = self.x.op(Additive, lhs.x);
         self.y = self.y.op(Additive, lhs.y);
@@ -69,14 +69,14 @@ impl<Scalar: Field> Identity<Additive> for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: Field> Quasigroup<Additive> for Vec2<Scalar> {}
-impl<Scalar: Field> Loop<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> AbstractQuasigroup<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> AbstractLoop<Additive> for Vec2<Scalar> {}
 
-impl<Scalar: Field> Semigroup<Additive> for Vec2<Scalar> {}
-impl<Scalar: Field> Monoid<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> AbstractSemigroup<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> AbstractMonoid<Additive> for Vec2<Scalar> {}
 
-impl<Scalar: Field> Group<Additive> for Vec2<Scalar> {}
-impl<Scalar: Field> GroupAbelian<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> AbstractGroup<Additive> for Vec2<Scalar> {}
+impl<Scalar: Field> AbstractGroupAbelian<Additive> for Vec2<Scalar> {}
 
 impl<Scalar: Field> Module for Vec2<Scalar> {
     type Ring = Scalar;
@@ -86,7 +86,7 @@ impl<Scalar: Field> VectorSpace for Vec2<Scalar> {
     type Field = Scalar;
 }
 
-impl<Scalar: Field> Magma<Multiplicative> for Vec2<Scalar> {
+impl<Scalar: Field> AbstractMagma<Multiplicative> for Vec2<Scalar> {
     fn operate(mut self, lhs: Self) -> Self {
         self.x = self.x.op(Multiplicative, lhs.x);
         self.y = self.y.op(Multiplicative, lhs.y);
@@ -187,7 +187,7 @@ impl ApproxEq for Rational {
     }
 }
 
-impl Magma<Additive> for Rational {
+impl AbstractMagma<Additive> for Rational {
     fn operate(mut self, lhs: Self) -> Self {
         self.a = self.a * lhs.b + lhs.a * self.b;
         self.b *= lhs.b;
@@ -215,16 +215,16 @@ impl Identity<Additive> for Rational {
     }
 }
 
-impl Quasigroup<Additive> for Rational {}
-impl Loop<Additive> for Rational {}
+impl AbstractQuasigroup<Additive> for Rational {}
+impl AbstractLoop<Additive> for Rational {}
 
-impl Semigroup<Additive> for Rational {}
-impl Monoid<Additive> for Rational {}
+impl AbstractSemigroup<Additive> for Rational {}
+impl AbstractMonoid<Additive> for Rational {}
 
-impl Group<Additive> for Rational {}
-impl GroupAbelian<Additive> for Rational {}
+impl AbstractGroup<Additive> for Rational {}
+impl AbstractGroupAbelian<Additive> for Rational {}
 
-impl Magma<Multiplicative> for Rational {
+impl AbstractMagma<Multiplicative> for Rational {
     fn operate(mut self, lhs: Self) -> Self {
         self.a *= lhs.a;
         self.b *= lhs.b;
@@ -251,14 +251,14 @@ impl Identity<Multiplicative> for Rational {
     }
 }
 
-impl Quasigroup<Multiplicative> for Rational {}
-impl Loop<Multiplicative> for Rational {}
+impl AbstractQuasigroup<Multiplicative> for Rational {}
+impl AbstractLoop<Multiplicative> for Rational {}
 
-impl Semigroup<Multiplicative> for Rational {}
-impl Monoid<Multiplicative> for Rational {}
+impl AbstractSemigroup<Multiplicative> for Rational {}
+impl AbstractMonoid<Multiplicative> for Rational {}
 
-impl Group<Multiplicative> for Rational {}
-impl GroupAbelian<Multiplicative> for Rational {}
+impl AbstractGroup<Multiplicative> for Rational {}
+impl AbstractGroupAbelian<Multiplicative> for Rational {}
 
 impl Ring for Rational {}
 impl RingCommutative for Rational {}

@@ -21,7 +21,7 @@ macro_rules! impl_marker {
 
 macro_rules! impl_ident {
     ($M:ty; $V:expr; $($T:ty),* $(,)*) => {
-        $(impl Identity<$M> for $T { #[inline] fn id() -> $T {$V} })+
+        $(impl Identity<$M> for $T { #[inline] fn identity() -> $T {$V} })+
     }
 }
 
