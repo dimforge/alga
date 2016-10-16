@@ -95,16 +95,10 @@ pub trait SquareMatrix
     /// The determinant of this matrix.
     fn determinant(&self) -> Self::Field;
 
-    // FIXME: remove this?
     // FIXME: add an epsilon value (as for try_normalize)?
     /// Attempts to inverse `self`.
     #[inline]
-    fn try_inverse(&self) -> Option<Self>;
-
-    // FIXME: remove this?
-    /// Inverts `self` in-place. Returns false and leave `self` in a unspecified state on failure.
-    #[inline]
-    fn try_inverse_mut(&mut self) -> bool;
+    fn try_inverse(self) -> Option<Self>;
 
     /// The number of rows or column of this matrix.
     #[inline]

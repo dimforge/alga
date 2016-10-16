@@ -13,21 +13,6 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
     /// Performs an operation.
     fn operate(&self, right: &Self) -> Self;
 
-    /// Performs an operation and output the result on a buffer.
-    fn operate_to(&self, right: &Self, result: &mut Self) {
-        *result = self.operate(right);
-    }
-
-    /// Performs an operation and outputs the result in `self`.
-    fn operate_mut(&mut self, right: &Self) {
-        *self = self.operate(right)
-    }
-
-    /// Performs an operation and outputs the result in `right`.
-    fn operate_to_mut(&self, right: &mut Self) {
-        *right = self.operate(right)
-    }
-
     /// Performs specific operation.
     #[inline]
     fn op(&self, _: O, lhs: &Self) -> Self {

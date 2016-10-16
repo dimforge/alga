@@ -26,7 +26,7 @@ pub trait SubsetOf<T>: Sized {
     /// Must return `None` if `element` has no equivalent in `Self`.
     fn from_superset(element: &T) -> Option<Self> {
         if Self::is_in_subset(element) {
-            Some(Self::from_superset_unchecked(element))
+            Some(unsafe { Self::from_superset_unchecked(element) })
         }
         else {
             None
@@ -34,7 +34,7 @@ pub trait SubsetOf<T>: Sized {
     }
 
     /// Use with care! Same as `self.to_superset` but without any property checks. Always succeeds.
-    fn from_superset_unchecked(element: &T) -> Self;
+    unsafe fn from_superset_unchecked(element: &T) -> Self;
 
     /// Checks if `element` is actually part of the subset `Self` (and can be converted to it).
     fn is_in_subset(element: &T) -> bool;
@@ -64,7 +64,7 @@ pub trait SupersetOf<T>: Sized {
     /// Must return `None` if `element` has no equivalent in `Self`.
     fn to_subset(&self) -> Option<T> {
         if self.is_in_subset() {
-            Some(self.to_subset_unchecked())
+            Some(unsafe { self.to_subset_unchecked() })
         }
         else {
             None
@@ -75,7 +75,7 @@ pub trait SupersetOf<T>: Sized {
     fn is_in_subset(&self) -> bool;
 
     /// Use with care! Same as `self.to_subset` but without any property checks. Always succeeds.
-    fn to_subset_unchecked(&self) -> T;
+    unsafe fn to_subset_unchecked(&self) -> T;
 
     /// The inclusion map: converts `self` to the equivalent element of its superset.
     fn from_subset(element: &T) -> Self;
@@ -93,7 +93,7 @@ impl<SS: SubsetOf<SP>, SP> SupersetOf<SS> for SP {
     }
 
     #[inline]
-    fn to_subset_unchecked(&self) -> SS {
+    unsafe fn to_subset_unchecked(&self) -> SS {
         SS::from_superset_unchecked(self)
     }
 
@@ -113,7 +113,7 @@ macro_rules! impl_subset(
             }
 
             #[inline]
-            fn from_superset_unchecked(element: &$superset) -> $subset {
+            unsafe fn from_superset_unchecked(element: &$superset) -> $subset {
                 *element as $subset
             }
 

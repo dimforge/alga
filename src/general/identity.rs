@@ -221,7 +221,7 @@ impl<O: Operator, T: PartialEq + Identity<O>> SubsetOf<T> for Id<O> {
     }
 
     #[inline]
-    fn from_superset_unchecked(_: &T) -> Self {
+    unsafe fn from_superset_unchecked(_: &T) -> Self {
         Id::new()
     }
 }
