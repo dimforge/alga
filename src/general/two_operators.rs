@@ -47,10 +47,10 @@ pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
 
 #[macro_export]
 macro_rules! impl_ring(
-    ($($T:ty),* $(,)*) => {
-        impl_abelian!($crate::general::Additive; $($T),*);
-        impl_monoid!($crate::general::Multiplicative; $($T),*);
-        impl_marker!($crate::general::AbstractRing; $($T),*);
+    (<$A:ty, $M:ty> for $($T:ty);* $(;)*) => {
+        impl_abelian!(<$A> for $($T);*);
+        impl_monoid!(<$M> for $($T);*);
+        impl_marker!(AbstractRing<$A, $M>; $($T);*);
     }
 );
 
@@ -86,9 +86,9 @@ pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multipli
 
 #[macro_export]
 macro_rules! impl_ring_commutative(
-    ($($T:ty);* $(;)*) => {
-        impl_ring!($($T);*);
-        impl_marker!($crate::general::AbstractRingCommutative; $($T);*);
+    (<$A:ty, $M:ty> for $($T:ty);* $(;)*) => {
+        impl_ring!(<$A, $M> for $($T);*);
+        impl_marker!($crate::general::AbstractRingCommutative<$A, $M>; $($T);*);
     }
 );
 
@@ -100,13 +100,13 @@ pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>
 
 #[macro_export]
 macro_rules! impl_field(
-    ($($T:ty);* $(;)*) => {
-        impl_ring_commutative!($($T);*);
-        impl_marker!($crate::general::AbstractQuasigroup<Multiplicative>; $($T);*);
-        impl_marker!($crate::general::AbstractLoop<Multiplicative>; $($T);*);
-        impl_marker!($crate::general::AbstractGroup<Multiplicative>; $($T);*);
-        impl_marker!($crate::general::AbstractGroupAbelian<Multiplicative>; $($T);*);
-        impl_marker!($crate::general::AbstractField; $($T);*);
+    (<$A:ty, $M:ty> for $($T:ty);* $(;)*) => {
+        impl_ring_commutative!(<$A, $M> for $($T);*);
+        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T);*);
+        impl_marker!($crate::general::AbstractLoop<$M>; $($T);*);
+        impl_marker!($crate::general::AbstractGroup<$M>; $($T);*);
+        impl_marker!($crate::general::AbstractGroupAbelian<$M>; $($T);*);
+        impl_marker!($crate::general::AbstractField<$A, $M>; $($T);*);
     }
 );
 
@@ -115,6 +115,5 @@ macro_rules! impl_field(
  * Implementations.
  *
  */
-impl_marker!(AbstractRing<Additive, Multiplicative>; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractRingCommutative<Additive, Multiplicative>; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractField<Additive, Multiplicative>; f32; f64);
+impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64);
+impl_field!(<Additive, Multiplicative> for f32; f64);

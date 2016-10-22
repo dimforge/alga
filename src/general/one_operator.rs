@@ -56,8 +56,8 @@ pub trait AbstractQuasigroup<O: Operator>
 
 #[macro_export]
 macro_rules! impl_quasigroup(
-    ($M:ty; $($($T:tt)+);* $(;)*) => {
-        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($($T)+);*);
+    (<$M:ty> for $($T:tt)+) => {
+        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T)+);
     }
 );
 
@@ -87,8 +87,8 @@ pub trait AbstractSemigroup<O: Operator> : PartialEq + AbstractMagma<O> {
 
 #[macro_export]
 macro_rules! impl_semigroup(
-    ($M:ty; $($($T:tt)+);* $(;)*) => {
-        impl_marker!($crate::general::AbstractSemigroup<$M>; $($($T)+);*);
+    (<$M:ty> for $($T:tt)+) => {
+        impl_marker!($crate::general::AbstractSemigroup<$M>; $($T)+);
     }
 );
 
@@ -108,9 +108,9 @@ pub trait AbstractLoop<O: Operator>
 
 #[macro_export]
 macro_rules! impl_loop(
-    ($M:ty; $($($T:tt)+);* $(;)*) => {
-        impl_quasigroup!($M; $($($T)+);*);
-        impl_marker!($crate::general::AbstractLoop<$M>; $($($T)+);*);
+    (<$M:ty> for $($T:tt)+) => {
+        impl_quasigroup!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractLoop<$M>; $($T)+);
     }
 );
 
@@ -137,15 +137,15 @@ pub trait AbstractMonoid<O: Operator>
     fn prop_operating_identity_element_is_noop(a: Self) -> bool
         where Self: Eq {
         a.operate(&Self::identity()) == a &&
-        Self::identity().operate(&a)     == a
+        Self::identity().operate(&a) == a
     }
 }
 
 #[macro_export]
 macro_rules! impl_monoid(
-    ($M:ty; $($($T:tt)+);* $(;)*) => {
-        impl_semigroup!($M; $($($T)+);*);
-        impl_marker!($crate::general::AbstractMonoid<$M>; $($($T)+);*);
+    (<$M:ty> for $($T:tt)+) => {
+        impl_semigroup!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractMonoid<$M>; $($T)+);
     }
 );
 
@@ -156,11 +156,11 @@ pub trait AbstractGroup<O: Operator>
 
 #[macro_export]
 macro_rules! impl_group(
-    ($M:ty; $($($T:tt)+);* $(;)*) => {
-        impl_monoid!($M; $($($T)+);*);
-        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($($T)+);*);
-        impl_marker!($crate::general::AbstractLoop<$M>; $($($T)+);*);
-        impl_marker!($crate::general::AbstractGroup<$M>; $($($T)+);*);
+    (<$M:ty> for $($T:tt)+) => {
+        impl_monoid!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractLoop<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractGroup<$M>; $($T)+);
     }
 );
 
@@ -190,9 +190,9 @@ pub trait AbstractGroupAbelian<O: Operator>
 
 #[macro_export]
 macro_rules! impl_abelian(
-    ($M:ty; $($($T:tt)+);* $(;)*) => {
-        impl_group!($M; $($($T)+);*);
-        impl_marker!($crate::general::AbstractGroupAbelian<$M>; $($($T)+);*);
+    (<$M:ty> for $($T:tt)+) => {
+        impl_group!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractGroupAbelian<$M>; $($T)+);
     }
 );
 
@@ -218,20 +218,5 @@ macro_rules! impl_magma(
 impl_magma!(Additive; add; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 impl_magma!(Multiplicative; mul; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
-impl_marker!(AbstractQuasigroup<Additive>; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractQuasigroup<Multiplicative>; f32; f64);
-
-impl_marker!(AbstractMonoid<Additive>; u8; u16; u32; u64; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractMonoid<Multiplicative>; u8; u16; u32; u64; i8; i16; i32; i64; f32; f64);
-
-impl_marker!(AbstractSemigroup<Additive>; u8; u16; u32; u64; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractSemigroup<Multiplicative>; u8; u16; u32; u64; i8; i16; i32; i64; f32; f64);
-
-impl_marker!(AbstractLoop<Additive>; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractLoop<Multiplicative>; f32; f64);
-
-impl_marker!(AbstractGroup<Additive>; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractGroup<Multiplicative>; f32; f64);
-
-impl_marker!(AbstractGroupAbelian<Additive>; i8; i16; i32; i64; f32; f64);
-impl_marker!(AbstractGroupAbelian<Multiplicative>; f32; f64);
+impl_monoid!(<Additive> for u8; u16; u32; u64);
+impl_monoid!(<Multiplicative> for u8; u16; u32; u64);

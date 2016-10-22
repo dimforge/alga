@@ -80,7 +80,7 @@ impl<Scalar: AbstractField> Identity<Additive> for Vec2<Scalar> {
     }
 }
 
-impl_abelian!(Additive; Vec2<Scalar> where Scalar: AbstractField);
+impl_abelian!(<Additive> for Vec2<Scalar> where Scalar: AbstractField);
 
 impl<Scalar: AbstractField> AbstractModule for Vec2<Scalar> {
     type AbstractRing = Scalar;
@@ -251,7 +251,7 @@ impl Identity<Multiplicative> for Rational {
     }
 }
 
-impl_field!(Rational);
+impl_field!(<Additive, Multiplicative> for Rational);
 
 fn main() {
     let vec = || W::<_, Additive, Multiplicative>::new(Vec2::new(Rational::new(1, 2), Rational::whole(3)));
