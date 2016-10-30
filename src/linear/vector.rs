@@ -50,7 +50,7 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
     fn angle(&self, other: &Self) -> Self::Real {
         let prod = self.inner_product(other);
         let n1   = self.norm();
-        let n2   = self.norm();
+        let n2   = other.norm();
 
         if n1 == num::zero() || n2 == num::zero() {
             num::zero()
@@ -58,7 +58,15 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
         else {
             let cang = prod / (n1 * n2);
 
-            cang.acos()
+            if cang > num::one() {
+                num::zero()
+            }
+            else if cang < -num::one::<Self::Real>() {
+                Self::Real::pi()
+            }
+            else {
+                cang.acos()
+            }
         }
     }
 }
@@ -96,16 +104,20 @@ pub trait FiniteDimVectorSpace: VectorSpace {
     unsafe fn component_unchecked(&self, i: usize) -> Self::Field;
 }
 
-/// A finite-dimenisonal vector space equipped with an inner product that must coincide
+/// A finite-dimensional vector space equipped with an inner product that must coincide
 /// with the dot product.
 pub trait FiniteDimInnerSpace: InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real> {
+
+    /// Orthonormalizes the given family of vectors. The largest free family of vectors is moved at
+    /// the beginning of the array and its size is returned. Vectors at an indices larger or equal to
+    /// this length can be modified to an arbitrary value.
+    fn orthonormalize(vs: &mut [Self]) -> usize;
+
     /// Applies the given closure to each element of the orthonormal basis of the subspace
     /// orthogonal to free family of vectors `vs`. If `vs` is not a free family, the result is
     /// unspecified.
     // XXX: return an iterator instead when `-> impl Iterator` will be supported by Rust.
     fn orthonormal_subspace_basis<F: FnMut(&Self) -> bool>(vs: &[Self], f: F);
-
-    // FIXME: add another method to orthogonalize a non-free family of vector?
 }
 
 /// A set points associated with a vector space and a transitive and free additive group action

@@ -36,7 +36,7 @@ pub trait AffineTransformation<E: EuclideanSpace>: Transformation<E> {
     /// The type of the pure translation part of this affine transformation.
     type Translation:  Translation<E>;
 
-    /// Decomposes this affine transformaton into a rotation followed by a non-uniform scaling,
+    /// Decomposes this affine transformation into a rotation followed by a non-uniform scaling,
     /// followed by a rotation, followed by a translation.
     fn decompose(&self) -> (Self::Translation, Self::PostRotation,
                             Self::NonUniformScaling, Self::PreRotation);
@@ -198,7 +198,7 @@ pub trait Translation<E: EuclideanSpace>: DirectIsometry<E> /* + SubsetOf<E::Vec
         Self::from_vector(&(self.to_vector() * n))
     }
 
-    /// The translation needed to make `a` coinside with `b`, i.e., `b = a * translation_to(a, b)`.
+    /// The translation needed to make `a` coincide with `b`, i.e., `b = a * translation_to(a, b)`.
     #[inline]
     fn translation_between(a: &E, b: &E) -> Option<Self> {
         Self::from_vector(&(b.clone() - a.clone()))
@@ -212,9 +212,9 @@ pub trait Rotation<E: EuclideanSpace>: OrthogonalTransformation<E> + DirectIsome
     fn powf(&self, n: E::Real) -> Option<Self>;
 
     /// Computes a simple rotation that makes the angle between `a` and `b` equal to zero, i.e.,
-    /// `b.angle(a * delta_rotation(a, b)) = 0`. If `a` and `b` are colinear, the computed rotation
-    /// may not be unique. Returns `None` if no such simple rotation exists in the subgroup
-    /// represented by `Self`.
+    /// `b.angle(a * delta_rotation(a, b)) = 0`. If `a` and `b` are collinear, the computed
+    /// rotation may not be unique. Returns `None` if no such simple rotation exists in the
+    /// subgroup represented by `Self`.
     fn rotation_between(a: &E::Vector, b: &E::Vector) -> Option<Self>;
 }
 
