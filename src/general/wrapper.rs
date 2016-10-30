@@ -1,108 +1,148 @@
 //! Wrappers that attach an algebraic structure with a value type.
 
 use std::ops::{Add, Neg, Sub, Mul, Div};
+use std::cmp::{PartialOrd, Ordering};
 use std::fmt::{Display, Formatter, Error};
+use std::marker::PhantomData;
 
-use general::{Op, Inverse, Recip, Additive, Identity, Multiplicative};
-use numeric::ApproxEq;
+use approx::ApproxEq;
 
-use general::Magma;
-use general::Quasigroup;
+use general::{Operator, Inverse};
+use general::AbstractMagma;
+use general::AbstractQuasigroup;
 
 /// Wrapper that allows to use operators on algebraic types.
-#[derive(Clone, Copy, PartialOrd, PartialEq, Debug)]
-pub struct Wrapper<M>(pub M);
+#[derive(Debug)]
+pub struct Wrapper<T, A, M> {
+    pub val: T,
+    _add: PhantomData<A>,
+    _mul: PhantomData<M>,
+}
 
-impl<M: Display> Display for Wrapper<M> {
+impl<T: Copy, A, M> Copy for Wrapper<T, A, M> { }
+
+impl<T: Clone, A, M> Clone for Wrapper<T, A, M> {
+    fn clone(&self) -> Self {
+        Wrapper::new(self.val.clone())
+    }
+}
+
+impl<T: PartialOrd, A, M> PartialOrd for Wrapper<T, A, M> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.val.partial_cmp(&other.val)
+    }
+}
+
+impl<T: PartialEq, A, M> PartialEq for Wrapper<T, A, M> {
+    fn eq(&self, other: &Self) -> bool {
+        self.val == other.val
+    }
+}
+
+impl<T, A, M> Wrapper<T, A, M> {
+    pub fn new(val: T) -> Self {
+        Wrapper {
+            val: val,
+            _add: PhantomData,
+            _mul: PhantomData
+        }
+    }
+}
+
+impl<T: Display, A: Operator, M: Operator> Display for Wrapper<T, A, M> {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
-        self.0.fmt(fmt)
+        self.val.fmt(fmt)
     }
 }
 
-/// Creates wrapper with identity value for a specific operator.
-pub fn id<O: Op, M>(_: O) -> Wrapper<M>
-where M: Identity<O>
-{
-    Wrapper(Identity::<O>::id())
-}
+impl<T: ApproxEq, A, M> ApproxEq for Wrapper<T, A, M> {
+    type Epsilon = T::Epsilon;
 
-impl<M> ApproxEq for Wrapper<M>
-where M: ApproxEq
-{
-    type Epsilon = M::Epsilon;
-
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
-        M::default_epsilon()
+        T::default_epsilon()
     }
 
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
-        M::default_max_relative()
+        T::default_max_relative()
     }
 
+    #[inline]
     fn default_max_ulps() -> u32 {
-        M::default_max_ulps()
+        T::default_max_ulps()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
-        self.0.relative_eq(&other.0, epsilon, max_relative)
+        self.val.relative_eq(&other.val, epsilon, max_relative)
     }
 
+    #[inline]
     fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
-        self.0.ulps_eq(&other.0, epsilon, max_ulps)
+        self.val.ulps_eq(&other.val, epsilon, max_ulps)
     }
 }
 
-impl<M> Add<Wrapper<M>> for Wrapper<M>
-where M: Magma<Additive>
+impl<T, A: Operator, M> Add<Wrapper<T, A, M>> for Wrapper<T, A, M>
+where T: AbstractMagma<A>
 {
     type Output = Self;
+
+    #[inline]
     fn add(self, lhs: Self) -> Self {
-        Wrapper(self.0.operate(lhs.0))
+        Wrapper::new(self.val.operate(&lhs.val))
     }
 }
 
-impl<M> Neg for Wrapper<M>
-where M: Quasigroup<Additive>
+impl<T, A: Operator, M> Neg for Wrapper<T, A, M>
+where T: AbstractQuasigroup<A>
 {
     type Output = Self;
+
+    #[inline]
     fn neg(mut self) -> Self {
-        self.0 = self.0.inv();
+        self.val = self.val.inverse();
         self
     }
 }
 
-impl<M> Sub<Wrapper<M>> for Wrapper<M>
-where M: Quasigroup<Additive>
+impl<T, A: Operator, M> Sub<Wrapper<T, A, M>> for Wrapper<T, A, M>
+where T: AbstractQuasigroup<A>
 {
     type Output = Self;
+
+    #[inline]
     fn sub(self, lhs: Self) -> Self {
         self + -lhs
     }
 }
 
-impl<M> Mul<Wrapper<M>> for Wrapper<M>
-where M: Magma<Multiplicative>
+impl<T, A, M: Operator> Mul<Wrapper<T, A, M>> for Wrapper<T, A, M>
+where T: AbstractMagma<M>
 {
     type Output = Self;
+
+    #[inline]
     fn mul(self, lhs: Self) -> Self {
-        Wrapper(self.0.operate(lhs.0))
+        Wrapper::new(self.val.operate(&lhs.val))
     }
 }
 
-impl<M> Recip for Wrapper<M>
-where M: Quasigroup<Multiplicative>
-{
-    type Result = Self;
-    fn recip(self) -> Self {
-        Wrapper(self.0.inv())
+impl<T, A, M: Operator> Inverse<M> for Wrapper<T, A, M>
+where T: AbstractQuasigroup<M> {
+    #[inline]
+    fn inverse(&self) -> Self {
+        Wrapper::new(self.val.inverse())
     }
 }
 
-impl<M> Div<Wrapper<M>> for Wrapper<M>
-where M: Quasigroup<Multiplicative>
-{
+impl<T, A, M: Operator> Div<Wrapper<T, A, M>> for Wrapper<T, A, M>
+where T: AbstractQuasigroup<M> {
     type Output = Self;
+
+    #[inline]
     fn div(self, lhs: Self) -> Self {
-        self * lhs.inv()
+        self * lhs.inverse()
     }
 }

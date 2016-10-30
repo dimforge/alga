@@ -13,6 +13,5 @@ matrix:
     - rust: beta
 script:
   - cargo build --verbose
-  - if [ "$TEST_SUITE" = "suite_nightly" ]; then
-      cargo test --verbose;
-    fi
+  - cargo test --verbose;
+  - cargo run --example vectors;
