@@ -16,7 +16,7 @@ use general::{Field, SubsetOf, SupersetOf};
 // allow a blancket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 pub trait Real: SubsetOf<Self> + SupersetOf<f64> + Field + Copy + Num + FromPrimitive +
                 Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
-                ApproxEq + PartialOrd {
+                ApproxEq<Epsilon = Self> + PartialOrd {
     fn floor(self) -> Self;
     fn ceil(self) -> Self;
     fn round(self) -> Self;
