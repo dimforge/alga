@@ -26,11 +26,11 @@
 //! Let `Self` be a set. Here is a list of the most common properties those operator may fulfill:
 //!
 //! ~~~notrust
-//! (Closure)       a, b ∈ Self ⇒ a ∘ b ∈ Self, 
+//! (Closure)       a, b ∈ Self ⇒ a ∘ b ∈ Self,
 //! (Divisibility)  ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
 //! (Invertibility) ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
 //!                 If the right and left inverse are equal they are usually noted r = l = a⁻¹.
-//! (Associativity) ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)       
+//! (Associativity) ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)
 //! (Neutral Elt.)  ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 //! (Commutativity) ∀ a, b ∈ Self, a ∘ b = b ∘ a
 //! ~~~
@@ -88,7 +88,7 @@
 //! ## Ring-like structures
 //!
 //! ~~~notrust
-//!      GroupAbelian           Monoid              
+//!      GroupAbelian           Monoid
 //!           \________   ________/
 //!                    \ /
 //!                     |
@@ -166,6 +166,7 @@ pub use self::specialized::{
     Ring, RingCommutative, Field, Module};
 pub use self::real::Real;
 
+#[macro_use]
 mod one_operator;
 mod two_operators;
 mod module;

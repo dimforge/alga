@@ -54,11 +54,18 @@ pub trait AbstractQuasigroup<O: Operator>
     }
 }
 
+#[macro_export]
+macro_rules! impl_quasigroup(
+    (<$M:ty> for $($T:tt)+) => {
+        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T)+);
+    }
+);
+
 
 /// An associative magma.
 ///
 /// ~~~notrust
-/// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)       
+/// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)
 /// ~~~
 pub trait AbstractSemigroup<O: Operator> : PartialEq + AbstractMagma<O> {
     /// Returns `true` if associativity holds for the given arguments. Approximate equality is used
@@ -78,6 +85,14 @@ pub trait AbstractSemigroup<O: Operator> : PartialEq + AbstractMagma<O> {
     }
 }
 
+#[macro_export]
+macro_rules! impl_semigroup(
+    (<$M:ty> for $($T:tt)+) => {
+        impl_marker!($crate::general::AbstractSemigroup<$M>; $($T)+);
+    }
+);
+
+
 /// A quasigroup with an unique identity element.
 ///
 /// The left inverse `r` and right inverse `l` are not required to be equal.
@@ -90,6 +105,14 @@ pub trait AbstractLoop<O: Operator>
     : AbstractQuasigroup<O>
     + Identity<O>
 { }
+
+#[macro_export]
+macro_rules! impl_loop(
+    (<$M:ty> for $($T:tt)+) => {
+        impl_quasigroup!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractLoop<$M>; $($T)+);
+    }
+);
 
 
 /// A semigroup equipped with an identity element.
@@ -114,14 +137,32 @@ pub trait AbstractMonoid<O: Operator>
     fn prop_operating_identity_element_is_noop(a: Self) -> bool
         where Self: Eq {
         a.operate(&Self::identity()) == a &&
-        Self::identity().operate(&a)     == a
+        Self::identity().operate(&a) == a
     }
 }
+
+#[macro_export]
+macro_rules! impl_monoid(
+    (<$M:ty> for $($T:tt)+) => {
+        impl_semigroup!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractMonoid<$M>; $($T)+);
+    }
+);
 
 /// A group is a loop and a monoid at the same time.
 pub trait AbstractGroup<O: Operator>
     : AbstractLoop<O> + AbstractMonoid<O>
 { }
+
+#[macro_export]
+macro_rules! impl_group(
+    (<$M:ty> for $($T:tt)+) => {
+        impl_monoid!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractLoop<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractGroup<$M>; $($T)+);
+    }
+);
 
 /// An commutative group.
 ///
@@ -147,7 +188,13 @@ pub trait AbstractGroupAbelian<O: Operator>
     }
 }
 
-
+#[macro_export]
+macro_rules! impl_abelian(
+    (<$M:ty> for $($T:tt)+) => {
+        impl_group!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractGroupAbelian<$M>; $($T)+);
+    }
+);
 
 /*
  *
@@ -171,20 +218,5 @@ macro_rules! impl_magma(
 impl_magma!(Additive; add; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 impl_magma!(Multiplicative; mul; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
 
-impl_marker!(AbstractQuasigroup<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractQuasigroup<Multiplicative>; f32, f64);
-
-impl_marker!(AbstractMonoid<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractMonoid<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
-
-impl_marker!(AbstractSemigroup<Additive>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractSemigroup<Multiplicative>; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64);
-
-impl_marker!(AbstractLoop<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractLoop<Multiplicative>; f32, f64);
-
-impl_marker!(AbstractGroup<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractGroup<Multiplicative>; f32, f64);
-
-impl_marker!(AbstractGroupAbelian<Additive>; i8, i16, i32, i64, f32, f64);
-impl_marker!(AbstractGroupAbelian<Multiplicative>; f32, f64);
+impl_monoid!(<Additive> for u8; u16; u32; u64);
+impl_monoid!(<Multiplicative> for u8; u16; u32; u64);
