@@ -140,12 +140,14 @@
 //!
 //! For example:
 //!
-//! ~~~
-//! # use algebra::general::SemigroupMultiplicative;
-//! #[quickcheck]
-//! fn prop_mul_is_associative(args: (i32, i32, i32)) -> bool {
-//!     SemigroupMultiplicative::prop_mul_is_associative(args)
-//! }
+//! ~~~.ignore
+//! use algebra::general::SemigroupMultiplicative;
+//!
+//! quickcheck! (
+//!     fn prop_mul_is_associative(args: (i32, i32, i32)) -> bool {
+//!         SemigroupMultiplicative::prop_mul_is_associative(args)
+//!     }
+//! );
 //! ~~~
 
 pub use self::operator::{Inverse, Operator, Multiplicative, Additive,

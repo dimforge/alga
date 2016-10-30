@@ -16,5 +16,4 @@ num-traits = "0.1"
 approx = "0.1"
 
 [dev-dependencies]
-quickcheck = "0.2"
-#quickcheck_macros = "0.2"
+quickcheck = "0.3"
