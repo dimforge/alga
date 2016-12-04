@@ -2,7 +2,8 @@ use num;
 
 use general::{Identity, Id};
 use linear::{InnerSpace, EuclideanSpace, Transformation, AffineTransformation, Scaling, Similarity,
-             Isometry, DirectIsometry, OrthogonalTransformation, Translation, Rotation};
+             Isometry, DirectIsometry, OrthogonalTransformation, Translation, Rotation,
+             ProjectiveTransformation};
 
 /*
  * Implementation of linear algebra structures for the ubiquitous identity element.
@@ -14,35 +15,65 @@ impl<E: EuclideanSpace> Transformation<E> for Id {
     }
 
     #[inline]
-    fn transform_vector(&self, v: &E::Vector) -> E::Vector {
+    fn transform_vector(&self, v: &E::Coordinates) -> E::Coordinates {
         v.clone()
     }
+}
 
+impl<E: EuclideanSpace> ProjectiveTransformation<E> for Id {
     #[inline]
     fn inverse_transform_point(&self, pt: &E) -> E {
         pt.clone()
     }
 
     #[inline]
-    fn inverse_transform_vector(&self, v: &E::Vector) -> E::Vector {
+    fn inverse_transform_vector(&self, v: &E::Coordinates) -> E::Coordinates {
         v.clone()
     }
 }
 
 impl<E: EuclideanSpace> AffineTransformation<E> for Id {
-    type PreRotation       = Id;
+    type Rotation          = Id;
     type NonUniformScaling = Id;
-    type PostRotation      = Id;
     type Translation       = Id;
 
     #[inline]
     fn decompose(&self) -> (Id, Id, Id, Id) {
         (Id::new(), Id::new(), Id::new(), Id::new())
     }
+
+    #[inline]
+    fn append_translation(&self, _: &Self::Translation) -> Self {
+        *self
+    }
+
+    #[inline]
+    fn prepend_translation(&self, _: &Self::Translation) -> Self {
+        *self
+    }
+
+    #[inline]
+    fn append_rotation(&self, _: &Self::Rotation) -> Self {
+        *self
+    }
+
+    #[inline]
+    fn prepend_rotation(&self, _: &Self::Rotation) -> Self {
+        *self
+    }
+
+    #[inline]
+    fn append_scaling(&self, _: &Self::NonUniformScaling) -> Self {
+        *self
+    }
+
+    #[inline]
+    fn prepend_scaling(&self, _: &Self::NonUniformScaling) -> Self {
+        *self
+    }
 }
 
 impl<E: EuclideanSpace> Similarity<E> for Id {
-    type Rotation = Id;
     type Scaling  = Id;
 
     #[inline]
@@ -74,7 +105,7 @@ impl<E: EuclideanSpace> Rotation<E> for Id {
     }
 
     #[inline]
-    fn rotation_between(a: &E::Vector, b: &E::Vector) -> Option<Self> {
+    fn rotation_between(a: &E::Coordinates, b: &E::Coordinates) -> Option<Self> {
         if a.angle(b) == num::zero() {
             Some(Id::new())
         }
@@ -82,17 +113,22 @@ impl<E: EuclideanSpace> Rotation<E> for Id {
             None
         }
     }
+
+    #[inline]
+    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, _: E::Real) -> Option<Self> {
+        Rotation::<E>::rotation_between(a, b)
+    }
 }
 
 impl<E: EuclideanSpace> Translation<E> for Id {
     #[inline]
-    fn to_vector(&self) -> E::Vector {
-        E::Vector::identity()
+    fn to_vector(&self) -> E::Coordinates {
+        E::Coordinates::identity()
     }
 
     #[inline]
-    fn from_vector(v: &E::Vector) -> Option<Self> {
-        if *v == E::Vector::identity() {
+    fn from_vector(v: E::Coordinates) -> Option<Self> {
+        if v == E::Coordinates::identity() {
             Some(Id::new())
         }
         else {
