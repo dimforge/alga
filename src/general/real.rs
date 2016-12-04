@@ -1,10 +1,12 @@
-use num::{Num, FromPrimitive};
+use std::any::Any;
+use num::{Num, FromPrimitive, Signed, Bounded};
 use std::{f32, f64};
+use std::fmt::{Debug, Display};
 use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
 
 use approx::ApproxEq;
 
-use general::{Field, SubsetOf, SupersetOf};
+use general::{Field, SubsetOf, SupersetOf, Lattice};
 
 #[allow(missing_docs)]
 
@@ -16,7 +18,9 @@ use general::{Field, SubsetOf, SupersetOf};
 // allow a blancket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 pub trait Real: SubsetOf<Self> + SupersetOf<f64> + Field + Copy + Num + FromPrimitive +
                 Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
-                ApproxEq<Epsilon = Self> + PartialOrd {
+                ApproxEq<Epsilon = Self> + Lattice + PartialEq + Signed +
+                Send + Sync + Any + 'static + Debug + Display + // NOTE: make all types debuggable/'static/Any ? This seems essencial for any kind of generic programming.
+                Bounded { // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
     fn floor(self) -> Self;
     fn ceil(self) -> Self;
     fn round(self) -> Self;

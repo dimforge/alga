@@ -72,7 +72,7 @@
 //!          commutativity
 //!                |
 //!                V
-//!           AbstractGroupAbelian
+//!      AbstractGroupAbelian
 //! ~~~
 //!
 //! The following traits are provided:

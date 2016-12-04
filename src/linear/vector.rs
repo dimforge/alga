@@ -1,11 +1,11 @@
 use num;
-use std::ops::{Add, Sub, Mul, Div, MulAssign, DivAssign, Neg};
+use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg, Index, IndexMut};
 
-use general::{ClosedDiv, Module, Field, Real};
+use general::{ClosedAdd, ClosedMul, ClosedDiv, Module, Field, Real};
 
 /// A vector space has a module structure over a field instead of a ring.
-pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field> +
-                       ClosedDiv<<Self as VectorSpace>::Field> {
+pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field> /* +
+                       ClosedDiv<<Self as VectorSpace>::Field> */ {
     /// The underlying scalar field.
     type Field: Field;
 }
@@ -72,7 +72,9 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
 }
 
 /// A finite-dimensional vector space.
-pub trait FiniteDimVectorSpace: VectorSpace {
+pub trait FiniteDimVectorSpace: VectorSpace +
+                                Index<usize, Output = <Self as VectorSpace>::Field> +
+                                IndexMut<usize, Output = <Self as VectorSpace>::Field> {
     /// The vector space dimension.
     fn dimension() -> usize;
 
@@ -90,18 +92,14 @@ pub trait FiniteDimVectorSpace: VectorSpace {
     /// The i-the canonical basis element.
     fn canonical_basis_element(i: usize) -> Self;
 
-    /// Retrieves the i-th component of `Self` wrt. some basis.
-    ///
-    /// As usual, indexing starts with 0. The actual choice of basis is usually context-dependent
-    /// and is not specified to this method. It is up to the user to assume the provided component
-    /// will by wrt. the suitable basis for his application.
-    fn component(&self, i: usize) -> Self::Field;
-
     /// The dot product between two vectors.
     fn dot(&self, other: &Self) -> Self::Field;
 
-    /// Same as `.component(i)` but without bound-checking.
-    unsafe fn component_unchecked(&self, i: usize) -> Self::Field;
+    /// Same as `&self[i]` but without bound-checking.
+    unsafe fn component_unchecked(&self, i: usize) -> &Self::Field;
+
+    /// Same as `&mut self[i]` but without bound-checking.
+    unsafe fn component_unchecked_mut(&mut self, i: usize) -> &mut Self::Field;
 }
 
 /// A finite-dimensional vector space equipped with an inner product that must coincide
@@ -124,18 +122,20 @@ pub trait FiniteDimInnerSpace: InnerSpace + FiniteDimVectorSpace<Field = <Self a
 /// (the translation).
 pub trait AffineSpace: Sized + Clone + PartialEq +
                        Sub<Self, Output = <Self as AffineSpace>::Translation> +
-                       Add<<Self as AffineSpace>::Translation, Output = Self> {
+                       ClosedAdd<<Self as AffineSpace>::Translation> {
     /// The associated vector space.
     type Translation: VectorSpace;
 
     /// Same as `*self + *t`. Applies the additive group action of this affine space's associated
     /// vector space on `self`.
+    #[inline]
     fn translate_by(&self, t: &Self::Translation) -> Self {
         self.clone() + t.clone()
     }
 
     /// Same as `*self - *other`. Returns the unique element `v` of the associated vector space
     /// such that `self = right + v`.
+    #[inline]
     fn subtract(&self, right: &Self) -> Self::Translation {
         self.clone() - right.clone()
     }
@@ -143,17 +143,27 @@ pub trait AffineSpace: Sized + Clone + PartialEq +
 
 
 /// The finite-dimensional affine space based on the field of reals.
-pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Vector> {
+pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Coordinates> +
+                          // Equivalent to `.scale_by`.
+                          ClosedMul<<Self as EuclideanSpace>::Real> +
+                          // Equivalent to `.scale_by`.
+                          ClosedDiv<<Self as EuclideanSpace>::Real> +
+                          // Equivalent to `.scale_by(-1.0)`.
+                          Neg<Output = Self> {
     /// The underlying finite vector space.
-    type Vector: FiniteDimInnerSpace<Real = Self::Real> +
+    type Coordinates: FiniteDimInnerSpace<Real = Self::Real> +
                  // XXX: the following bounds should not be necessary but the compiler does not
-                 // seem to be able to find them (from the Module trait)… Also, it won't find them
-                 // even if we add ClosedMul instead of Mul and MulAssign separately…
-                 Mul<Self::Real, Output = Self::Vector> +
+                 // seem to be able to find them (from supertraits of VectorSpace)… Also, it won't
+                 // find them even if we add ClosedMul instead of Mul and MulAssign separately…
+                 Add<Self::Coordinates, Output = Self::Coordinates> +
+                 AddAssign<Self::Coordinates> +
+                 Sub<Self::Coordinates, Output = Self::Coordinates> +
+                 SubAssign<Self::Coordinates> +
+                 Mul<Self::Real, Output = Self::Coordinates> +
                  MulAssign<Self::Real>                  +
-                 Div<Self::Real, Output = Self::Vector> +
+                 Div<Self::Real, Output = Self::Coordinates> +
                  DivAssign<Self::Real>                  +
-                 Neg<Output = Self::Vector>;
+                 Neg<Output = Self::Coordinates>;
 
     // XXX: we can't write the following =( :
     // type Vector: FiniteDimInnerSpace<Field = Self::Real> + InnerSpace<Real = Self::Real>;
@@ -170,14 +180,24 @@ pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Ve
     fn origin() -> Self;
 
     /// Multiplies the distance of this point to `Self::origin()` by `s`.
+    ///
+    /// Same as self * s.
+    #[inline]
     fn scale_by(&self, s: Self::Real) -> Self {
-        Self::origin().translate_by(&(self.coordinates() * s))
+        Self::from_coordinates(self.coordinates() * s)
     }
 
-    /// The coordinates of this point, i.e., the translation from the prefered origin.
+    // FIXME: take self by-value?
+    /// The coordinates of this point, i.e., the translation from the origin.
     #[inline]
-    fn coordinates(&self) -> Self::Vector {
+    fn coordinates(&self) -> Self::Coordinates {
         self.subtract(&Self::origin())
+    }
+
+    /// Builds a point from its coordinates relative to the origin.
+    #[inline]
+    fn from_coordinates(coords: Self::Coordinates) -> Self {
+        Self::origin().translate_by(&coords)
     }
 
     /// The distance between two points.
