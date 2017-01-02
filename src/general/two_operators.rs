@@ -45,12 +45,55 @@ pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
     }
 }
 
+/// Implements the ring trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractRing, Additive, Multiplicative, Inverse, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl<T: AbstractMagma<Multiplicative>> AbstractMagma<Multiplicative> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Identity<Multiplicative>> Identity<Multiplicative> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_ring!(<Additive, Multiplicative> for Wrapper<T> where T: AbstractRing);
+/// ```
 #[macro_export]
 macro_rules! impl_ring(
-    (<$A:ty, $M:ty> for $($T:ty);* $(;)*) => {
-        impl_abelian!(<$A> for $($T);*);
-        impl_monoid!(<$M> for $($T);*);
-        impl_marker!(AbstractRing<$A, $M>; $($T);*);
+    (<$A:ty, $M:ty> for $($T:tt)+) => {
+        impl_abelian!(<$A> for $($T)+);
+        impl_monoid!(<$M> for $($T)+);
+        impl_marker!($crate::general::AbstractRing<$A, $M>; $($T)+);
     }
 );
 
@@ -84,11 +127,54 @@ pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multipli
     }
 }
 
+/// Implements the commutative ring trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractRingCommutative, Additive, Multiplicative, Inverse, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl<T: AbstractMagma<Multiplicative>> AbstractMagma<Multiplicative> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Identity<Multiplicative>> Identity<Multiplicative> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_ring!(<Additive, Multiplicative> for Wrapper<T> where T: AbstractRingCommutative);
+/// ```
 #[macro_export]
 macro_rules! impl_ring_commutative(
-    (<$A:ty, $M:ty> for $($T:ty);* $(;)*) => {
-        impl_ring!(<$A, $M> for $($T);*);
-        impl_marker!($crate::general::AbstractRingCommutative<$A, $M>; $($T);*);
+    (<$A:ty, $M:ty> for $($T:tt)+) => {
+        impl_ring!(<$A, $M> for $($T)+);
+        impl_marker!($crate::general::AbstractRingCommutative<$A, $M>; $($T)+);
     }
 );
 
@@ -98,15 +184,63 @@ pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>
     + AbstractGroupAbelian<M>
 { }
 
+/// Implements the field trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractField, Additive, Multiplicative, Inverse, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl<T: AbstractMagma<Multiplicative>> AbstractMagma<Multiplicative> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+/// impl<T: Inverse<Multiplicative>> Inverse<Multiplicative> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Multiplicative>> Identity<Multiplicative> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_field!(<Additive, Multiplicative> for Wrapper<T> where T: AbstractField);
+/// ```
 #[macro_export]
 macro_rules! impl_field(
-    (<$A:ty, $M:ty> for $($T:ty);* $(;)*) => {
-        impl_ring_commutative!(<$A, $M> for $($T);*);
-        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T);*);
-        impl_marker!($crate::general::AbstractLoop<$M>; $($T);*);
-        impl_marker!($crate::general::AbstractGroup<$M>; $($T);*);
-        impl_marker!($crate::general::AbstractGroupAbelian<$M>; $($T);*);
-        impl_marker!($crate::general::AbstractField<$A, $M>; $($T);*);
+    (<$A:ty, $M:ty> for $($T:tt)+) => {
+        impl_ring_commutative!(<$A, $M> for $($T)+);
+        impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractLoop<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractGroup<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractGroupAbelian<$M>; $($T)+);
+        impl_marker!($crate::general::AbstractField<$A, $M>; $($T)+);
     }
 );
 

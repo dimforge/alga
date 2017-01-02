@@ -13,6 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// Implements empty traits aka marker traits for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # fn main() {}
+/// trait Marker {}
+/// struct Struct;
+/// impl_marker!(Marker; u32; Struct);
+/// ```
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use std::fmt::Debug;
+/// # fn main() {}
+/// trait Marker<T: Debug> {}
+/// struct Struct<T>(T);
+/// impl_marker!(Marker<T>; Struct<T> where T: Debug);
+/// ```
 #[macro_export]
 macro_rules! impl_marker(
     // Finds the generic parameters of the type and implements the trait for it
