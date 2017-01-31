@@ -54,6 +54,31 @@ pub trait AbstractQuasigroup<O: Operator>
     }
 }
 
+/// Implements the quasigroup trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractQuasigroup, Additive, Inverse};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl_quasigroup!(<Additive> for Wrapper<T> where T: AbstractQuasigroup<Additive>);
+/// ```
 #[macro_export]
 macro_rules! impl_quasigroup(
     (<$M:ty> for $($T:tt)+) => {
@@ -85,6 +110,25 @@ pub trait AbstractSemigroup<O: Operator> : PartialEq + AbstractMagma<O> {
     }
 }
 
+/// Implements the semigroup trait for types provded.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractSemigroup, Additive};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl_semigroup!(<Additive> for Wrapper<T> where T: AbstractSemigroup<Additive>);
+/// ```
 #[macro_export]
 macro_rules! impl_semigroup(
     (<$M:ty> for $($T:tt)+) => {
@@ -106,6 +150,37 @@ pub trait AbstractLoop<O: Operator>
     + Identity<O>
 { }
 
+/// Implements the loop trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractLoop, Additive, Inverse, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_loop!(<Additive> for Wrapper<T> where T: AbstractLoop<Additive>);
+/// ```
 #[macro_export]
 macro_rules! impl_loop(
     (<$M:ty> for $($T:tt)+) => {
@@ -141,6 +216,31 @@ pub trait AbstractMonoid<O: Operator>
     }
 }
 
+/// Implements the monoid trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractMonoid, Additive, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_monoid!(<Additive> for Wrapper<T> where T: AbstractMonoid<Additive>);
+/// ```
 #[macro_export]
 macro_rules! impl_monoid(
     (<$M:ty> for $($T:tt)+) => {
@@ -154,6 +254,37 @@ pub trait AbstractGroup<O: Operator>
     : AbstractLoop<O> + AbstractMonoid<O>
 { }
 
+/// Implements the group trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractGroup, Additive, Inverse, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_group!(<Additive> for Wrapper<T> where T: AbstractGroup<Additive>);
+/// ```
 #[macro_export]
 macro_rules! impl_group(
     (<$M:ty> for $($T:tt)+) => {
@@ -188,6 +319,37 @@ pub trait AbstractGroupAbelian<O: Operator>
     }
 }
 
+/// Implements the abelian group trait for types provided.
+/// # Examples
+///
+/// ```
+/// # #[macro_use]
+/// # extern crate alga;
+/// # use alga::general::{AbstractMagma, AbstractGroupAbelian, Additive, Inverse, Identity};
+/// # fn main() {}
+/// #[derive(PartialEq, Clone)]
+/// struct Wrapper<T>(T);
+///
+/// impl<T: AbstractMagma<Additive>> AbstractMagma<Additive> for Wrapper<T> {
+///     fn operate(&self, right: &Self) -> Self {
+///         Wrapper(self.0.operate(&right.0))
+///     }
+/// }
+///
+/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
+///     fn inverse(&self) -> Self {
+///         Wrapper(self.0.inverse())
+///     }
+/// }
+///
+/// impl<T: Identity<Additive>> Identity<Additive> for Wrapper<T> {
+///     fn identity() -> Self {
+///         Wrapper(T::identity())
+///     }
+/// }
+///
+/// impl_abelian!(<Additive> for Wrapper<T> where T: AbstractGroupAbelian<Additive>);
+/// ```
 #[macro_export]
 macro_rules! impl_abelian(
     (<$M:ty> for $($T:tt)+) => {
