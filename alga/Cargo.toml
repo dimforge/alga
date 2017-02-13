@@ -1,0 +1,23 @@
+[package]
+name = "alga"
+version = "0.5.1"
+authors = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet"]
+description = "Abstract algebra for Rust"
+keywords = ["algebra", "monoids", "math"]
+categories = ["Science"]
+readme = "README.md"
+repository = "https://github.com/sebcrozet/alga"
+documentation = "https://docs.rs/alga"
+license = "Apache-2.0"
+
+[lib]
+name = "alga"
+
+[dependencies]
+num-traits  = "0.1"
+num-complex = "0.1"
+approx      = "0.1"
+
+[dev-dependencies]
+quickcheck = "0.3"
+alga_derive = {path = "../alga_derive"}
