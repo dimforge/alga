@@ -4,7 +4,11 @@ documented here.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.4.0] - WIP
+## [0.5.0]
+  * Traits are now also implemented for `Complex`.
+  * `AbstractModule` now inherit from `AdditiveGroupAbelian` as well.
+
+## [0.4.0]
   * The `Real` trait now includes some commonly implemented markers, e.g.,
     Sync, Any, 'static, etc.
   * The `Module` trait no longer inherit from operator overload traits. This is
