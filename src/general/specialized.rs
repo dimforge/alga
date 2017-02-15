@@ -44,9 +44,9 @@ specialize_structures!(Field,           AbstractField:           RingCommutative
 
 /// A module which overloads the `*` and `+` operators.
 pub trait Module: AbstractModule<AbstractRing = <Self as Module>::Ring> +
-                    AdditiveGroupAbelian /* +
+                    AdditiveGroupAbelian +
                     ClosedMul<<Self as Module>::Ring>
-                  */ {
+                  {
     /// The underlying scalar field.
     type Ring: RingCommutative;
 }

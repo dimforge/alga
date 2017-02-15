@@ -21,6 +21,7 @@
 #![deny(missing_docs)]
 
 extern crate num_traits as num;
+extern crate num_complex;
 #[macro_use]
 extern crate approx;
 

@@ -3,7 +3,8 @@ use std::marker::PhantomData;
 use std::cmp::{PartialOrd, Ordering};
 use std::fmt;
 
-use num::{Zero, One};
+use num::{Num, Zero, One};
+use num_complex::Complex;
 
 use approx::ApproxEq;
 
@@ -21,6 +22,23 @@ impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64);
 impl_ident!(Additive; 0.; f32, f64);
 impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64);
 impl_ident!(Multiplicative; 1.; f32, f64);
+
+impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
+    #[inline]
+    fn identity() -> Self {
+        Complex {
+            re: N::identity(),
+            im: N::identity()
+        }
+    }
+}
+
+impl<N: Num + Clone> Identity<Multiplicative> for Complex<N> {
+    #[inline]
+    fn identity() -> Self {
+        Complex::new(N::one(), N::zero())
+    }
+}
 
 
 /// The universal identity element wrt. a given operator, usually noted `Id` with a

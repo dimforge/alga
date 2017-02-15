@@ -1,6 +1,9 @@
 //! Operators traits and structures.
 pub use std::ops::{Add, Sub, Mul, Div, Rem, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
 
+use num::Num;
+use num_complex::Complex;
+
 
 /// Trait implemented by types representing abstract operators.
 pub trait Operator: Copy {
@@ -74,6 +77,16 @@ macro_rules! impl_additive_inverse(
 
 impl_additive_inverse!(i8, i16, i32, i64, f32, f64);
 
+impl<N: Inverse<Additive>> Inverse<Additive> for Complex<N> {
+    #[inline]
+    fn inverse(&self) -> Complex<N> {
+        Complex {
+            re: self.re.inverse(),
+            im: self.im.inverse()
+        }
+    }
+}
+
 impl Inverse<Multiplicative> for f32 {
     #[inline]
     fn inverse(&self) -> f32 {
@@ -85,6 +98,13 @@ impl Inverse<Multiplicative> for f64 {
     #[inline]
     fn inverse(&self) -> f64 {
         1.0 / self
+    }
+}
+
+impl<N: Num + Clone + ClosedNeg> Inverse<Multiplicative> for Complex<N> {
+    #[inline]
+    fn inverse(&self) -> Self {
+        self.inv()
     }
 }
 

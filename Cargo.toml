@@ -12,8 +12,9 @@ license = "Apache-2.0"
 name = "alga"
 
 [dependencies]
-num-traits = "0.1"
-approx = "0.1"
+num-traits  = "0.1"
+num-complex = "0.1"
+approx      = "0.1"
 
 [dev-dependencies]
 quickcheck = "0.3"

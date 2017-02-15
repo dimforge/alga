@@ -1,7 +1,10 @@
+use num::Zero;
+use num_complex::Complex;
+
 /// Nested sets and conversions between them (using an injective mapping). Useful to work with
 /// substructures. In generic code, it is preferable to use `SupersetOf` as trait bound whenever
 /// possible instead of `SubsetOf` (because SupersetOf is automatically implemented whenever
-/// `SubsetOf` is.
+/// `SubsetOf` is).
 ///
 /// The notion of "nested sets" is very broad and applies to what the types are _supposed to
 /// represent_, independently from their actual implementation details and limitations. For
@@ -141,4 +144,58 @@ impl_subset!(
 
     f32 as f32, f64;
     f64 as f32, f64;
+);
+
+
+impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
+    #[inline]
+    fn to_superset(&self) -> Complex<N2> {
+        Complex {
+            re: N2::from_subset(&self.re),
+            im: N2::from_subset(&self.im)
+        }
+    }
+
+    #[inline]
+    unsafe fn from_superset_unchecked(element: &Complex<N2>) -> Complex<N1> {
+        Complex {
+            re: element.re.to_subset_unchecked(),
+            im: element.im.to_subset_unchecked()
+        }
+    }
+
+    #[inline]
+    fn is_in_subset(c: &Complex<N2>) -> bool {
+        c.re.is_in_subset() && c.im.is_in_subset()
+    }
+}
+
+macro_rules! impl_scalar_subset_of_complex(
+    ($($t: ident),*) => {$(
+        impl<N2: Zero + SupersetOf<$t>> SubsetOf<Complex<N2>> for $t {
+            #[inline]
+            fn to_superset(&self) -> Complex<N2> {
+                Complex {
+                    re: N2::from_subset(self),
+                    im: N2::zero()
+                }
+            }
+
+            #[inline]
+            unsafe fn from_superset_unchecked(element: &Complex<N2>) -> $t {
+                element.re.to_subset_unchecked()
+            }
+
+            #[inline]
+            fn is_in_subset(c: &Complex<N2>) -> bool {
+                c.re.is_in_subset() && c.im.is_zero()
+            }
+        }
+    )*}
+);
+
+impl_scalar_subset_of_complex!(
+    u8, u16, u32, u64, usize,
+    i8, i16, i32, i64, isize,
+    f32, f64
 );

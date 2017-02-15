@@ -1,6 +1,8 @@
+use num::Num;
+use num_complex::Complex;
 use approx::ApproxEq;
 
-use general::{Operator, Additive, Multiplicative, AbstractGroupAbelian, AbstractMonoid};
+use general::{Operator, Additive, Multiplicative, AbstractGroupAbelian, AbstractMonoid, ClosedNeg};
 use general::wrapper::Wrapper as W;
 
 /// A ring is the combination of an abelian group and a multiplicative monoid structure.
@@ -251,3 +253,7 @@ macro_rules! impl_field(
  */
 impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64);
 impl_field!(<Additive, Multiplicative> for f32; f64);
+
+impl<N: Num + Clone + ClosedNeg + AbstractRing>            AbstractRing            for Complex<N> { }
+impl<N: Num + Clone + ClosedNeg + AbstractRingCommutative> AbstractRingCommutative for Complex<N> { }
+impl<N: Num + Clone + ClosedNeg + AbstractField>           AbstractField           for Complex<N> { }

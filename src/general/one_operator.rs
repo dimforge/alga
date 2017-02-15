@@ -1,8 +1,10 @@
 use std::ops::{Add, Mul};
+use num::Num;
+use num_complex::Complex;
 
 use approx::ApproxEq;
 
-use general::{Operator, Additive, Multiplicative, Inverse, Identity};
+use general::{Operator, Additive, Multiplicative, Inverse, Identity, ClosedNeg};
 
 /// Types that are closed under a given operator.
 ///
@@ -382,3 +384,23 @@ impl_magma!(Multiplicative; mul; u8, u16, u32, u64, i8, i16, i32, i64, f32, f64)
 
 impl_monoid!(<Additive> for u8; u16; u32; u64);
 impl_monoid!(<Multiplicative> for u8; u16; u32; u64);
+
+impl<N: AbstractMagma<Additive>> AbstractMagma<Additive> for Complex<N> {
+    #[inline]
+    fn operate(&self, lhs: &Self) -> Self {
+        Complex {
+            re: self.re.operate(&lhs.re),
+            im: self.im.operate(&lhs.im)
+        }
+    }
+}
+
+impl<N: Num + Clone> AbstractMagma<Multiplicative> for Complex<N> {
+    #[inline]
+    fn operate(&self, lhs: &Self) -> Self {
+        self * lhs
+    }
+}
+
+impl_abelian!(<Multiplicative> for Complex<N> where N: Num + Clone + ClosedNeg);
+impl_abelian!(<Additive> for Complex<N> where N: AbstractGroupAbelian<Additive>);
