@@ -14,5 +14,6 @@ name = "alga_derive"
 proc-macro = true
 
 [dependencies]
-quote = "0.3.8"
+quote = "0.3"
 syn = "0.11"
+edit-distance = "1.0"
