@@ -2,11 +2,11 @@ extern crate alga;
 #[macro_use]
 extern crate alga_derive;
 
-use alga::general::{Inverse, Additive, Multiplicative, AbstractMagma};
+use alga::general::{Inverse, Identity, Additive, Multiplicative, AbstractMagma};
 
 #[derive(Alga, Clone, PartialEq)]
-#[alga_traits(Quasigroup = "Additive", Semigroup = "Multiplicative")]
-struct W(i64);
+#[alga_traits(Field(Additive, Multiplicative))]
+struct W(f64);
 
 impl AbstractMagma<Additive> for W {
     fn operate(&self, right: &Self) -> Self {
@@ -22,5 +22,23 @@ impl AbstractMagma<Multiplicative> for W {
 impl Inverse<Additive> for W {
     fn inverse(&self) -> Self {
         W(-self.0)
+    }
+}
+
+impl Inverse<Multiplicative> for W {
+    fn inverse(&self) -> Self {
+        W(1. / self.0)
+    }
+}
+
+impl Identity<Additive> for W {
+    fn identity() -> Self {
+        W(0.)
+    }
+}
+
+impl Identity<Multiplicative> for W {
+    fn identity() -> Self {
+        W(1.)
     }
 }
