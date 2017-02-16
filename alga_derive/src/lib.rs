@@ -11,11 +11,11 @@ use syn::Ident;
 
 use std::iter::once;
 
-fn get_op_arity(tra1t: &str) -> Option<usize> {
+fn get_op_arity(tra1t: &str) -> usize {
     match tra1t {
-        "Quasigroup" | "Monoid" | "Semigroup" | "Loop" | "Group" | "GroupAbelian" => Some(1),
-        "Ring" | "RingCommutative" | "Field" => Some(2),
-        _ => None,
+        "Quasigroup" | "Monoid" | "Semigroup" | "Loop" | "Group" | "GroupAbelian" => 1,
+        "Ring" | "RingCommutative" | "Field" => 2,
+        _ => panic!("Invalid Alga trait provided. Did you mean `{}`?", get_closest_trait(tra1t)),
     }
 }
 
@@ -61,65 +61,47 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
     let item = syn::parse_derive_input(&input.to_string()).unwrap();
     let name = &item.ident;
     let (tra1t, op): (Vec<_>, Vec<_>) = item.attrs.iter()
-        .filter_map(|a| {
-                if let List(ref ident, ref traits) = a.value {
-                    Some((ident, traits))
-                } else {
-                    None
-                }
+        .filter_map(|a|
+            if let List(ref ident, ref traits) = a.value {
+                Some((ident, traits))
+            } else {
+                None
             })
         .filter(|&(i, _)| i == "alga_traits")
         .flat_map(|(_, v)| v)
-        .map(|t| {
-            if let &MetaItem(ref n) = t {
-                n
+        .map(|t|
+            if let &MetaItem(List(ref name, ref value)) = t {
+                (name.as_ref(), value)
             } else {
-                panic!("Instead of a literal, trait with operator expected:\n         #[alga_traits(Trait = Operator, ...)]");
-            }
-        }).map(|n| {
-            if let &List(ref name, ref value) = n {
-                (name, value)
-            } else {
-                panic!("Operator has to be provided via #[alga_traits(Trait(Op1, ..))]");
-            }
-        }).flat_map(|(name, value)| {
-            let name = name.as_ref();
-            let arity = get_op_arity(name)
-                .expect(&format!("Invalid Alga trait provided. Did you mean `{}`?", get_closest_trait(name)));
+                panic!("Operator has to be provided via #[alga_traits(Trait(Operators))]");
+            })
+        .flat_map(|(name, value)| {
+            let arity = get_op_arity(name);
             assert!(value.len() == arity, "Exactly {} operators need to be specified.", arity);
-            let iter = once(name.into()).chain(
-                get_dependencies(name, 0)
-                    .into_iter()
-            ).map(|n| {
-                let arity = get_op_arity(&n)
-                    .expect(&format!("Invalid Alga trait `{}`. Programming error.", n));
-                (Ident::from(format!("Abstract{}", n)), if arity == 1 {
-                    vec![value[0].clone()]
+            let create_tuple = |n: &str, i: usize| {
+                let value = if get_op_arity(n) == 1 {
+                    vec![value[i].clone()]
                 } else {
                     value.clone()
-                })
-            });
+                };
+                (Ident::from(format!("Abstract{}", n)), value)
+            };
+            let iter = once(name.into())
+                .chain(get_dependencies(name, 0))
+                .map(|n| create_tuple(&n, 0));
             if arity == 1 {
                 iter.collect::<Vec<_>>()
             } else {
                 iter.chain(
                     get_dependencies(name, 1)
                         .into_iter()
-                        .map(|n| {
-                            let arity = get_op_arity(&n)
-                                .expect(&format!("Invalid Alga trait `{}`. Programming error.", n));
-                            (Ident::from(format!("Abstract{}", n)), if arity == 1 {
-                                vec![value[1].clone()]
-                            } else {
-                                value.clone()
-                            })
-                        }
-                )).collect()
+                        .map(|n| create_tuple(&n, 1))
+                ).collect()
             }
         })
         .unzip();
     assert!(!tra1t.is_empty(),
-    "Atleast one trait is required to be implemented.\n         Trait can be specified with `#[alga_traits(Trait = Operator, ...)]` attribute.");
+    "Atleast one trait is required to be implemented.\n         Trait can be specified with `#[alga_traits(Trait(Operators))]` attribute.");
 
     let dummy_const = Ident::new(format!("_ALGA_DERIVE_{}", name));
     let name = once(&name).cycle();
@@ -129,8 +111,10 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         #[allow(non_upper_case_globals, unused_attributes, unused_qualifications)]
         const #dummy_const: () = {
             extern crate alga as _alga;
-            #(#[automatically_derived]
-            impl #impl_generics _alga::general::#tra1t<#(#op,)*> for #name #ty_generics #where_clause {})*
+            #(
+                #[automatically_derived]
+                impl #impl_generics _alga::general::#tra1t<#(#op,)*> for #name #ty_generics #where_clause {}
+            )*
         };
     }).parse().unwrap()
 }
