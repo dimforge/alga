@@ -12,6 +12,7 @@ matrix:
     - rust: nightly
     - rust: beta
 script:
-  - cargo build --verbose
-  - cargo test --verbose;
-  - cargo run --example vectors;
+  - export DIR="$(pwd)"
+  - cd "$DIR/alga" && cargo build --verbose
+  - cd "$DIR/alga" && cargo test --verbose;
+  - cd "$DIR/alga" && cargo run --example vectors;
