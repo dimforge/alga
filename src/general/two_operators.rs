@@ -251,7 +251,7 @@ macro_rules! impl_field(
  * Implementations.
  *
  */
-impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64);
+impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64; isize);
 impl_field!(<Additive, Multiplicative> for f32; f64);
 
 impl<N: Num + Clone + ClosedNeg + AbstractRing>            AbstractRing            for Complex<N> { }

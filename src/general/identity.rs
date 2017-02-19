@@ -18,9 +18,9 @@ pub trait Identity<O: Operator> {
     fn identity() -> Self;
 }
 
-impl_ident!(Additive; 0; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_ident!(Additive; 0; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 impl_ident!(Additive; 0.; f32, f64);
-impl_ident!(Multiplicative; 1; u8, u16, u32, u64, i8, i16, i32, i64);
+impl_ident!(Multiplicative; 1; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 impl_ident!(Multiplicative; 1.; f32, f64);
 
 impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
