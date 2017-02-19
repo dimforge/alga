@@ -75,7 +75,7 @@ macro_rules! impl_additive_inverse(
     )*}
 );
 
-impl_additive_inverse!(i8, i16, i32, i64, f32, f64);
+impl_additive_inverse!(i8, i16, i32, i64, isize, f32, f64);
 
 impl<N: Inverse<Additive>> Inverse<Additive> for Complex<N> {
     #[inline]
