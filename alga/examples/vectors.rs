@@ -1,5 +1,6 @@
-#[macro_use]
 extern crate alga;
+#[macro_use]
+extern crate alga_derive;
 #[macro_use]
 extern crate approx;
 
@@ -10,8 +11,9 @@ use alga::general::wrapper::Wrapper as W;
 
 use approx::ApproxEq;
 
-#[derive(PartialEq, Clone)]
-struct Vec2<Scalar: AbstractField> {
+#[derive(Alga, PartialEq, Clone)]
+#[alga_traits(GroupAbelian(Additive), Where = "Scalar: AbstractField")]
+struct Vec2<Scalar> {
     x: Scalar,
     y: Scalar,
 }
@@ -80,8 +82,6 @@ impl<Scalar: AbstractField> Identity<Additive> for Vec2<Scalar> {
     }
 }
 
-impl_abelian!(<Additive> for Vec2<Scalar> where Scalar: AbstractField);
-
 impl<Scalar: AbstractField> AbstractModule for Vec2<Scalar> {
     type AbstractRing = Scalar;
     fn multiply_by(&self, r: Self::AbstractRing) -> Self {
@@ -135,7 +135,8 @@ fn gcd_works() {
     assert_eq!(5, gcd(-15, -35));
 }
 
-#[derive(Clone)]
+#[derive(Alga, Clone)]
+#[alga_traits(Field(Additive, Multiplicative))]
 struct Rational {
     a: i64,
     b: i64,
@@ -250,8 +251,6 @@ impl Identity<Multiplicative> for Rational {
         }
     }
 }
-
-impl_field!(<Additive, Multiplicative> for Rational);
 
 fn main() {
     let vec = || W::<_, Additive, Multiplicative>::new(Vec2::new(Rational::new(1, 2), Rational::whole(3)));
