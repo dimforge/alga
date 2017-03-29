@@ -19,5 +19,5 @@ num-complex = "0.1"
 approx      = "0.1"
 
 [dev-dependencies]
-quickcheck = "0.3"
-alga_derive = {path = "../alga_derive"}
+quickcheck  = "0.3"
+alga_derive = { path = "../alga_derive" }

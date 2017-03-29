@@ -1,19 +1,19 @@
 [package]
-name = "alga_derive"
-version = "0.4.0"
-authors = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet"]
-description = "Derive attribute for implementing algebraic traits."
-keywords = ["algebra", "monoids", "math"]
-categories = ["Science"]
-readme = "README.md"
-repository = "https://github.com/sebcrozet/alga"
-license = "Apache-2.0"
+name        = "alga_derive"
+version     = "0.5.0"
+authors     = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet"]
+description = "Derive attribute for implementing algebraic traits from the alga crate."
+keywords    = ["algebra", "monoids", "math"]
+categories  = ["Science"]
+readme      = "README.md"
+repository  = "https://github.com/sebcrozet/alga"
+license     = "Apache-2.0"
 
 [lib]
-name = "alga_derive"
+name       = "alga_derive"
 proc-macro = true
 
 [dependencies]
-quote = "0.3"
-syn = "0.11"
+quote         = "0.3"
+syn           = "0.11"
 edit-distance = "1.0"
