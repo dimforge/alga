@@ -108,9 +108,9 @@
 //!
 //! The following traits are provided:
 //!
-//! -            `Ring`
+//! - `Ring`
 //! - `RingCommutative`
-//! -           `Field`
+//! - `Field`
 //!
 //! ## Module-like structures
 //!
