@@ -54,6 +54,20 @@ fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
     }.into_iter().map(String::from).collect()
 }
 
+fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
+    match tra1t {
+        "Quasigroup" => vec![("prop_inv_is_latin_square", 2)],
+        "Monoid" => vec![("prop_operating_identity_element_is_noop", 1)],
+        "Semigroup" => vec![("prop_is_associative", 3)],
+        "GroupAbelian" => vec![("prop_is_commutative", 2)],
+        "Ring" => vec![("prop_mul_and_add_are_distributive", 3)],
+        "RingCommutative" => vec![("prop_mul_is_commutative", 2)],
+        _ => vec![],
+    }.into_iter()
+    .map(|(n, p)| (Ident::new(format!("Abstract{}", tra1t)), Ident::new(format!("{}_approx", n)), p))
+    .collect()
+}
+
 #[proc_macro_derive(Alga, attributes(alga_traits))]
 pub fn derive_alga(input: TokenStream) -> TokenStream {
     use syn::MetaItem::*;
@@ -107,7 +121,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                                 .expect("Where clauses bound was invalid.");
                     clause.predicates.extend(w.predicates.clone());
                     traits[len - 1].2 = Some(clause);
-                }else {
+                } else {
                     panic!("Where clause should be a string literal.");
                 }
                 valid_clause_place = false;
@@ -124,7 +138,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             traits.push((name, value, None));
         }
     }
-    let (tra1t, op, where_clause) = traits.into_iter()
+    let (tra1t, op, where_clause, checks) = traits.into_iter()
         .flat_map(|(name, value, clause)| {
             let arity = get_op_arity(name);
             let value = value.clone();
@@ -154,7 +168,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                 } else {
                     value.clone()
                 };
-                (Ident::from(format!("Abstract{}", n)), value, clause.clone())
+                (Ident::from(format!("Abstract{}", n)), value.clone(), clause.clone(), (value, get_props(n)))
             };
             let create_tuple = &create_tuple;
             let iter = once(name.into())
@@ -170,39 +184,74 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                 ).collect()
             }
         })
-        .unzip3();
+        .unzip4();
     assert!(!tra1t.is_empty(),
     "Atleast one trait is required to be implemented.\n         Trait can be specified with `#[alga_traits(Trait(Operators))]` attribute.");
 
     let dummy_const = Ident::new(format!("_ALGA_DERIVE_{}", name));
-    let name = once(&name).cycle();
-    quote!(
+    let type_name = once(&name).cycle();
+    let mut tks = quote!(
         #[allow(non_upper_case_globals, unused_attributes, unused_qualifications)]
         const #dummy_const: () = {
             extern crate alga as _alga;
             #(
                 #[automatically_derived]
-                impl #impl_generics _alga::general::#tra1t<#(#op,)*> for #name #ty_generics #where_clause {}
+                impl #impl_generics _alga::general::#tra1t<#(#op,)*> for #type_name #ty_generics #where_clause {}
             )*
         };
-    ).parse().unwrap()
+    );
+    for (ops, check) in checks {
+        let ops = &ops;
+        for (tra1t, check, params) in check {
+            let params: &Vec<_> = &(0..params).map(|_| name).collect();
+            let show_ops: String = ops.iter()
+                .map(|n| match n {
+                    &MetaItem(Word(ref ident)) => format!("_{}", ident),
+                    _ => panic!(),
+                })
+                .collect();
+            let dummy_const = Ident::new(format!("{}_for_{}_as_{}{}", check, name, tra1t, show_ops));
+            let parsed: String = quote!(
+                #[test]
+                #[allow(non_snake_case)]
+                fn #dummy_const() {
+                    extern crate quickcheck as _quickcheck;
+                    extern crate alga as _alga;
+                    fn prop(args: (#(#params),*)) -> bool {
+                        _alga::general::#tra1t::<#(#ops),*>::#check(args)
+                    }
+                    _quickcheck::quickcheck(prop as fn((#(#params),*)) -> bool);
+                }
+            ).parse().unwrap();
+            tks.append(&parsed);
+        }
+    }
+    let s: String = tks.parse().unwrap();
+    println!("{}", s);
+    tks.parse().unwrap()
 }
 
-trait Unzip3<A, B, C> {
-    fn unzip3(self) -> (Vec<A>, Vec<B>, Vec<C>);
+trait Unzip4<A, B, C, D> {
+    fn unzip4(self) -> (Vec<A>, Vec<B>, Vec<C>, Vec<D>);
 }
 
-impl<A, B, C, I> Unzip3<A, B, C> for I
-    where I: Iterator<Item=(A, B, C)>,
+impl<A, B, C, D, I> Unzip4<A, B, C, D> for I
+    where I: Iterator<Item=(A, B, C, D)>,
 {
-    fn unzip3(self) -> (Vec<A>, Vec<B>, Vec<C>) {
+    fn unzip4(self) -> (Vec<A>, Vec<B>, Vec<C>, Vec<D>) {
         let hint = self.size_hint().1.unwrap_or(Vec::<A>::new().capacity());
-        let (mut va, mut vb, mut vc) = (Vec::with_capacity(hint), Vec::with_capacity(hint), Vec::with_capacity(hint));
-        for (a, b, c) in self {
+        let (mut va, mut vb, mut vc, mut vd) = (
+            Vec::with_capacity(hint),
+            Vec::with_capacity(hint),
+            Vec::with_capacity(hint),
+            Vec::with_capacity(hint)
+        );
+        for (a, b, c, d) in self {
             va.push(a);
             vb.push(b);
             vc.push(c);
+            vd.push(d);
         }
-        (va, vb, vc)
+        (va, vb, vc, vd)
     }
 }
