@@ -17,3 +17,4 @@ proc-macro = true
 quote         = "0.3"
 syn           = "0.11"
 edit-distance = "1.0"
+quickcheck    = "0.3"
