@@ -12,20 +12,21 @@ use quickcheck::{Arbitrary, Gen};
 
 #[derive(Alga, Clone, PartialEq, Debug)]
 #[alga_traits(Field(Additive, Multiplicative))]
+#[alga_quickcheck]
 struct W(f64);
 
 impl ApproxEq for W {
     type Epsilon = W;
     fn default_epsilon() -> W {
-        W(f64::default_epsilon())
+        W(0.0000000001)
     }
 
     fn default_max_relative() -> W {
-        W(f64::default_max_relative())
+        W(0.0000000001)
     }
 
     fn default_max_ulps() -> u32 {
-        f64::default_max_ulps()
+        40
     }
 
     fn relative_eq(&self, other: &Self, epsilon: W, max_relative: W) -> bool {

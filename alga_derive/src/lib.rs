@@ -68,7 +68,7 @@ fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
     .collect()
 }
 
-#[proc_macro_derive(Alga, attributes(alga_traits))]
+#[proc_macro_derive(Alga, attributes(alga_traits, alga_quickcheck))]
 pub fn derive_alga(input: TokenStream) -> TokenStream {
     use syn::MetaItem::*;
     use syn::NestedMetaItem::*;
@@ -200,30 +200,41 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             )*
         };
     );
-    for (ops, check) in checks {
-        let ops = &ops;
-        for (tra1t, check, params) in check {
-            let params: &Vec<_> = &(0..params).map(|_| name).collect();
-            let show_ops: String = ops.iter()
-                .map(|n| match n {
-                    &MetaItem(Word(ref ident)) => format!("_{}", ident),
-                    _ => panic!(),
+
+    if let Some(_) = item.attrs.iter()
+            .filter_map(|a|
+                if let Word(ref ident) = a.value {
+                    Some(ident)
+                } else {
+                    None
                 })
-                .collect();
-            let dummy_const = Ident::new(format!("{}_for_{}_as_{}{}", check, name, tra1t, show_ops));
-            let parsed: String = quote!(
-                #[test]
-                #[allow(non_snake_case)]
-                fn #dummy_const() {
-                    extern crate quickcheck as _quickcheck;
-                    extern crate alga as _alga;
-                    fn prop(args: (#(#params),*)) -> bool {
-                        _alga::general::#tra1t::<#(#ops),*>::#check(args)
+            .filter(|i| i.as_ref() == "alga_quickcheck")
+            .next() {
+        for (ops, check) in checks {
+            let ops = &ops;
+            for (tra1t, check, params) in check {
+                let params: &Vec<_> = &(0..params).map(|_| name).collect();
+                let show_ops: String = ops.iter()
+                    .map(|n| match n {
+                        &MetaItem(Word(ref ident)) => format!("_{}", ident),
+                        _ => panic!(),
+                    })
+                    .collect();
+                let dummy_const = Ident::new(format!("{}_for_{}_as_{}{}", check, name, tra1t, show_ops));
+                let parsed: String = quote!(
+                    #[test]
+                    #[allow(non_snake_case)]
+                    fn #dummy_const() {
+                        extern crate quickcheck as _quickcheck;
+                        extern crate alga as _alga;
+                        fn prop(args: (#(#params),*)) -> bool {
+                            _alga::general::#tra1t::<#(#ops),*>::#check(args)
+                        }
+                        _quickcheck::quickcheck(prop as fn((#(#params),*)) -> bool);
                     }
-                    _quickcheck::quickcheck(prop as fn((#(#params),*)) -> bool);
-                }
-            ).parse().unwrap();
-            tks.append(&parsed);
+                ).parse().unwrap();
+                tks.append(&parsed);
+            }
         }
     }
     let s: String = tks.parse().unwrap();
