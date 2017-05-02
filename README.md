@@ -15,11 +15,11 @@
 alga − abstract algebra for Rust
 ========
 
-**alga** aim to provide solid mathematical abstractions to algebra-focused
-applications. It defines and organize through trait inheritance the basic
-building blocks of general algebraic structures. Specific implementation of
-algebraic structure traits is is left to other crates. Higher-level traits for
-specilazied domain of algebra (like linear algebra) are also provided and will
+**alga** aims to provide solid mathematical abstractions to algebra-focused
+applications. It defines and organizes through trait inheritance the basic
+building blocks of general algebraic structures. Specific implementations of
+algebraic structure traits are left to other crates. Higher-level traits for
+specialized domains of algebra (like linear algebra) are also provided and will
 prove useful for applications that include code that is generic wrt. the
 algebraic entity types.
 
