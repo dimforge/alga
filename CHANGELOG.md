@@ -4,6 +4,9 @@ documented here.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.2]
+  * Add feature-gated support for the `decimal` crate.
+
 ## [0.5.0]
   * Traits are now also implemented for `Complex`.
   * `AbstractModule` now inherit from `AdditiveGroupAbelian` as well.
