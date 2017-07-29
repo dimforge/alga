@@ -20,8 +20,12 @@ pub trait Identity<O: Operator> {
 
 impl_ident!(Additive; 0; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 impl_ident!(Additive; 0.; f32, f64);
+#[cfg(decimal)]
+impl_ident!(Additive; 0.; decimal::d128);
 impl_ident!(Multiplicative; 1; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 impl_ident!(Multiplicative; 1.; f32, f64);
+#[cfg(decimal)]
+impl_ident!(Multiplicative; 1.; decimal::d128);
 
 impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     #[inline]

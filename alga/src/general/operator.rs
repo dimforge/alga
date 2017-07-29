@@ -76,6 +76,8 @@ macro_rules! impl_additive_inverse(
 );
 
 impl_additive_inverse!(i8, i16, i32, i64, isize, f32, f64);
+#[cfg(decimal)]
+impl_additive_inverse!(decimal::d128);
 
 impl<N: Inverse<Additive>> Inverse<Additive> for Complex<N> {
     #[inline]
@@ -98,6 +100,14 @@ impl Inverse<Multiplicative> for f64 {
     #[inline]
     fn inverse(&self) -> f64 {
         1.0 / self
+    }
+}
+
+#[cfg(decimal)]
+impl Inverse<Multiplicative> for decimal::d128 {
+    #[inline]
+    fn inverse(&self) -> decimal::d128 {
+        d128!(1.0) / self
     }
 }
 
