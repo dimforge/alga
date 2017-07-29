@@ -145,6 +145,24 @@ impl_subset!(
     f32 as f32, f64;
     f64 as f32, f64;
 );
+#[cfg(decimal)]
+impl_subset!(
+    u8 as decimal::d128;
+    u16 as decimal::d128;
+    u32 as decimal::d128;
+    u64 as decimal::d128;
+    usize as decimal::d128;
+
+    i8 as decimal::d128;
+    i16 as decimal::d128;
+    i32 as decimal::d128;
+    i64 as decimal::d128;
+    isize as decimal::d128;
+
+    f32 as decimal::d128;
+    f64 as decimal::d128;
+    decimal::d128 as decimal::d128;
+);
 
 
 impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
@@ -198,4 +216,8 @@ impl_scalar_subset_of_complex!(
     u8, u16, u32, u64, usize,
     i8, i16, i32, i64, isize,
     f32, f64
+);
+#[cfg(decimal)]
+impl_scalar_subset_of_complex!(
+    decimal::d128
 );

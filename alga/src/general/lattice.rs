@@ -124,3 +124,5 @@ macro_rules! impl_lattice(
 );
 
 impl_lattice!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
+#[cfg(decimal)]
+impl_lattice!(decimal::d128);

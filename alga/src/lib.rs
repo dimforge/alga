@@ -24,6 +24,8 @@ extern crate num_traits as num;
 extern crate num_complex;
 #[macro_use]
 extern crate approx;
+#[cfg(decimal)]
+extern crate decimal;
 
 #[macro_use]
 mod macros;
