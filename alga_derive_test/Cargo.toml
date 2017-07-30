@@ -1,0 +1,9 @@
+[package]
+name = "alga_derive_test"
+version = "0.1.0"
+authors = ["Wadelma <delma@del.ma>"]
+
+[dependencies]
+alga = { path = "../alga" }
+alga_derive = { path = "../alga_derive" }
+compiletest_rs = "0.2"

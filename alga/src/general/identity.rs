@@ -16,6 +16,14 @@ use general::{AbstractMagma, AbstractGroup, AbstractLoop, AbstractMonoid, Abstra
 pub trait Identity<O: Operator> {
     /// The identity element.
     fn identity() -> Self;
+
+    /// Specific identity.
+    #[inline]
+    fn id(_: O) -> Self
+        where Self: Sized
+    {
+        Self::identity()
+    }
 }
 
 impl_ident!(Additive; 0; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);

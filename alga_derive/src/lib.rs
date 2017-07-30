@@ -75,14 +75,24 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         .filter(|&(i, _)| i == "alga_traits")
         .flat_map(|(_, v)| v)
         .map(|t|
-            match t {
-                &MetaItem(List(ref name, ref value)) => (name.as_ref(), value.clone()),
-                &MetaItem(NameValue(ref name, ref value)) => if name == "Where" {
-                    (name.as_ref(), vec![Literal(value.clone())])
-                } else {
-                    panic!("Where clause should be defined with `Where = \"TypeParameter: Trait\"`.");
+            match *t {
+                MetaItem(ref m) => match *m {
+                    List(ref name, ref value) => (name.as_ref(), value.clone()),
+                    NameValue(ref name, ref value) => if name == "Where" {
+                        (name.as_ref(), vec![Literal(value.clone())])
+                    } else {
+                        panic!("Where clause should be defined with `Where = \"TypeParameter: Trait\"`.");
+                    },
+                    Word(ref i) => {
+                        let oper = match get_op_arity(&format!("{}", i)) {
+                            1 => "Operator",
+                            2 => "Operator1, Operator2",
+                            n => unreachable!("Trait `{}` with unknown arity {} encountered.", name, n),
+                        };
+                        panic!("Operator has to be provided via #[alga_traits({}({}))]", i, oper);
+                    },
                 },
-                _ => panic!("Operator has to be provided via #[alga_traits(Trait(Operators))]"),
+                _ => panic!("Derived alga trait has to be provided via #[alga_traits(Trait(Operators))]"),
             }
         );
     let mut traits: Vec<(_, _, Option<_>)> = vec![];
@@ -118,7 +128,26 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         .flat_map(|(name, value, clause)| {
             let arity = get_op_arity(name);
             let value = value.clone();
-            assert!(value.len() == arity, "Exactly {} operators need to be specified.", arity);
+            if value.len() != arity {
+                match arity {
+                    1 => {
+                        let message = format!("One operator is required for `{}` trait.", name);
+                        match value.len() {
+                            0 => panic!("{} None was provided.", message),
+                            _ => panic!("{} Too many were provided.", message),
+                        }
+                    },
+                    2 => {
+                        let message = format!("Two operators are required for `{}` trait.", name);
+                        match value.len() {
+                            0 => panic!("{} None was provided.", message),
+                            1 => panic!("{} Only one was provided.", message),
+                            _ => panic!("{} Too many were provided.", message),
+                        }
+                    },
+                    n => unreachable!("Trait `{}` with unknown arity {} encountered.", name, n),
+                }
+            }
             let create_tuple = |n: &str, i: usize| {
                 let value = if get_op_arity(n) == 1 {
                     vec![value[i].clone()]
