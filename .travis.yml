@@ -16,3 +16,6 @@ script:
   - cd "$DIR/alga" && cargo build --verbose
   - cd "$DIR/alga" && cargo test --verbose;
   - cd "$DIR/alga" && cargo run --example vectors;
+  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
+        cd "$DIR/alga_derive_test" && cargo test --verbose
+    fi
