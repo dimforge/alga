@@ -203,16 +203,18 @@ pub trait AbstractMonoid<O: Operator>
 {
     /// Checks whether operating with the identity element is a no-op for the given
     /// argument. Approximate equality is used for verifications.
-    fn prop_operating_identity_element_is_noop_approx(a: Self) -> bool
+    fn prop_operating_identity_element_is_noop_approx(args: (Self,)) -> bool
         where Self: ApproxEq {
+        let (a,) = args;
         relative_eq!(a.operate(&Self::identity()), a) &&
         relative_eq!(Self::identity().operate(&a), a)
     }
 
     /// Checks whether operating with the identity element is a no-op for the given
     /// argument.
-    fn prop_operating_identity_element_is_noop(a: Self) -> bool
+    fn prop_operating_identity_element_is_noop(args: (Self,)) -> bool
         where Self: Eq {
+        let (a,) = args;
         a.operate(&Self::identity()) == a &&
         Self::identity().operate(&a) == a
     }

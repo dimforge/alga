@@ -28,11 +28,11 @@ mod int_check {
                     use alga::general::{AbstractMonoid, AbstractSemigroup, Additive, Multiplicative};
 
                     quickcheck!(
-                        fn prop_zero_is_noop(args: $T) -> bool {
+                        fn prop_zero_is_noop(args: ($T,)) -> bool {
                             AbstractMonoid::<Additive>::prop_operating_identity_element_is_noop(args)
                         }
 
-                        fn prop_mul_unit_is_noop(args: $T) -> bool {
+                        fn prop_mul_unit_is_noop(args: ($T,)) -> bool {
                             AbstractMonoid::<Multiplicative>::prop_operating_identity_element_is_noop(args)
                         }
 

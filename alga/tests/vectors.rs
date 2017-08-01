@@ -185,9 +185,6 @@ impl RationalShrinker {
                 i: Rational::new(x.a, x.b * 2),
             };
             let items = vec![Rational::new(0, 1)];
-            // if shrinker.i < 0 {
-            //     items.push(shrinker.x.abs());
-            // }
             Box::new(items.into_iter().chain(shrinker))
         }
     }
@@ -198,7 +195,6 @@ impl Iterator for RationalShrinker {
     fn next(&mut self) -> Option<Self::Item> {
         let next = Rational::new((self.x.a * self.i.b) - (self.i.a * self.x.b), self.x.b * self.i.b);
         if next.a * self.x.b < self.x.a * next.b {
-            println!("{:?}", next);
             let result = Some(next);
             self.i = Rational::new(self.i.a, self.i.b * 2);
             result
