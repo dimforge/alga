@@ -163,12 +163,17 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                 }
             }
             let create_tuple = |n: &str, i: usize| {
+                let mul = if i == 1 {
+                    value.first().cloned()
+                } else {
+                    None
+                };
                 let value = if get_op_arity(n) == 1 {
                     vec![value[i].clone()]
                 } else {
                     value.clone()
                 };
-                (Ident::from(format!("Abstract{}", n)), value.clone(), clause.clone(), (value, get_props(n)))
+                (Ident::from(format!("Abstract{}", n)), value.clone(), clause.clone(), (value, mul, get_props(n)))
             };
             let create_tuple = &create_tuple;
             let iter = once(name.into())
@@ -210,10 +215,11 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                 })
             .filter(|i| i.as_ref() == "alga_quickcheck")
             .next() {
-        for (ops, check) in checks {
+        for (ops, add, check) in checks {
             let ops = &ops;
-            for (tra1t, check, params) in check {
-                let params: &Vec<_> = &(0..params).map(|_| name).collect();
+            for (tra1t, check, nparams) in check {
+                let params: &Vec<_> = &(0..nparams).map(|_| name).collect();
+                let nparams: &Vec<_> = &(0..nparams).map(|n| Ident::new(format!("v{}", n))).collect();
                 let show_ops: String = ops.iter()
                     .map(|n| match n {
                         &MetaItem(Word(ref ident)) => format!("_{}", ident),
@@ -221,24 +227,38 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     })
                     .collect();
                 let dummy_const = Ident::new(format!("{}_for_{}_as_{}{}", check, name, tra1t, show_ops));
+                let nonzero = if let Some(ref add) = add {
+                    let add = once(add).cycle();
+                    quote!(
+                        {
+                            let &(#(ref #nparams,)*) = &args;
+                            #(
+                                if #nparams == &_alga::general::Identity::<#add>::identity() {
+                                    return _quickcheck::TestResult::discard();
+                                }
+                            )*
+                        }
+                    )
+                } else {
+                    quote!()
+                };
                 let parsed: String = quote!(
                     #[test]
                     #[allow(non_snake_case)]
                     fn #dummy_const() {
                         extern crate quickcheck as _quickcheck;
                         extern crate alga as _alga;
-                        fn prop(args: (#(#params),*)) -> bool {
-                            _alga::general::#tra1t::<#(#ops),*>::#check(args)
+                        fn prop(args: (#(#params,)*)) -> _quickcheck::TestResult {
+                            #nonzero
+                            _quickcheck::TestResult::from_bool(_alga::general::#tra1t::<#(#ops),*>::#check(args))
                         }
-                        _quickcheck::quickcheck(prop as fn((#(#params),*)) -> bool);
+                        _quickcheck::quickcheck(prop as fn((#(#params,)*)) -> _quickcheck::TestResult);
                     }
                 ).parse().unwrap();
                 tks.append(&parsed);
             }
         }
     }
-    let s: String = tks.parse().unwrap();
-    println!("{}", s);
     tks.parse().unwrap()
 }
 
