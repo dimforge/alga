@@ -7,7 +7,7 @@ extern crate proc_macro;
 extern crate edit_distance as ed;
 
 use proc_macro::TokenStream;
-use syn::Ident;
+use syn::{Ident, Generics};
 
 use std::iter::once;
 
@@ -206,56 +206,91 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         };
     );
 
-    if let Some(_) = item.attrs.iter()
-            .filter_map(|a|
-                if let Word(ref ident) = a.value {
-                    Some(ident)
-                } else {
-                    None
-                })
-            .filter(|i| i.as_ref() == "alga_quickcheck")
+    if let Some((_, checked_generics)) = item.attrs.iter()
+            .filter_map(|a| match a.value {
+                Word(ref name) => Some((name, None)),
+                List(ref name, ref value) => Some((name, Some(value))),
+                _ => None,
+            })
+            .filter(|&(n, _)| n.as_ref() == "alga_quickcheck")
             .next() {
+        let checked_generics = checked_generics
+            .map(|checks|
+                checks.iter().map(|ty_params| if let MetaItem(List(ref indicator, ref tys)) = *ty_params {
+                    if indicator == "check" {
+                        tys.iter().map(|ty| if let MetaItem(Word(ref ident)) = *ty {
+                            ident.clone()
+                        } else {
+                            panic!(); // TODO: Error message that clarifies syntax
+                        }).collect::<Vec<_>>()
+                    } else {
+                        panic!(); // TODO: Error message that clarifies syntax
+                    }
+                } else {
+                    panic!(); // TODO: Error message that clarifies syntax
+                })
+                .collect())
+            .unwrap_or(vec![]);
         for (ops, add, check) in checks {
             let ops = &ops;
             for (tra1t, check, nparams) in check {
-                let params: &Vec<_> = &(0..nparams).map(|_| name).collect();
-                let nparams: &Vec<_> = &(0..nparams).map(|n| Ident::new(format!("v{}", n))).collect();
-                let show_ops: String = ops.iter()
-                    .map(|n| match n {
-                        &MetaItem(Word(ref ident)) => format!("_{}", ident),
-                        _ => panic!(),
-                    })
-                    .collect();
-                let dummy_const = Ident::new(format!("{}_for_{}_as_{}{}", check, name, tra1t, show_ops));
-                let nonzero = if let Some(ref add) = add {
-                    let add = once(add).cycle();
-                    quote!(
-                        {
-                            let &(#(ref #nparams,)*) = &args;
-                            #(
-                                if #nparams == &_alga::general::Identity::<#add>::identity() {
-                                    return _quickcheck::TestResult::discard();
-                                }
-                            )*
-                        }
-                    )
-                } else {
-                    quote!()
-                };
-                let parsed: String = quote!(
-                    #[test]
-                    #[allow(non_snake_case)]
-                    fn #dummy_const() {
-                        extern crate quickcheck as _quickcheck;
-                        extern crate alga as _alga;
-                        fn prop(args: (#(#params,)*)) -> _quickcheck::TestResult {
-                            #nonzero
-                            _quickcheck::TestResult::from_bool(_alga::general::#tra1t::<#(#ops),*>::#check(args))
-                        }
-                        _quickcheck::quickcheck(prop as fn((#(#params,)*)) -> _quickcheck::TestResult);
+                let mut add_test = |check_generics: &[Ident]| {
+                    let params: &Vec<_> = &(0..nparams).map(|_| name).collect();
+                    let nparams: &Vec<_> = &(0..nparams).map(|n| Ident::new(format!("v{}", n))).collect();
+                    let show_ops: String = ops.iter()
+                        .map(|n| match n {
+                            &MetaItem(Word(ref ident)) => format!("_{}", ident),
+                            _ => panic!(), // TODO: Error message that clarifies syntax
+                        })
+                        .collect();
+                    let mut name_gens = check_generics.iter().map(|g| g.to_string()).collect::<Vec<_>>().join("_");
+                    if !name_gens.is_empty() {
+                        name_gens = format!("_{}", name_gens);
                     }
-                ).parse().unwrap();
-                tks.append(&parsed);
+                    let test_name = Ident::new(format!("{}_for_{}{}_as_{}{}", check, name, name_gens, tra1t, show_ops));
+                    let check_generics = Generics {
+                        ty_params: check_generics.iter().cloned().map(Into::into).collect(),
+                        ..Default::default()
+                    };
+                    let generics1 = once(&check_generics).cycle();
+                    let generics2 = once(&check_generics).cycle();
+                    let nonzero = if let Some(ref add) = add {
+                        let add = once(add).cycle();
+                        quote!(
+                            {
+                                let &(#(ref #nparams,)*) = &args;
+                                #(
+                                    if #nparams == &_alga::general::Identity::<#add>::identity() {
+                                        return _quickcheck::TestResult::discard();
+                                    }
+                                )*
+                            }
+                        )
+                    } else {
+                        quote!()
+                    };
+                    let parsed: String = quote!(
+                        #[test]
+                        #[allow(non_snake_case)]
+                        fn #test_name() {
+                            extern crate quickcheck as _quickcheck;
+                            extern crate alga as _alga;
+                            fn prop(args: (#(#params #generics1,)*)) -> _quickcheck::TestResult {
+                                #nonzero
+                                _quickcheck::TestResult::from_bool(_alga::general::#tra1t::<#(#ops),*>::#check(args))
+                            }
+                            _quickcheck::quickcheck(prop as fn((#(#params #generics2,)*)) -> _quickcheck::TestResult);
+                        }
+                    ).parse().unwrap();
+                    tks.append(&parsed);
+                };
+                if checked_generics.is_empty() {
+                    add_test(&vec![][..]);
+                } else {
+                    for check_generics in &checked_generics {
+                        add_test(check_generics);
+                    }
+                }
             }
         }
     }

@@ -14,11 +14,22 @@ use approx::ApproxEq;
 
 use quickcheck::{Arbitrary, Gen};
 
-#[derive(Alga, PartialEq, Clone)]
+#[derive(Alga, PartialEq, Clone, Debug)]
 #[alga_traits(GroupAbelian(Additive), Where = "Scalar: AbstractField")]
+#[alga_quickcheck(check(Rational), check(f64))]
 struct Vec2<Scalar> {
     x: Scalar,
     y: Scalar,
+}
+
+impl<Scalar: AbstractField + Arbitrary> Arbitrary for Vec2<Scalar> {
+    fn arbitrary<G: Gen>(g: &mut G) -> Self {
+        Vec2::new(Scalar::arbitrary(g), Scalar::arbitrary(g))
+    }
+
+    fn shrink(&self) -> Box<Iterator<Item=Self>> {
+        Box::new(self.x.shrink().zip(self.y.shrink()).map(|(x, y)| Vec2::new(x, y)))
+    }
 }
 
 impl<Scalar: AbstractField> Vec2<Scalar> {
