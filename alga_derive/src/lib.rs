@@ -135,6 +135,16 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         } else {
             first = false;
             valid_clause_place = true;
+            let value: Vec<_> = value.iter().map(|v| if let MetaItem(Word(ref ident)) = *v {
+                ident.clone()
+            } else {
+                panic!("Operator has to be provided via #[alga_traits({}({}))].", name, value.iter().map(|v| match *v {
+                    MetaItem(ref i) => i.name(),
+                    Literal(Str(ref i, _)) => i,
+                    _ => "Operator",
+                }).collect::<Vec<_>>().join(", "));
+            })
+            .collect();
             traits.push((name, value, None));
         }
     }
@@ -215,21 +225,27 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             .filter(|&(n, _)| n.as_ref() == "alga_quickcheck")
             .next() {
         let checked_generics = checked_generics
-            .map(|checks|
+            .map(|checks| {
+                let err = "To specify which concrete types are used for generic parameters `#[alga_quickcheck(check(Type1, Type2))]` form should be used.";
                 checks.iter().map(|ty_params| if let MetaItem(List(ref indicator, ref tys)) = *ty_params {
                     if indicator == "check" {
                         tys.iter().map(|ty| if let MetaItem(Word(ref ident)) = *ty {
                             ident.clone()
                         } else {
-                            panic!(); // TODO: Error message that clarifies syntax
+                            panic!("Concrete types has to be provided via #[alga_quickcheck(check({}))].", tys.iter().map(|v| match *v {
+                                MetaItem(ref i) => i.name(),
+                                Literal(Str(ref i, _)) => i,
+                                _ => "Type",
+                            }).collect::<Vec<_>>().join(", "));
                         }).collect::<Vec<_>>()
                     } else {
-                        panic!(); // TODO: Error message that clarifies syntax
+                        panic!(err);
                     }
                 } else {
-                    panic!(); // TODO: Error message that clarifies syntax
+                    panic!(err);
                 })
-                .collect())
+                .collect()
+            })
             .unwrap_or(vec![]);
         for (ops, add, check) in checks {
             let ops = &ops;
@@ -238,10 +254,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     let params: &Vec<_> = &(0..nparams).map(|_| name).collect();
                     let nparams: &Vec<_> = &(0..nparams).map(|n| Ident::new(format!("v{}", n))).collect();
                     let show_ops: String = ops.iter()
-                        .map(|n| match n {
-                            &MetaItem(Word(ref ident)) => format!("_{}", ident),
-                            _ => panic!(), // TODO: Error message that clarifies syntax
-                        })
+                        .map(|n| format!("_{}", n))
                         .collect();
                     let mut name_gens = check_generics.iter().map(|g| g.to_string()).collect::<Vec<_>>().join("_");
                     if !name_gens.is_empty() {

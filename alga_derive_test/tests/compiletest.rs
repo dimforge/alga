@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use std::env;
 
 fn run_mode(mode: &'static str) {
-    let mut config = compiletest::default_config();
+    let mut config = compiletest::Config::default();
     let mut base_path = env::current_dir().expect("Current directory is invalid");
     base_path.pop();
     let debug_path = base_path.join("target").join("debug");
