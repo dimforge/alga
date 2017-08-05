@@ -47,6 +47,8 @@
 //!
 //! These structures are provided for both the addition and multiplication.
 //!
+//! These can be derived automatically by `alga_traits` attribute from `alga_derive` crate.
+//!
 //! ~~~notrust
 //!            AbstractMagma
 //!                 |
@@ -86,6 +88,8 @@
 //! - (`Abstract`|`Additive`|`Multiplicative`)`GroupAbelian`
 //!
 //! ## Ring-like structures
+//!
+//! These can be derived automatically by `alga_traits` attribute from `alga_derive` crate.
 //!
 //! ~~~notrust
 //!      GroupAbelian           Monoid
@@ -136,18 +140,20 @@
 //! # Quickcheck properties
 //!
 //! Functions are provided to test that algebraic properties like
-//! assciociativity and commutativity hold for a given set of arguments.
+//! associativity and commutativity hold for a given set of arguments.
+//!
+//! These tests can be automatically derived by `alga_quickcheck` attribute from `alga_derive` crate.
 //!
 //! For example:
 //!
 //! ~~~.ignore
 //! use algebra::general::SemigroupMultiplicative;
 //!
-//! quickcheck! (
+//! quickcheck! {
 //!     fn prop_mul_is_associative(args: (i32, i32, i32)) -> bool {
 //!         SemigroupMultiplicative::prop_mul_is_associative(args)
 //!     }
-//! );
+//! }
 //! ~~~
 
 pub use self::operator::{Inverse, Operator, Multiplicative, Additive,

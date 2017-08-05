@@ -1,5 +1,39 @@
-#![recursion_limit = "1024"]
+//! Custom derive for `alga` traits.
+//!
+//! ~~~.ignore
+//! extern crate alga;
+//! #[macro_use]
+//! extern crate alga_derive;
+//!
+//! use alga::general::Additive;
+//!
+//! #[derive(Alga)]
+//! #[alga_traits(Group(Additive))]
+//! struct Struct;
+//! ~~~
+//! This derive implements `AbstractGroup` marker trait with `Additive` operator and all marker traits required by groupness (`AbstractMonoid`, `AbstractSemigroup`, `AbstractLoop` and `AbstractQuasigroup`) for `Struct`.
+//!
+//! Traits required by these marker traits (`Identity`, `PartialEq`, `Inverse` and `AbstractMagma`) should be implemented manually.
+//!
+//! If `#[alga_quickcheck]` attribute is added to `Struct` then `quickcheck` tests are generated for checking that required algebraic properties are true for the type. This attribute requires `Arbitary` trait to be implemented for it
+//!
+//! ~~~.ignore
+//! extern crate alga;
+//! #[macro_use]
+//! extern crate alga_derive;
+//!
+//! use alga::general::{Additive, AbstractGroup};
+//!
+//! #[derive(Alga)]
+//! #[alga_traits(Group(Additive)), Where = "T: AbstractGroup"]
+//! #[alga_quickcheck(check(i32), check(i64))]
+//! struct Struct<T>;
+//! ~~~
+//! If the `Struct` is generic then bounds required for the `alga` traits to be implemented can be specified as demonstrated by the example.
+//!
+//! `alga_quickcheck` can then list concrete type parameters for which the tests are run for.
 
+#![recursion_limit = "1024"]
 extern crate syn;
 #[macro_use]
 extern crate quote;
