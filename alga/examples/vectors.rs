@@ -3,6 +3,7 @@ extern crate alga;
 extern crate alga_derive;
 #[macro_use]
 extern crate approx;
+extern crate quickcheck;
 
 use std::fmt::{Display, Formatter, Error};
 
@@ -11,11 +12,24 @@ use alga::general::wrapper::Wrapper as W;
 
 use approx::ApproxEq;
 
-#[derive(Alga, PartialEq, Clone)]
+use quickcheck::{Arbitrary, Gen};
+
+#[derive(Alga, PartialEq, Clone, Debug)]
 #[alga_traits(GroupAbelian(Additive), Where = "Scalar: AbstractField")]
+#[alga_quickcheck(check(Rational))]
 struct Vec2<Scalar> {
     x: Scalar,
     y: Scalar,
+}
+
+impl<Scalar: AbstractField + Arbitrary> Arbitrary for Vec2<Scalar> {
+    fn arbitrary<G: Gen>(g: &mut G) -> Self {
+        Vec2::new(Scalar::arbitrary(g), Scalar::arbitrary(g))
+    }
+
+    fn shrink(&self) -> Box<Iterator<Item=Self>> {
+        Box::new(self.x.shrink().zip(self.y.shrink()).map(|(x, y)| Vec2::new(x, y)))
+    }
 }
 
 impl<Scalar: AbstractField> Vec2<Scalar> {
@@ -106,11 +120,21 @@ impl<Scalar: AbstractField> Identity<Multiplicative> for Vec2<Scalar> {
 
 fn gcd<T: AbstractRingCommutative + PartialOrd>(a: T, b: T) -> T {
     let (mut a, mut b) = (W::<_, _, Multiplicative>::new(a), W::new(b));
-    if a < W::new(Identity::<Additive>::identity()) {
+    let zero = W::new(Identity::<Additive>::identity());
+    if a < zero{
         a = -a;
     }
-    if b < W::new(Identity::<Additive>::identity()) {
+    if b < zero {
         b = -b;
+    }
+    if a == zero {
+        if b == zero {
+            return zero.val;
+        }
+        return b.val;
+    }
+    if b == zero {
+        return a.val;
     }
     while a != b {
         if a > b {
@@ -135,19 +159,77 @@ fn gcd_works() {
     assert_eq!(5, gcd(-15, -35));
 }
 
-#[derive(Alga, Clone)]
+#[derive(Alga, Clone, Debug)]
 #[alga_traits(Field(Additive, Multiplicative))]
+#[alga_quickcheck]
 struct Rational {
     a: i64,
     b: i64,
 }
 
+impl Arbitrary for Rational {
+    fn arbitrary<G: Gen>(g: &mut G) -> Self {
+        let mut div = 0;
+        while div == 0 {
+            div = i64::arbitrary(g);
+        }
+        Rational::new(i64::arbitrary(g), div)
+    }
+
+    fn shrink(&self) -> Box<Iterator<Item=Self>> {
+        RationalShrinker::new(self.clone())
+    }
+}
+
+struct RationalShrinker {
+    x: Rational,
+    i: Rational,
+}
+
+impl RationalShrinker {
+    pub fn new(x: Rational) -> Box<Iterator<Item=Rational>> {
+        if x.a == 0 {
+            quickcheck::empty_shrinker()
+        } else {
+            let shrinker = RationalShrinker {
+                x: x.clone(),
+                i: Rational::new(x.a, x.b * 2),
+            };
+            let items = vec![Rational::new(0, 1)];
+            Box::new(items.into_iter().chain(shrinker))
+        }
+    }
+}
+
+impl Iterator for RationalShrinker {
+    type Item = Rational;
+    fn next(&mut self) -> Option<Self::Item> {
+        let next = Rational::new((self.x.a * self.i.b) - (self.i.a * self.x.b), self.x.b * self.i.b);
+        if next.a * self.x.b < self.x.a * next.b {
+            let result = Some(next);
+            self.i = Rational::new(self.i.a, self.i.b * 2);
+            result
+        } else {
+            None
+        }
+    }
+}
+
 impl Rational {
-    fn new(a: i64, b: i64) -> Self {
+    fn new(mut a: i64, mut b: i64) -> Self {
         assert!(b != 0);
-        Rational {
-            a: a,
-            b: b,
+        if b < 0 {
+            b = -b;
+            a = -a;
+        }
+        if a == 0 {
+            Rational::whole(0)
+        } else {
+            let gcd = gcd(a, b);
+            Rational {
+                a: a / gcd,
+                b: b / gcd,
+            }
         }
     }
 
@@ -220,10 +302,7 @@ impl Inverse<Additive> for Rational {
 
 impl Identity<Additive> for Rational {
     fn identity() -> Self {
-        Rational {
-            a: 0,
-            b: 1,
-        }
+        Rational::whole(0)
     }
 }
 
@@ -239,16 +318,17 @@ impl AbstractMagma<Multiplicative> for Rational {
 
 impl Inverse<Multiplicative> for Rational {
     fn inverse(&self) -> Self {
-        Rational::new(self.b, self.a)
+        if self.a == 0 {
+            self.clone()
+        } else {
+            Rational::new(self.b, self.a)
+        }
     }
 }
 
 impl Identity<Multiplicative> for Rational {
     fn identity() -> Self {
-        Rational {
-            a: 1,
-            b: 1,
-        }
+        Rational::whole(1)
     }
 }
 
