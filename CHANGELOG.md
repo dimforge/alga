@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.2]
   * Add feature-gated support for the `decimal` crate.
+  * Add attributes to automatically generate quickcheck checks.
 
 ## [0.5.0]
   * Traits are now also implemented for `Complex`.
