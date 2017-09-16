@@ -1,6 +1,6 @@
 <p align="center">
-    <a href="https://crates.io/crates/alga">
-         <img src="http://meritbadge.herokuapp.com/alga?style=flat-square" alt="crates.io">
+    <a href="https://crates.io/crates/alga-derive">
+         <img src="http://meritbadge.herokuapp.com/alga-derive?style=flat-square" alt="crates.io">
     </a>
     <a href="https://travis-ci.org/sebcrozet/alga">
         <img src="https://travis-ci.org/sebcrozet/alga.svg?branch=master" alt="Build status">
@@ -8,28 +8,25 @@
 </p>
 <p align = "center">
     <strong>
-        <a href="https://docs.rs/alga">Documentation</a>
+        <a href="https://docs.rs/alga-derive">Documentation</a>
     </strong>
 </p>
 
-alga − abstract algebra for Rust
+alga-derive − automatic deriving of abstract algebra traits for Rust
 ========
 
-**alga** aim to provide solid mathematical abstractions to algebra-focused
-applications. It defines and organize through trait inheritance the basic
-building blocks of general algebraic structures. Specific implementation of
-algebraic structure traits is is left to other crates. Higher-level traits for
-specilazied domain of algebra (like linear algebra) are also provided and will
-prove useful for applications that include code that is generic wrt. the
-algebraic entity types.
+**alga-derive** allows automatic deriving of traits provided by **alga**.
 
-Examples of types that could derive from traits defined in **alga**:
+It supports deriving following **alga** traits:
 
-- Integers, reals and rationals numbers
-- Complex numbers
-- Polynomials
-- Matrices and vectors
-- Quaternions and octonians
-- Strings under concatenation
+- `AbstractQuasigroup`
+- `AbstractMonoid`
+- `AbstractSemigroup`
+- `AbstractGroup`
+- `AbstractGroupAbelian`
+- `AbstractRing`
+- `AbstractRingCommutative`
+- `AbstractField`
 
-**alga** started as a fork of [algebra](https://crates.io/crates/algebra).
+The custom derive can also be used to generate **quickcheck** tests that check
+that algebraic properties are satisfied by the target of the derive.
