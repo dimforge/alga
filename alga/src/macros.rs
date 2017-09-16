@@ -33,7 +33,6 @@
 /// struct Struct<T>(T);
 /// impl_marker!(Marker<T>; Struct<T> where T: Debug);
 /// ```
-#[macro_export]
 macro_rules! impl_marker(
     // Finds the generic parameters of the type and implements the trait for it
     (@para_rec

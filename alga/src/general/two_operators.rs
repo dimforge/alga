@@ -90,7 +90,6 @@ pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
 ///
 /// impl_ring!(<Additive, Multiplicative> for Wrapper<T> where T: AbstractRing);
 /// ```
-#[macro_export]
 macro_rules! impl_ring(
     (<$A:ty, $M:ty> for $($T:tt)+) => {
         impl_abelian!(<$A> for $($T)+);
@@ -172,7 +171,6 @@ pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multipli
 ///
 /// impl_ring!(<Additive, Multiplicative> for Wrapper<T> where T: AbstractRingCommutative);
 /// ```
-#[macro_export]
 macro_rules! impl_ring_commutative(
     (<$A:ty, $M:ty> for $($T:tt)+) => {
         impl_ring!(<$A, $M> for $($T)+);
@@ -234,7 +232,6 @@ pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>
 ///
 /// impl_field!(<Additive, Multiplicative> for Wrapper<T> where T: AbstractField);
 /// ```
-#[macro_export]
 macro_rules! impl_field(
     (<$A:ty, $M:ty> for $($T:tt)+) => {
         impl_ring_commutative!(<$A, $M> for $($T)+);
