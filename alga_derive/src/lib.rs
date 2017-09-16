@@ -1,4 +1,19 @@
+//! # alga-derive
+//!
 //! Custom derive for `alga` traits.
+//!
+//! Supported traits:
+//!
+//! - `AbstractQuasigroup`
+//! - `AbstractMonoid`
+//! - `AbstractSemigroup`
+//! - `AbstractGroup`
+//! - `AbstractGroupAbelian`
+//! - `AbstractRing`
+//! - `AbstractRingCommutative`
+//! - `AbstractField`
+//!
+//! ## Examples
 //!
 //! ~~~.ignore
 //! extern crate alga;
@@ -11,11 +26,16 @@
 //! #[alga_traits(Group(Additive))]
 //! struct Struct;
 //! ~~~
-//! This derive implements `AbstractGroup` marker trait with `Additive` operator and all marker traits required by groupness (`AbstractMonoid`, `AbstractSemigroup`, `AbstractLoop` and `AbstractQuasigroup`) for `Struct`.
+//! This derive implements `AbstractGroup` marker trait with `Additive` operator and all
+//! marker traits required by the algebraic groupness property
+//! (`AbstractMonoid`, `AbstractSemigroup`, `AbstractLoop` and `AbstractQuasigroup`) for the target of the derive.
 //!
 //! Traits required by these marker traits (`Identity`, `PartialEq`, `Inverse` and `AbstractMagma`) should be implemented manually.
 //!
-//! If `#[alga_quickcheck]` attribute is added to `Struct` then `quickcheck` tests are generated for checking that required algebraic properties are true for the type. This attribute requires `Arbitary` trait to be implemented for it
+//! If `#[alga_quickcheck]` attribute is added for the target of the derive,
+//! then `quickcheck` tests will be generated.
+//! These tests will check that the algebraic properties of the derived trait are true for the type.
+//! This attribute requires `quickcheck`s `Arbitary` trait to be implemented for the target of the derive.
 //!
 //! ~~~.ignore
 //! extern crate alga;
@@ -29,9 +49,12 @@
 //! #[alga_quickcheck(check(i32), check(i64))]
 //! struct Struct<T>;
 //! ~~~
-//! If the `Struct` is generic then bounds required for the `alga` traits to be implemented can be specified as demonstrated by the example.
+//! When there is generic parameters on the target of the derive,
+//! then all the concrete type parameters that the tests are generated for can be specified in
+//! `alga_quickcheck` attribute by listing them in `check`s.
 //!
-//! `alga_quickcheck` can then list concrete type parameters for which the tests are run for.
+//! If bounds are required for the `alga` traits to be implemented,
+//! they can be listed by `Where = "A: Bound1. B: Bound2"`.
 
 #![recursion_limit = "1024"]
 extern crate syn;
@@ -102,6 +125,7 @@ fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
     .collect()
 }
 
+/// Implementation of the custom derive
 #[proc_macro_derive(Alga, attributes(alga_traits, alga_quickcheck))]
 pub fn derive_alga(input: TokenStream) -> TokenStream {
     use syn::MetaItem::*;
