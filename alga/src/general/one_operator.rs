@@ -81,7 +81,6 @@ pub trait AbstractQuasigroup<O: Operator>
 ///
 /// impl_quasigroup!(<Additive> for Wrapper<T> where T: AbstractQuasigroup<Additive>);
 /// ```
-#[macro_export]
 macro_rules! impl_quasigroup(
     (<$M:ty> for $($T:tt)+) => {
         impl_marker!($crate::general::AbstractQuasigroup<$M>; $($T)+);
@@ -131,7 +130,6 @@ pub trait AbstractSemigroup<O: Operator> : PartialEq + AbstractMagma<O> {
 ///
 /// impl_semigroup!(<Additive> for Wrapper<T> where T: AbstractSemigroup<Additive>);
 /// ```
-#[macro_export]
 macro_rules! impl_semigroup(
     (<$M:ty> for $($T:tt)+) => {
         impl_marker!($crate::general::AbstractSemigroup<$M>; $($T)+);
@@ -183,7 +181,6 @@ pub trait AbstractLoop<O: Operator>
 ///
 /// impl_loop!(<Additive> for Wrapper<T> where T: AbstractLoop<Additive>);
 /// ```
-#[macro_export]
 macro_rules! impl_loop(
     (<$M:ty> for $($T:tt)+) => {
         impl_quasigroup!(<$M> for $($T)+);
@@ -245,7 +242,6 @@ pub trait AbstractMonoid<O: Operator>
 ///
 /// impl_monoid!(<Additive> for Wrapper<T> where T: AbstractMonoid<Additive>);
 /// ```
-#[macro_export]
 macro_rules! impl_monoid(
     (<$M:ty> for $($T:tt)+) => {
         impl_semigroup!(<$M> for $($T)+);
@@ -289,7 +285,6 @@ pub trait AbstractGroup<O: Operator>
 ///
 /// impl_group!(<Additive> for Wrapper<T> where T: AbstractGroup<Additive>);
 /// ```
-#[macro_export]
 macro_rules! impl_group(
     (<$M:ty> for $($T:tt)+) => {
         impl_monoid!(<$M> for $($T)+);
@@ -354,7 +349,6 @@ pub trait AbstractGroupAbelian<O: Operator>
 ///
 /// impl_abelian!(<Additive> for Wrapper<T> where T: AbstractGroupAbelian<Additive>);
 /// ```
-#[macro_export]
 macro_rules! impl_abelian(
     (<$M:ty> for $($T:tt)+) => {
         impl_group!(<$M> for $($T)+);
