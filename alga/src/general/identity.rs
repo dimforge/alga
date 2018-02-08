@@ -1,16 +1,16 @@
-use std::ops::{Mul, MulAssign, Add, AddAssign, Div, DivAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
 use std::marker::PhantomData;
-use std::cmp::{PartialOrd, Ordering};
+use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
 
-use num::{Num, Zero, One};
+use num::{Num, One, Zero};
 use num_complex::Complex;
 
 use approx::ApproxEq;
 
-use general::{AbstractMagma, AbstractGroup, AbstractLoop, AbstractMonoid, AbstractQuasigroup,
-              AbstractSemigroup, Operator, Inverse, AbstractGroupAbelian, SubsetOf, Additive,
-              Multiplicative, MeetSemilattice, JoinSemilattice, Lattice};
+use general::{AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
+              AbstractQuasigroup, AbstractSemigroup, Additive, Inverse, JoinSemilattice, Lattice,
+              MeetSemilattice, Multiplicative, Operator, SubsetOf};
 
 /// A type that is equipped with identity.
 pub trait Identity<O: Operator> {
@@ -20,7 +20,8 @@ pub trait Identity<O: Operator> {
     /// Specific identity.
     #[inline]
     fn id(_: O) -> Self
-        where Self: Sized
+    where
+        Self: Sized,
     {
         Self::identity()
     }
@@ -40,7 +41,7 @@ impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     fn identity() -> Self {
         Complex {
             re: N::identity(),
-            im: N::identity()
+            im: N::identity(),
         }
     }
 }
@@ -52,7 +53,6 @@ impl<N: Num + Clone> Identity<Multiplicative> for Complex<N> {
     }
 }
 
-
 /// The universal identity element wrt. a given operator, usually noted `Id` with a
 /// context-dependent subscript.
 ///
@@ -62,20 +62,18 @@ impl<N: Num + Clone> Identity<Multiplicative> for Complex<N> {
 #[repr(C)]
 #[derive(Debug)]
 pub struct Id<O: Operator = Multiplicative> {
-    _op: PhantomData<O>
+    _op: PhantomData<O>,
 }
 
 impl<O: Operator> Id<O> {
     /// Creates a new identity element.
     #[inline]
     pub fn new() -> Id<O> {
-        Id {
-            _op: PhantomData
-        }
+        Id { _op: PhantomData }
     }
 }
 
-impl<O: Operator> Copy for Id<O> { }
+impl<O: Operator> Copy for Id<O> {}
 
 impl<O: Operator> Clone for Id<O> {
     #[inline]
@@ -97,7 +95,7 @@ impl<O: Operator> PartialEq for Id<O> {
     }
 }
 
-impl<O: Operator> Eq for Id<O> { }
+impl<O: Operator> Eq for Id<O> {}
 
 impl<O: Operator> PartialOrd for Id<O> {
     #[inline]
@@ -208,12 +206,12 @@ impl<O: Operator> Inverse<O> for Id<O> {
     }
 }
 
-impl<O: Operator> AbstractSemigroup<O>    for Id<O> { }
-impl<O: Operator> AbstractQuasigroup<O>   for Id<O> { }
-impl<O: Operator> AbstractMonoid<O>       for Id<O> { }
-impl<O: Operator> AbstractLoop<O>         for Id<O> { }
-impl<O: Operator> AbstractGroup<O>        for Id<O> { }
-impl<O: Operator> AbstractGroupAbelian<O> for Id<O> { }
+impl<O: Operator> AbstractSemigroup<O> for Id<O> {}
+impl<O: Operator> AbstractQuasigroup<O> for Id<O> {}
+impl<O: Operator> AbstractMonoid<O> for Id<O> {}
+impl<O: Operator> AbstractLoop<O> for Id<O> {}
+impl<O: Operator> AbstractGroup<O> for Id<O> {}
+impl<O: Operator> AbstractGroupAbelian<O> for Id<O> {}
 
 impl One for Id {
     #[inline]
@@ -270,5 +268,4 @@ impl<O: Operator> JoinSemilattice for Id<O> {
     }
 }
 
-impl<O: Operator> Lattice for Id<O> {
-}
+impl<O: Operator> Lattice for Id<O> {}

@@ -1,8 +1,8 @@
-use num::{Zero, One};
-use general::{AbstractMagma, AbstractQuasigroup, AbstractLoop, AbstractSemigroup,
-              AbstractMonoid, AbstractGroup, AbstractGroupAbelian, Multiplicative, Additive,
-              AbstractRing, AbstractRingCommutative, AbstractField, AbstractModule,
-              ClosedAdd, ClosedSub, ClosedNeg, ClosedMul, ClosedDiv};
+use num::{One, Zero};
+use general::{AbstractField, AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
+              AbstractModule, AbstractMonoid, AbstractQuasigroup, AbstractRing,
+              AbstractRingCommutative, AbstractSemigroup, Additive, ClosedAdd, ClosedDiv,
+              ClosedMul, ClosedNeg, ClosedSub, Multiplicative};
 
 macro_rules! specialize_structures(
     // **With type parameters** for the trait being implemented.
@@ -19,7 +19,6 @@ macro_rules! specialize_structures(
     }
 );
 
-
 specialize_structures!(AdditiveMagma,        AbstractMagma<Additive>        : );
 specialize_structures!(AdditiveQuasigroup,   AbstractQuasigroup<Additive>   : AdditiveMagma ClosedSub);
 specialize_structures!(AdditiveLoop,         AbstractLoop<Additive>         : AdditiveQuasigroup ClosedNeg Zero);
@@ -27,7 +26,6 @@ specialize_structures!(AdditiveSemigroup,    AbstractSemigroup<Additive>    : Ad
 specialize_structures!(AdditiveMonoid,       AbstractMonoid<Additive>       : AdditiveSemigroup Zero);
 specialize_structures!(AdditiveGroup,        AbstractGroup<Additive>        : AdditiveLoop AdditiveMonoid);
 specialize_structures!(AdditiveGroupAbelian, AbstractGroupAbelian<Additive> : AdditiveGroup);
-
 
 specialize_structures!(MultiplicativeMagma,      AbstractMagma<Multiplicative>      : );
 specialize_structures!(MultiplicativeQuasigroup, AbstractQuasigroup<Multiplicative> : MultiplicativeMagma ClosedDiv);
@@ -37,16 +35,15 @@ specialize_structures!(MultiplicativeMonoid,     AbstractMonoid<Multiplicative> 
 specialize_structures!(MultiplicativeGroup,      AbstractGroup<Multiplicative>      : MultiplicativeLoop MultiplicativeMonoid);
 specialize_structures!(MultiplicativeGroupAbelian, AbstractGroupAbelian<Multiplicative> : MultiplicativeGroup);
 
-
 specialize_structures!(Ring,            AbstractRing:            AdditiveGroupAbelian MultiplicativeMonoid);
 specialize_structures!(RingCommutative, AbstractRingCommutative: Ring);
 specialize_structures!(Field,           AbstractField:           RingCommutative MultiplicativeGroupAbelian);
 
 /// A module which overloads the `*` and `+` operators.
-pub trait Module: AbstractModule<AbstractRing = <Self as Module>::Ring> +
-                    AdditiveGroupAbelian +
-                    ClosedMul<<Self as Module>::Ring>
-                  {
+pub trait Module
+    : AbstractModule<AbstractRing = <Self as Module>::Ring>
+    + AdditiveGroupAbelian
+    + ClosedMul<<Self as Module>::Ring> {
     /// The underlying scalar field.
     type Ring: RingCommutative;
 }

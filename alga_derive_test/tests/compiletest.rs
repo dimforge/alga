@@ -10,7 +10,11 @@ fn run_mode(mode: &'static str) {
     let debug_path = base_path.join("target").join("debug");
     let deps_path = debug_path.join("deps");
 
-    config.target_rustcflags = Some(format!("-L {} -L {}", debug_path.display(), deps_path.display()));
+    config.target_rustcflags = Some(format!(
+        "-L {} -L {}",
+        debug_path.display(),
+        deps_path.display()
+    ));
     config.mode = mode.parse().ok().expect("Invalid mode");
     config.src_base = PathBuf::from("tests").join(mode);
 

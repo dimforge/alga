@@ -1,10 +1,12 @@
 use num;
-use std::ops::{Add, Sub, Mul, Div, AddAssign, SubAssign, MulAssign, DivAssign, Neg, Index, IndexMut};
+use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub,
+               SubAssign};
 
-use general::{ClosedAdd, ClosedMul, ClosedDiv, Module, Field, Real};
+use general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real};
 
 /// A vector space has a module structure over a field instead of a ring.
-pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field> /* +
+pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
+/* +
                        ClosedDiv<<Self as VectorSpace>::Field> */ {
     /// The underlying scalar field.
     type Field: Field;
@@ -33,7 +35,6 @@ pub trait NormedSpace: VectorSpace {
     fn try_normalize_mut(&mut self, eps: Self::Field) -> Option<Self::Field>;
 }
 
-
 /// A vector space aquipped with an inner product.
 ///
 /// It must be a normed space as well and the norm must agree with the inner product.
@@ -49,22 +50,19 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
     #[inline]
     fn angle(&self, other: &Self) -> Self::Real {
         let prod = self.inner_product(other);
-        let n1   = self.norm();
-        let n2   = other.norm();
+        let n1 = self.norm();
+        let n2 = other.norm();
 
         if n1 == num::zero() || n2 == num::zero() {
             num::zero()
-        }
-        else {
+        } else {
             let cang = prod / (n1 * n2);
 
             if cang > num::one() {
                 num::zero()
-            }
-            else if cang < -num::one::<Self::Real>() {
+            } else if cang < -num::one::<Self::Real>() {
                 Self::Real::pi()
-            }
-            else {
+            } else {
                 cang.acos()
             }
         }
@@ -72,9 +70,10 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
 }
 
 /// A finite-dimensional vector space.
-pub trait FiniteDimVectorSpace: VectorSpace +
-                                Index<usize, Output = <Self as VectorSpace>::Field> +
-                                IndexMut<usize, Output = <Self as VectorSpace>::Field> {
+pub trait FiniteDimVectorSpace
+    : VectorSpace
+    + Index<usize, Output = <Self as VectorSpace>::Field>
+    + IndexMut<usize, Output = <Self as VectorSpace>::Field> {
     /// The vector space dimension.
     fn dimension() -> usize;
 
@@ -82,7 +81,7 @@ pub trait FiniteDimVectorSpace: VectorSpace +
     /// `f` returns `false`.
     // XXX: return an iterator instead when `-> impl Iterator` will be supported by Rust.
     fn canonical_basis<F: FnMut(&Self) -> bool>(mut f: F) {
-        for i in 0 .. Self::dimension() {
+        for i in 0..Self::dimension() {
             if !f(&Self::canonical_basis_element(i)) {
                 break;
             }
@@ -104,8 +103,8 @@ pub trait FiniteDimVectorSpace: VectorSpace +
 
 /// A finite-dimensional vector space equipped with an inner product that must coincide
 /// with the dot product.
-pub trait FiniteDimInnerSpace: InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real> {
-
+pub trait FiniteDimInnerSpace
+    : InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real> {
     /// Orthonormalizes the given family of vectors. The largest free family of vectors is moved at
     /// the beginning of the array and its size is returned. Vectors at an indices larger or equal to
     /// this length can be modified to an arbitrary value.
@@ -120,9 +119,12 @@ pub trait FiniteDimInnerSpace: InnerSpace + FiniteDimVectorSpace<Field = <Self a
 
 /// A set points associated with a vector space and a transitive and free additive group action
 /// (the translation).
-pub trait AffineSpace: Sized + Clone + PartialEq +
-                       Sub<Self, Output = <Self as AffineSpace>::Translation> +
-                       ClosedAdd<<Self as AffineSpace>::Translation> {
+pub trait AffineSpace
+    : Sized
+    + Clone
+    + PartialEq
+    + Sub<Self, Output = <Self as AffineSpace>::Translation>
+    + ClosedAdd<<Self as AffineSpace>::Translation> {
     /// The associated vector space.
     type Translation: VectorSpace;
 
@@ -140,7 +142,6 @@ pub trait AffineSpace: Sized + Clone + PartialEq +
         self.clone() - right.clone()
     }
 }
-
 
 /// The finite-dimensional affine space based on the field of reals.
 pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Coordinates> +

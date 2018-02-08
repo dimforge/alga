@@ -4,7 +4,7 @@ use num_complex::Complex;
 
 use approx::ApproxEq;
 
-use general::{Operator, Additive, Multiplicative, Inverse, Identity, ClosedNeg};
+use general::{Additive, ClosedNeg, Identity, Inverse, Multiplicative, Operator};
 
 /// Types that are closed under a given operator.
 ///
@@ -30,27 +30,27 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
 /// ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
 /// ```
 pub trait AbstractQuasigroup<O: Operator>
-    : PartialEq + AbstractMagma<O> + Inverse<O>
-{
+    : PartialEq + AbstractMagma<O> + Inverse<O> {
     /// Returns `true` if latin squareness holds for the given arguments. Approximate
     /// equality is used for verifications.
     fn prop_inv_is_latin_square_approx(args: (Self, Self)) -> bool
-        where Self: ApproxEq {
-
+    where
+        Self: ApproxEq,
+    {
         let (a, b) = args;
-        relative_eq!(a, a.operate(&b.inverse()).operate(&b)) &&
-        relative_eq!(a, a.operate(&b.operate(&b.inverse())))
+        relative_eq!(a, a.operate(&b.inverse()).operate(&b))
+            && relative_eq!(a, a.operate(&b.operate(&b.inverse())))
 
         // TODO: pseudo inverse?
     }
 
     /// Returns `true` if latin squareness holds for the given arguments.
     fn prop_inv_is_latin_square(args: (Self, Self)) -> bool
-        where Self: Eq {
-
+    where
+        Self: Eq,
+    {
         let (a, b) = args;
-        a == a.operate(&b.inverse()).operate(&b) &&
-        a == a.operate(&b.operate(&b.inverse()))
+        a == a.operate(&b.inverse()).operate(&b) && a == a.operate(&b.operate(&b.inverse()))
 
         // TODO: pseudo inverse?
     }
@@ -87,25 +87,27 @@ macro_rules! impl_quasigroup(
     }
 );
 
-
 /// An associative magma.
 ///
 /// ~~~notrust
 /// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)
 /// ~~~
-pub trait AbstractSemigroup<O: Operator> : PartialEq + AbstractMagma<O> {
+pub trait AbstractSemigroup<O: Operator>: PartialEq + AbstractMagma<O> {
     /// Returns `true` if associativity holds for the given arguments. Approximate equality is used
     /// for verifications.
     fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool
-        where Self: ApproxEq {
+    where
+        Self: ApproxEq,
+    {
         let (a, b, c) = args;
         relative_eq!(a.operate(&b).operate(&c), a.operate(&b.operate(&c)))
     }
 
     /// Returns `true` if associativity holds for the given arguments.
     fn prop_is_associative(args: (Self, Self, Self)) -> bool
-        where Self: Eq {
-
+    where
+        Self: Eq,
+    {
         let (a, b, c) = args;
         a.operate(&b).operate(&c) == a.operate(&b.operate(&c))
     }
@@ -136,7 +138,6 @@ macro_rules! impl_semigroup(
     }
 );
 
-
 /// A quasigroup with an unique identity element.
 ///
 /// The left inverse `r` and right inverse `l` are not required to be equal.
@@ -145,10 +146,7 @@ macro_rules! impl_semigroup(
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
 /// ~~~
-pub trait AbstractLoop<O: Operator>
-    : AbstractQuasigroup<O>
-    + Identity<O>
-{ }
+pub trait AbstractLoop<O: Operator>: AbstractQuasigroup<O> + Identity<O> {}
 
 /// Implements the loop trait for types provided.
 /// # Examples
@@ -188,32 +186,31 @@ macro_rules! impl_loop(
     }
 );
 
-
 /// A semigroup equipped with an identity element.
 ///
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 /// ~~~
-pub trait AbstractMonoid<O: Operator>
-    : AbstractSemigroup<O>
-    + Identity<O>
-{
+pub trait AbstractMonoid<O: Operator>: AbstractSemigroup<O> + Identity<O> {
     /// Checks whether operating with the identity element is a no-op for the given
     /// argument. Approximate equality is used for verifications.
     fn prop_operating_identity_element_is_noop_approx(args: (Self,)) -> bool
-        where Self: ApproxEq {
+    where
+        Self: ApproxEq,
+    {
         let (a,) = args;
-        relative_eq!(a.operate(&Self::identity()), a) &&
-        relative_eq!(Self::identity().operate(&a), a)
+        relative_eq!(a.operate(&Self::identity()), a)
+            && relative_eq!(Self::identity().operate(&a), a)
     }
 
     /// Checks whether operating with the identity element is a no-op for the given
     /// argument.
     fn prop_operating_identity_element_is_noop(args: (Self,)) -> bool
-        where Self: Eq {
+    where
+        Self: Eq,
+    {
         let (a,) = args;
-        a.operate(&Self::identity()) == a &&
-        Self::identity().operate(&a) == a
+        a.operate(&Self::identity()) == a && Self::identity().operate(&a) == a
     }
 }
 
@@ -250,9 +247,7 @@ macro_rules! impl_monoid(
 );
 
 /// A group is a loop and a monoid at the same time.
-pub trait AbstractGroup<O: Operator>
-    : AbstractLoop<O> + AbstractMonoid<O>
-{ }
+pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 
 /// Implements the group trait for types provided.
 /// # Examples
@@ -299,20 +294,22 @@ macro_rules! impl_group(
 /// ```notrust
 /// ∀ a, b ∈ Self, a ∘ b = b ∘ a
 /// ```
-pub trait AbstractGroupAbelian<O: Operator>
-    : AbstractGroup<O> {
+pub trait AbstractGroupAbelian<O: Operator>: AbstractGroup<O> {
     /// Returns `true` if the operator is commutative for the given argument tuple. Approximate
     /// equality is used for verifications.
     fn prop_is_commutative_approx(args: (Self, Self)) -> bool
-        where Self: ApproxEq {
-
+    where
+        Self: ApproxEq,
+    {
         let (a, b) = args;
         relative_eq!(a.operate(&b), b.operate(&a))
     }
 
     /// Returns `true` if the operator is commutative for the given argument tuple.
     fn prop_is_commutative(args: (Self, Self)) -> bool
-        where Self: Eq {
+    where
+        Self: Eq,
+    {
         let (a, b) = args;
         a.operate(&b) == b.operate(&a)
     }
@@ -390,7 +387,7 @@ impl<N: AbstractMagma<Additive>> AbstractMagma<Additive> for Complex<N> {
     fn operate(&self, lhs: &Self) -> Self {
         Complex {
             re: self.re.operate(&lhs.re),
-            im: self.im.operate(&lhs.im)
+            im: self.im.operate(&lhs.im),
         }
     }
 }

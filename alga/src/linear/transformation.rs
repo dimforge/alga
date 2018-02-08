@@ -1,6 +1,6 @@
-use general::{ClosedMul, ClosedDiv, ClosedNeg, Real, MultiplicativeGroup, MultiplicativeMonoid,
-              SubsetOf, Id, Inverse};
-use linear::{NormedSpace, EuclideanSpace};
+use general::{ClosedDiv, ClosedMul, ClosedNeg, Id, Inverse, MultiplicativeGroup,
+              MultiplicativeMonoid, Real, SubsetOf};
+use linear::{EuclideanSpace, NormedSpace};
 
 // NOTE: A subgroup trait inherit from its parent groups.
 
@@ -16,8 +16,9 @@ pub trait Transformation<E: EuclideanSpace>: MultiplicativeMonoid {
     fn transform_vector(&self, v: &E::Coordinates) -> E::Coordinates;
 }
 
-/// The most general form of inversible transformations on an euclidean space. 
-pub trait ProjectiveTransformation<E: EuclideanSpace>: MultiplicativeGroup + Transformation<E> {
+/// The most general form of inversible transformations on an euclidean space.
+pub trait ProjectiveTransformation<E: EuclideanSpace>
+    : MultiplicativeGroup + Transformation<E> {
     /// Applies this group's inverse action on a point from the euclidean space.
     fn inverse_transform_point(&self, pt: &E) -> E;
 
@@ -40,28 +41,33 @@ pub trait AffineTransformation<E: EuclideanSpace>: ProjectiveTransformation<E> {
 
     /// Decomposes this affine transformation into a rotation followed by a non-uniform scaling,
     /// followed by a rotation, followed by a translation.
-    fn decompose(&self) -> (Self::Translation, Self::Rotation,
-                            Self::NonUniformScaling, Self::Rotation);
+    fn decompose(
+        &self,
+    ) -> (
+        Self::Translation,
+        Self::Rotation,
+        Self::NonUniformScaling,
+        Self::Rotation,
+    );
     // FIXME: add a `recompose` method?
-
 
     /*
      * Composition with components.
      */
     /// Appends a translation to this similarity.
-    fn append_translation(&self,  t: &Self::Translation) -> Self;
+    fn append_translation(&self, t: &Self::Translation) -> Self;
 
     /// Prepends a translation to this similarity.
     fn prepend_translation(&self, t: &Self::Translation) -> Self;
 
     /// Appends a rotation to this similarity.
-    fn append_rotation(&self,  r: &Self::Rotation) -> Self;
+    fn append_rotation(&self, r: &Self::Rotation) -> Self;
 
     /// Prepends a rotation to this similarity.
     fn prepend_rotation(&self, r: &Self::Rotation) -> Self;
 
     /// Appends a scaling factor to this similarity.
-    fn append_scaling(&self,  s: &Self::NonUniformScaling) -> Self;
+    fn append_scaling(&self, s: &Self::NonUniformScaling) -> Self;
 
     /// Prepends a scaling factor to this similarity.
     fn prepend_scaling(&self, s: &Self::NonUniformScaling) -> Self;
@@ -72,12 +78,15 @@ pub trait AffineTransformation<E: EuclideanSpace>: ProjectiveTransformation<E> {
     /// May return `None` if `Self` does not have enough translational degree of liberty to perform
     /// this computation.
     #[inline]
-    fn append_rotation_wrt_point(&self,  r: &Self::Rotation, p: &E) -> Option<Self> {
+    fn append_rotation_wrt_point(&self, r: &Self::Rotation, p: &E) -> Option<Self> {
         if let Some(t) = Self::Translation::from_vector(p.coordinates()) {
             let it = t.inverse();
-            Some(self.append_translation(&it).append_rotation(&r).append_translation(&t))
-        }
-        else {
+            Some(
+                self.append_translation(&it)
+                    .append_rotation(&r)
+                    .append_translation(&t),
+            )
+        } else {
             None
         }
     }
@@ -86,7 +95,9 @@ pub trait AffineTransformation<E: EuclideanSpace>: ProjectiveTransformation<E> {
 /// Subgroups of the similarity group `S(n)`, i.e., rotations, translations, and (signed) uniform scaling.
 ///
 /// Similarities map lines to lines and preserve angles.
-pub trait Similarity<E: EuclideanSpace>: AffineTransformation<E, NonUniformScaling = <Self as Similarity<E>>::Scaling> {
+pub trait Similarity<E: EuclideanSpace>
+    : AffineTransformation<E, NonUniformScaling = <Self as Similarity<E>>::Scaling>
+    {
     /// The type of the pure (uniform) scaling part of this similarity transformation.
     type Scaling: Scaling<E>;
 
@@ -170,19 +181,20 @@ pub trait Similarity<E: EuclideanSpace>: AffineTransformation<E, NonUniformScali
 }
 
 /// Subgroups of the isometry group `E(n)`, i.e., rotations, reflexions, and translations.
-pub trait Isometry<E: EuclideanSpace>: Similarity<E, Scaling = Id> {
-}
+pub trait Isometry<E: EuclideanSpace>: Similarity<E, Scaling = Id> {}
 
 /// Subgroups of the orientation-preserving isometry group `SE(n)`, i.e., rotations and translations.
-pub trait DirectIsometry<E: EuclideanSpace>: Isometry<E> {
-}
+pub trait DirectIsometry<E: EuclideanSpace>: Isometry<E> {}
 
 /// Subgroups of the n-dimensional rotations and scaling `O(n)`.
-pub trait OrthogonalTransformation<E: EuclideanSpace>: Isometry<E, Translation = Id> {
+pub trait OrthogonalTransformation<E: EuclideanSpace>
+    : Isometry<E, Translation = Id> {
 }
 
 /// Subgroups of the (signed) uniform scaling group.
-pub trait Scaling<E: EuclideanSpace>: AffineTransformation<E, NonUniformScaling = Self, Translation = Id, Rotation = Id> + SubsetOf<E::Real> {
+pub trait Scaling<E: EuclideanSpace>
+    : AffineTransformation<E, NonUniformScaling = Self, Translation = Id, Rotation = Id>
+    + SubsetOf<E::Real> {
     /// Converts this scaling factor to a real. Same as `self.to_superset()`.
     #[inline]
     fn to_real(&self) -> E::Real {
@@ -212,7 +224,8 @@ pub trait Scaling<E: EuclideanSpace>: AffineTransformation<E, NonUniformScaling 
 }
 
 /// Subgroups of the n-dimensional translation group `T(n)`.
-pub trait Translation<E: EuclideanSpace>: DirectIsometry<E, Translation = Self, Rotation = Id> /* + SubsetOf<E::Coordinates> */ {
+pub trait Translation<E: EuclideanSpace>
+    : DirectIsometry<E, Translation = Self, Rotation = Id> /* + SubsetOf<E::Coordinates> */ {
     // NOTE: we must define those two conversions here (instead of just using SubsetOf) because the
     // structure of Self uses the multiplication for composition, while E::Coordinates uses addition.
     // Having a trait that sais "remap this operator to this other one" does not seem to be
@@ -239,7 +252,9 @@ pub trait Translation<E: EuclideanSpace>: DirectIsometry<E, Translation = Self, 
 }
 
 /// Subgroups of the n-dimensional rotation group `SO(n)`.
-pub trait Rotation<E: EuclideanSpace>: OrthogonalTransformation<E, Rotation = Self> + DirectIsometry<E, Rotation = Self> {
+pub trait Rotation<E: EuclideanSpace>
+    : OrthogonalTransformation<E, Rotation = Self> + DirectIsometry<E, Rotation = Self>
+    {
     /// Raises this rotation to a power. If this is a simple rotation, the result must be
     /// equivalent to multiplying the rotation angle by `n`.
     fn powf(&self, n: E::Real) -> Option<Self>;
@@ -261,8 +276,6 @@ pub trait Rotation<E: EuclideanSpace>: OrthogonalTransformation<E, Rotation = Se
     // with angle equal to `n`?
 }
 
-
-
 /*
  *
  * Implementation for floats.
@@ -270,10 +283,11 @@ pub trait Rotation<E: EuclideanSpace>: OrthogonalTransformation<E, Rotation = Se
  */
 
 impl<R, E> Transformation<E> for R
-where R: Real,
-      E: EuclideanSpace<Real = R>,
-      E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg {
-
+where
+    R: Real,
+    E: EuclideanSpace<Real = R>,
+    E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
+{
     #[inline]
     fn transform_point(&self, pt: &E) -> E {
         pt.scale_by(*self)
@@ -286,10 +300,11 @@ where R: Real,
 }
 
 impl<R, E> ProjectiveTransformation<E> for R
-where R: Real,
-      E: EuclideanSpace<Real = R>,
-      E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg {
-
+where
+    R: Real,
+    E: EuclideanSpace<Real = R>,
+    E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
+{
     #[inline]
     fn inverse_transform_point(&self, pt: &E) -> E {
         assert!(*self != R::zero());
@@ -304,12 +319,14 @@ where R: Real,
 }
 
 impl<R, E> AffineTransformation<E> for R
-where R: Real,
-      E: EuclideanSpace<Real = R>,
-      E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg {
-    type Rotation          = Id;
+where
+    R: Real,
+    E: EuclideanSpace<Real = R>,
+    E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
+{
+    type Rotation = Id;
     type NonUniformScaling = R;
-    type Translation       = Id;
+    type Translation = Id;
 
     #[inline]
     fn decompose(&self) -> (Id, Id, R, Id) {
@@ -348,9 +365,11 @@ where R: Real,
 }
 
 impl<R, E> Scaling<E> for R
-where R: Real + SubsetOf<R>,
-      E: EuclideanSpace<Real = R>,
-      E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg {
+where
+    R: Real + SubsetOf<R>,
+    E: EuclideanSpace<Real = R>,
+    E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
+{
     #[inline]
     fn to_real(&self) -> E::Real {
         *self
@@ -373,9 +392,11 @@ where R: Real + SubsetOf<R>,
 }
 
 impl<R, E> Similarity<E> for R
-where R: Real + SubsetOf<R>,
-      E: EuclideanSpace<Real = R>,
-      E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg {
+where
+    R: Real + SubsetOf<R>,
+    E: EuclideanSpace<Real = R>,
+    E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
+{
     type Scaling = R;
 
     fn translation(&self) -> Self::Translation {

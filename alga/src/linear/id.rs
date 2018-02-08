@@ -1,9 +1,9 @@
 use num;
 
-use general::{Identity, Id};
-use linear::{InnerSpace, EuclideanSpace, Transformation, AffineTransformation, Scaling, Similarity,
-             Isometry, DirectIsometry, OrthogonalTransformation, Translation, Rotation,
-             ProjectiveTransformation};
+use general::{Id, Identity};
+use linear::{AffineTransformation, DirectIsometry, EuclideanSpace, InnerSpace, Isometry,
+             OrthogonalTransformation, ProjectiveTransformation, Rotation, Scaling, Similarity,
+             Transformation, Translation};
 
 /*
  * Implementation of linear algebra structures for the ubiquitous identity element.
@@ -33,9 +33,9 @@ impl<E: EuclideanSpace> ProjectiveTransformation<E> for Id {
 }
 
 impl<E: EuclideanSpace> AffineTransformation<E> for Id {
-    type Rotation          = Id;
+    type Rotation = Id;
     type NonUniformScaling = Id;
-    type Translation       = Id;
+    type Translation = Id;
 
     #[inline]
     fn decompose(&self) -> (Id, Id, Id, Id) {
@@ -74,7 +74,7 @@ impl<E: EuclideanSpace> AffineTransformation<E> for Id {
 }
 
 impl<E: EuclideanSpace> Similarity<E> for Id {
-    type Scaling  = Id;
+    type Scaling = Id;
 
     #[inline]
     fn translation(&self) -> Self::Translation {
@@ -92,11 +92,10 @@ impl<E: EuclideanSpace> Similarity<E> for Id {
     }
 }
 
-impl<E: EuclideanSpace> Scaling<E>        for Id { }
-impl<E: EuclideanSpace> Isometry<E>       for Id { }
-impl<E: EuclideanSpace> DirectIsometry<E> for Id { }
-impl<E: EuclideanSpace> OrthogonalTransformation<E> for Id { }
-
+impl<E: EuclideanSpace> Scaling<E> for Id {}
+impl<E: EuclideanSpace> Isometry<E> for Id {}
+impl<E: EuclideanSpace> DirectIsometry<E> for Id {}
+impl<E: EuclideanSpace> OrthogonalTransformation<E> for Id {}
 
 impl<E: EuclideanSpace> Rotation<E> for Id {
     #[inline]
@@ -108,8 +107,7 @@ impl<E: EuclideanSpace> Rotation<E> for Id {
     fn rotation_between(a: &E::Coordinates, b: &E::Coordinates) -> Option<Self> {
         if a.angle(b) == num::zero() {
             Some(Id::new())
-        }
-        else {
+        } else {
             None
         }
     }
@@ -130,8 +128,7 @@ impl<E: EuclideanSpace> Translation<E> for Id {
     fn from_vector(v: E::Coordinates) -> Option<Self> {
         if v == E::Coordinates::identity() {
             Some(Id::new())
-        }
-        else {
+        } else {
             None
         }
     }

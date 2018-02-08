@@ -1,7 +1,6 @@
+extern crate alga;
 #[macro_use]
 extern crate quickcheck;
-extern crate alga;
-
 
 mod signed_int_check {
     macro_rules! check {

@@ -1,12 +1,12 @@
 use std::any::Any;
-use num::{Num, FromPrimitive, Signed, Bounded};
+use num::{Bounded, FromPrimitive, Num, Signed};
 use std::{f32, f64};
 use std::fmt::{Debug, Display};
-use std::ops::{Neg, AddAssign, MulAssign, SubAssign, DivAssign};
+use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
 
 use approx::ApproxEq;
 
-use general::{Field, SubsetOf, SupersetOf, Lattice};
+use general::{Field, Lattice, SubsetOf, SupersetOf};
 
 #[allow(missing_docs)]
 
@@ -16,11 +16,31 @@ use general::{Field, SubsetOf, SupersetOf, Lattice};
 /// functions only have to be approximately equal to the actual theoretical values.
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
 // allow a blancket impl: impl<T: Clone> SubsetOf<T> for T { ... }
-pub trait Real: SubsetOf<Self> + SupersetOf<f64> + Field + Copy + Num + FromPrimitive +
-                Neg<Output = Self> + AddAssign + MulAssign + SubAssign + DivAssign +
-                ApproxEq<Epsilon = Self> + Lattice + PartialEq + Signed +
-                Send + Sync + Any + 'static + Debug + Display + // NOTE: make all types debuggable/'static/Any ? This seems essencial for any kind of generic programming.
-                Bounded { // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
+// NOTE: make all types debuggable/'static/Any ? This seems essencial for any kind of generic programming.
+pub trait Real
+    : SubsetOf<Self>
+    + SupersetOf<f64>
+    + Field
+    + Copy
+    + Num
+    + FromPrimitive
+    + Neg<Output = Self>
+    + AddAssign
+    + MulAssign
+    + SubAssign
+    + DivAssign
+    + ApproxEq<Epsilon = Self>
+    + Lattice
+    + PartialEq
+    + Signed
+    + Send
+    + Sync
+    + Any
+    + 'static
+    + Debug
+    + Display
+    + Bounded {
+    // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
     fn floor(self) -> Self;
     fn ceil(self) -> Self;
     fn round(self) -> Self;
@@ -62,7 +82,6 @@ pub trait Real: SubsetOf<Self> + SupersetOf<f64> + Field + Copy + Num + FromPrim
     fn acosh(self) -> Self;
     fn atanh(self) -> Self;
 
-
     fn pi() -> Self;
     fn two_pi() -> Self;
     fn frac_pi_2() -> Self;
@@ -80,7 +99,6 @@ pub trait Real: SubsetOf<Self> + SupersetOf<f64> + Field + Copy + Num + FromPrim
     fn ln_2() -> Self;
     fn ln_10() -> Self;
 }
-
 
 macro_rules! impl_real(
     ($($T:ty, $M:ident);*) => ($(

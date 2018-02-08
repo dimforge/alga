@@ -1,10 +1,10 @@
 extern crate alga;
 #[macro_use]
 extern crate alga_derive;
-extern crate quickcheck;
 extern crate approx;
+extern crate quickcheck;
 
-use alga::general::{Inverse, Identity, Additive, Multiplicative, AbstractMagma};
+use alga::general::{AbstractMagma, Additive, Identity, Inverse, Multiplicative};
 
 use approx::ApproxEq;
 
@@ -42,7 +42,7 @@ impl Arbitrary for W {
     fn arbitrary<G: Gen>(g: &mut G) -> Self {
         W(f64::arbitrary(g))
     }
-    fn shrink(&self) -> Box<Iterator<Item=Self>> {
+    fn shrink(&self) -> Box<Iterator<Item = Self>> {
         Box::new(self.0.shrink().map(W))
     }
 }

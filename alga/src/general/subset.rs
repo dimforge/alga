@@ -30,8 +30,7 @@ pub trait SubsetOf<T>: Sized {
     fn from_superset(element: &T) -> Option<Self> {
         if Self::is_in_subset(element) {
             Some(unsafe { Self::from_superset_unchecked(element) })
-        }
-        else {
+        } else {
             None
         }
     }
@@ -68,8 +67,7 @@ pub trait SupersetOf<T>: Sized {
     fn to_subset(&self) -> Option<T> {
         if self.is_in_subset() {
             Some(unsafe { self.to_subset_unchecked() })
-        }
-        else {
+        } else {
             None
         }
     }
@@ -164,13 +162,12 @@ impl_subset!(
     decimal::d128 as decimal::d128;
 );
 
-
 impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
     #[inline]
     fn to_superset(&self) -> Complex<N2> {
         Complex {
             re: N2::from_subset(&self.re),
-            im: N2::from_subset(&self.im)
+            im: N2::from_subset(&self.im),
         }
     }
 
@@ -178,7 +175,7 @@ impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
     unsafe fn from_superset_unchecked(element: &Complex<N2>) -> Complex<N1> {
         Complex {
             re: element.re.to_subset_unchecked(),
-            im: element.im.to_subset_unchecked()
+            im: element.im.to_subset_unchecked(),
         }
     }
 
@@ -212,12 +209,6 @@ macro_rules! impl_scalar_subset_of_complex(
     )*}
 );
 
-impl_scalar_subset_of_complex!(
-    u8, u16, u32, u64, usize,
-    i8, i16, i32, i64, isize,
-    f32, f64
-);
+impl_scalar_subset_of_complex!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
 #[cfg(decimal)]
-impl_scalar_subset_of_complex!(
-    decimal::d128
-);
+impl_scalar_subset_of_complex!(decimal::d128);

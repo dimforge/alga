@@ -156,22 +156,21 @@
 //! }
 //! ~~~
 
-pub use self::operator::{Inverse, Operator, Multiplicative, Additive,
-                         ClosedAdd, ClosedMul, ClosedSub, ClosedNeg, ClosedDiv};
-pub use self::identity::{Identity, Id};
+pub use self::operator::{Additive, ClosedAdd, ClosedDiv, ClosedMul, ClosedNeg, ClosedSub, Inverse,
+                         Multiplicative, Operator};
+pub use self::identity::{Id, Identity};
 pub use self::subset::{SubsetOf, SupersetOf};
 
-pub use self::one_operator::{AbstractMagma, AbstractQuasigroup, AbstractLoop, AbstractSemigroup,
-                             AbstractMonoid, AbstractGroup, AbstractGroupAbelian};
-pub use self::two_operators::{AbstractRing, AbstractRingCommutative, AbstractField};
+pub use self::one_operator::{AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
+                             AbstractMonoid, AbstractQuasigroup, AbstractSemigroup};
+pub use self::two_operators::{AbstractField, AbstractRing, AbstractRingCommutative};
 pub use self::module::AbstractModule;
-pub use self::lattice::{MeetSemilattice, JoinSemilattice, Lattice};
-pub use self::specialized::{
-    AdditiveMagma, AdditiveQuasigroup, AdditiveLoop, AdditiveSemigroup,
-    AdditiveMonoid, AdditiveGroup, AdditiveGroupAbelian,
-    MultiplicativeMagma, MultiplicativeQuasigroup, MultiplicativeLoop, MultiplicativeSemigroup,
-    MultiplicativeMonoid, MultiplicativeGroup, MultiplicativeGroupAbelian,
-    Ring, RingCommutative, Field, Module};
+pub use self::lattice::{JoinSemilattice, Lattice, MeetSemilattice};
+pub use self::specialized::{AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, AdditiveMagma,
+                            AdditiveMonoid, AdditiveQuasigroup, AdditiveSemigroup, Field, Module,
+                            MultiplicativeGroup, MultiplicativeGroupAbelian, MultiplicativeLoop,
+                            MultiplicativeMagma, MultiplicativeMonoid, MultiplicativeQuasigroup,
+                            MultiplicativeSemigroup, Ring, RingCommutative};
 pub use self::real::Real;
 
 #[macro_use]

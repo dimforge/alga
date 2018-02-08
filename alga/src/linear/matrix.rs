@@ -1,11 +1,12 @@
 use std::ops::Mul;
 
-use general::{Field, MultiplicativeMonoid, MultiplicativeGroup};
+use general::{Field, MultiplicativeGroup, MultiplicativeMonoid};
 use linear::FiniteDimVectorSpace;
 
 /// The space of all matrices.
-pub trait Matrix: Sized + Clone +
-                  Mul<<Self as Matrix>::Row, Output = <Self as Matrix>::Column> {
+pub trait Matrix
+    : Sized + Clone + Mul<<Self as Matrix>::Row, Output = <Self as Matrix>::Column>
+    {
     /// The underlying field.
     type Field: Field;
 
@@ -35,7 +36,10 @@ pub trait Matrix: Sized + Clone +
 
     /// Gets the component at row `i` and column `j` of this matrix.
     fn get(&self, i: usize, j: usize) -> Self::Field {
-        assert!(i < self.nrows() && j < self.ncolumns(), "Matrix indexing: index out of bounds.");
+        assert!(
+            i < self.nrows() && j < self.ncolumns(),
+            "Matrix indexing: index out of bounds."
+        );
 
         unsafe { self.get_unchecked(i, j) }
     }
@@ -73,7 +77,10 @@ pub trait MatrixMut: Matrix {
 
     /// Sets the component at row `i` and column `j` of this matrix.
     fn set(&mut self, i: usize, j: usize, val: Self::Field) {
-        assert!(i < self.nrows() && j < self.ncolumns(), "Matrix indexing: index out of bounds.");
+        assert!(
+            i < self.nrows() && j < self.ncolumns(),
+            "Matrix indexing: index out of bounds."
+        );
 
         unsafe { self.set_unchecked(i, j, val) }
     }
@@ -81,11 +88,12 @@ pub trait MatrixMut: Matrix {
 
 /// The monoid of all square matrices, including non-inversible ones.
 pub trait SquareMatrix
-    : Matrix<Row       = <Self as SquareMatrix>::Vector,
-             Column    = <Self as SquareMatrix>::Vector,
-             Transpose = Self> +
-      MultiplicativeMonoid {
-
+    : Matrix<
+    Row = <Self as SquareMatrix>::Vector,
+    Column = <Self as SquareMatrix>::Vector,
+    Transpose = Self,
+>
+    + MultiplicativeMonoid {
     /// The type of rows, column, and diagonal of this matrix.
     type Vector: FiniteDimVectorSpace<Field = Self::Field>;
 
@@ -114,10 +122,13 @@ pub trait SquareMatrix
 }
 
 /// The monoid of all mutable square matrices that are stable under modification of its diagonal.
-pub trait SquareMatrixMut: SquareMatrix +
-                           MatrixMut<Row       = <Self as SquareMatrix>::Vector,
-                                     Column    = <Self as SquareMatrix>::Vector,
-                                     Transpose = Self> {
+pub trait SquareMatrixMut
+    : SquareMatrix
+    + MatrixMut<
+    Row = <Self as SquareMatrix>::Vector,
+    Column = <Self as SquareMatrix>::Vector,
+    Transpose = Self,
+> {
     /// Constructs a new diagonal matrix.
     fn from_diagonal(diag: &Self::Vector) -> Self;
 
@@ -135,8 +146,6 @@ pub trait SquareMatrixMut: SquareMatrix +
 
 /// The group of inversible matrix. Commonly known as the General Linear group `GL(n)` by
 /// algebraists.
-pub trait InversibleSquareMatrix: SquareMatrix + MultiplicativeGroup {
-}
-
+pub trait InversibleSquareMatrix: SquareMatrix + MultiplicativeGroup {}
 
 // Add marker traits for symmetric-, SDP-ness, etc.

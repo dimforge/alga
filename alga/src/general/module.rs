@@ -1,5 +1,4 @@
-use general::{AbstractGroupAbelian, AbstractRingCommutative, Operator, Additive, Multiplicative};
-
+use general::{AbstractGroupAbelian, AbstractRingCommutative, Additive, Multiplicative, Operator};
 
 /// A module combines two sets: one with an abelian group structure and another with a
 /// commutative ring structure.
@@ -18,10 +17,11 @@ use general::{AbstractGroupAbelian, AbstractRingCommutative, Operator, Additive,
 /// (a × b) ∘ x = a ∘ (b ∘ x)
 /// 1 ∘ x       = x
 /// ```
-pub trait AbstractModule<OpGroup: Operator = Additive,
-                         OpAdd:   Operator = Additive,
-                         OpMul:   Operator = Multiplicative>
-                         : AbstractGroupAbelian<OpGroup> {
+pub trait AbstractModule<
+    OpGroup: Operator = Additive,
+    OpAdd: Operator = Additive,
+    OpMul: Operator = Multiplicative,
+>: AbstractGroupAbelian<OpGroup> {
     /// The underlying scalar field.
     type AbstractRing: AbstractRingCommutative<OpAdd, OpMul>;
 

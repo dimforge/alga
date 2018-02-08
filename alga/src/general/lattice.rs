@@ -1,4 +1,4 @@
-use std::cmp::{PartialOrd, Ordering};
+use std::cmp::{Ordering, PartialOrd};
 
 /// A set where every two elements have an infimum (i.e. greatest lower bound).
 pub trait MeetSemilattice: Sized {
@@ -26,10 +26,9 @@ pub trait Lattice: MeetSemilattice + JoinSemilattice + PartialOrd {
         if let Some(ord) = self.partial_cmp(other) {
             match ord {
                 Ordering::Greater => Some(other),
-                _                 => Some(self),
+                _ => Some(self),
             }
-        }
-        else {
+        } else {
             None
         }
     }
@@ -40,10 +39,9 @@ pub trait Lattice: MeetSemilattice + JoinSemilattice + PartialOrd {
         if let Some(ord) = self.partial_cmp(other) {
             match ord {
                 Ordering::Less => Some(other),
-                _              => Some(self),
+                _ => Some(self),
             }
-        }
-        else {
+        } else {
             None
         }
     }
@@ -54,10 +52,9 @@ pub trait Lattice: MeetSemilattice + JoinSemilattice + PartialOrd {
         if let Some(ord) = self.partial_cmp(other) {
             match ord {
                 Ordering::Less => Some((self, other)),
-                _              => Some((other, self)),
+                _ => Some((other, self)),
             }
-        }
-        else {
+        } else {
             None
         }
     }
@@ -69,15 +66,12 @@ pub trait Lattice: MeetSemilattice + JoinSemilattice + PartialOrd {
         if let (Some(cmp_min), Some(cmp_max)) = (self.partial_cmp(min), self.partial_cmp(max)) {
             if cmp_min == Ordering::Less {
                 Some(min)
-            }
-            else if cmp_max == Ordering::Greater {
+            } else if cmp_max == Ordering::Greater {
                 Some(max)
-            }
-            else {
+            } else {
                 Some(self)
             }
-        }
-        else {
+        } else {
             None
         }
     }

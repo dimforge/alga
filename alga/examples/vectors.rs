@@ -5,7 +5,7 @@ extern crate alga_derive;
 extern crate approx;
 extern crate quickcheck;
 
-use std::fmt::{Display, Formatter, Error};
+use std::fmt::{Display, Error, Formatter};
 
 use alga::general::*;
 use alga::general::wrapper::Wrapper as W;
@@ -27,17 +27,19 @@ impl<Scalar: AbstractField + Arbitrary> Arbitrary for Vec2<Scalar> {
         Vec2::new(Scalar::arbitrary(g), Scalar::arbitrary(g))
     }
 
-    fn shrink(&self) -> Box<Iterator<Item=Self>> {
-        Box::new(self.x.shrink().zip(self.y.shrink()).map(|(x, y)| Vec2::new(x, y)))
+    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+        Box::new(
+            self.x
+                .shrink()
+                .zip(self.y.shrink())
+                .map(|(x, y)| Vec2::new(x, y)),
+        )
     }
 }
 
 impl<Scalar: AbstractField> Vec2<Scalar> {
     fn new(x: Scalar, y: Scalar) -> Vec2<Scalar> {
-        Vec2 {
-            x: x,
-            y: y,
-        }
+        Vec2 { x: x, y: y }
     }
 }
 
@@ -48,7 +50,8 @@ impl<Scalar: AbstractField + Display> Display for Vec2<Scalar> {
 }
 
 impl<Scalar: AbstractField + ApproxEq> ApproxEq for Vec2<Scalar>
-where Scalar::Epsilon: Clone
+where
+    Scalar::Epsilon: Clone,
 {
     type Epsilon = Scalar::Epsilon;
 
@@ -64,14 +67,20 @@ where Scalar::Epsilon: Clone
         Scalar::default_max_ulps()
     }
 
-    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
-        self.x.relative_eq(&other.x, epsilon.clone(), max_relative.clone()) &&
-        self.y.relative_eq(&other.y, epsilon, max_relative)
+    fn relative_eq(
+        &self,
+        other: &Self,
+        epsilon: Self::Epsilon,
+        max_relative: Self::Epsilon,
+    ) -> bool {
+        self.x
+            .relative_eq(&other.x, epsilon.clone(), max_relative.clone())
+            && self.y.relative_eq(&other.y, epsilon, max_relative)
     }
 
     fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
-        self.x.ulps_eq(&other.x, epsilon.clone(), max_ulps) &&
-        self.y.ulps_eq(&other.y, epsilon, max_ulps)
+        self.x.ulps_eq(&other.x, epsilon.clone(), max_ulps)
+            && self.y.ulps_eq(&other.y, epsilon, max_ulps)
     }
 }
 
@@ -83,7 +92,10 @@ impl<Scalar: AbstractField> AbstractMagma<Additive> for Vec2<Scalar> {
 
 impl<Scalar: AbstractField> Inverse<Additive> for Vec2<Scalar> {
     fn inverse(&self) -> Self {
-        Vec2::new(Inverse::<Additive>::inverse(&self.x), Inverse::<Additive>::inverse(&self.y))
+        Vec2::new(
+            Inverse::<Additive>::inverse(&self.x),
+            Inverse::<Additive>::inverse(&self.y),
+        )
     }
 }
 
@@ -105,7 +117,10 @@ impl<Scalar: AbstractField> AbstractModule for Vec2<Scalar> {
 
 impl<Scalar: AbstractField> AbstractMagma<Multiplicative> for Vec2<Scalar> {
     fn operate(&self, lhs: &Self) -> Self {
-        Vec2::new(self.x.op(Multiplicative, &lhs.x), self.y.op(Multiplicative, &lhs.y))
+        Vec2::new(
+            self.x.op(Multiplicative, &lhs.x),
+            self.y.op(Multiplicative, &lhs.y),
+        )
     }
 }
 
@@ -121,7 +136,7 @@ impl<Scalar: AbstractField> Identity<Multiplicative> for Vec2<Scalar> {
 fn gcd<T: AbstractRingCommutative + PartialOrd>(a: T, b: T) -> T {
     let (mut a, mut b) = (W::<_, _, Multiplicative>::new(a), W::new(b));
     let zero = W::new(Identity::<Additive>::identity());
-    if a < zero{
+    if a < zero {
         a = -a;
     }
     if b < zero {
@@ -176,7 +191,7 @@ impl Arbitrary for Rational {
         Rational::new(i64::arbitrary(g), div)
     }
 
-    fn shrink(&self) -> Box<Iterator<Item=Self>> {
+    fn shrink(&self) -> Box<Iterator<Item = Self>> {
         RationalShrinker::new(self.clone())
     }
 }
@@ -187,7 +202,7 @@ struct RationalShrinker {
 }
 
 impl RationalShrinker {
-    pub fn new(x: Rational) -> Box<Iterator<Item=Rational>> {
+    pub fn new(x: Rational) -> Box<Iterator<Item = Rational>> {
         if x.a == 0 {
             quickcheck::empty_shrinker()
         } else {
@@ -204,7 +219,10 @@ impl RationalShrinker {
 impl Iterator for RationalShrinker {
     type Item = Rational;
     fn next(&mut self) -> Option<Self::Item> {
-        let next = Rational::new((self.x.a * self.i.b) - (self.i.a * self.x.b), self.x.b * self.i.b);
+        let next = Rational::new(
+            (self.x.a * self.i.b) - (self.i.a * self.x.b),
+            self.x.b * self.i.b,
+        );
         if next.a * self.x.b < self.x.a * next.b {
             let result = Some(next);
             self.i = Rational::new(self.i.a, self.i.b * 2);
@@ -234,10 +252,7 @@ impl Rational {
     }
 
     fn whole(n: i64) -> Self {
-        Rational {
-            a: n,
-            b: 1,
-        }
+        Rational { a: n, b: 1 }
     }
 }
 
@@ -272,7 +287,12 @@ impl ApproxEq for Rational {
         4
     }
 
-    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+    fn relative_eq(
+        &self,
+        other: &Self,
+        epsilon: Self::Epsilon,
+        max_relative: Self::Epsilon,
+    ) -> bool {
         let us = self.a as f64 / self.b as f64;
         let them = other.a as f64 / other.b as f64;
         us.relative_eq(&them, epsilon, max_relative)
@@ -306,7 +326,6 @@ impl Identity<Additive> for Rational {
     }
 }
 
-
 impl AbstractMagma<Multiplicative> for Rational {
     fn operate(&self, lhs: &Self) -> Self {
         let a = self.a * lhs.a;
@@ -333,7 +352,9 @@ impl Identity<Multiplicative> for Rational {
 }
 
 fn main() {
-    let vec = || W::<_, Additive, Multiplicative>::new(Vec2::new(Rational::new(1, 2), Rational::whole(3)));
+    let vec = || {
+        W::<_, Additive, Multiplicative>::new(Vec2::new(Rational::new(1, 2), Rational::whole(3)))
+    };
     let vec2 = || W::new(Vec2::new(Rational::whole(5), Rational::new(11, 7)));
     let vec3 = || W::new(Vec2::new(Rational::new(7, 11), Rational::whole(17)));
 

@@ -20,12 +20,12 @@
 #![deny(unused_results)]
 #![deny(missing_docs)]
 
-extern crate num_traits as num;
-extern crate num_complex;
 #[macro_use]
 extern crate approx;
 #[cfg(decimal)]
 extern crate decimal;
+extern crate num_complex;
+extern crate num_traits as num;
 
 #[macro_use]
 mod macros;
