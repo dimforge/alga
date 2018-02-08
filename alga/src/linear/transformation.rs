@@ -387,7 +387,7 @@ where
 
     #[inline]
     fn scale_between(a: &E::Coordinates, b: &E::Coordinates) -> Option<Self> {
-        Some((b.norm() / a.norm()))
+        Some(b.norm() / a.norm())
     }
 }
 
