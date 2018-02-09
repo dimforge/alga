@@ -15,10 +15,14 @@ name = "alga"
 
 [dependencies]
 num-traits  = "0.1"
-num-complex = "0.1"
+num-complex = { version = "0.1", default-features = false }
 approx      = "0.1"
 decimal     = { version = "1.0", optional = true }
 
 [dev-dependencies]
 quickcheck  = "0.3"
 alga_derive = { version = "0.5", path = "../alga_derive" }
+
+[features]
+rustc-serialize = ["num-complex/rustc-serialize"]
+default = ["rustc-serialize"]
