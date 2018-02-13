@@ -173,16 +173,16 @@ impl DivAssign<Id> for Id {
     }
 }
 
-impl Add<Id> for Id {
-    type Output = Id;
+impl Add<Id<Additive>> for Id<Additive> {
+    type Output = Id<Additive>;
 
-    fn add(self, _: Id) -> Id {
+    fn add(self, _: Id<Additive>) -> Id<Additive> {
         self
     }
 }
 
-impl AddAssign<Id> for Id {
-    fn add_assign(&mut self, _: Id) {
+impl AddAssign<Id<Additive>> for Id<Additive> {
+    fn add_assign(&mut self, _: Id<Additive>) {
         // no-op
     }
 }
@@ -220,9 +220,9 @@ impl One for Id {
     }
 }
 
-impl Zero for Id {
+impl Zero for Id<Additive> {
     #[inline]
-    fn zero() -> Id {
+    fn zero() -> Id<Additive> {
         Id::new()
     }
 
