@@ -19,3 +19,7 @@ script:
   - if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
       cd "$DIR/alga_derive_test" && cargo test --verbose;
     fi
+  - cargo install xargo
+  - cd "$DIR/alga" && xargo build --no-default-features --target x86_64-unknown-linux-gnu
+  - cd "$DIR/alga_derive" && xargo build --no-default-features --target x86_64-unknown-linux-gnu
+
