@@ -1,15 +1,15 @@
 //! Wrappers that attach an algebraic structure with a value type.
 
-use std::ops::{Add, Div, Mul, Neg, Sub};
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt::{Display, Error, Formatter};
 use std::marker::PhantomData;
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
-use approx::ApproxEq;
+use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
-use general::{Inverse, Operator};
 use general::AbstractMagma;
 use general::AbstractQuasigroup;
+use general::{Inverse, Operator};
 
 /// Wrapper that allows to use operators on algebraic types.
 #[derive(Debug)]
@@ -55,7 +55,7 @@ impl<T: Display, A: Operator, M: Operator> Display for Wrapper<T, A, M> {
     }
 }
 
-impl<T: ApproxEq, A, M> ApproxEq for Wrapper<T, A, M> {
+impl<T: AbsDiffEq, A, M> AbsDiffEq for Wrapper<T, A, M> {
     type Epsilon = T::Epsilon;
 
     #[inline]
@@ -64,13 +64,15 @@ impl<T: ApproxEq, A, M> ApproxEq for Wrapper<T, A, M> {
     }
 
     #[inline]
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.val.abs_diff_eq(&other.val, eps)
+    }
+}
+
+impl<T: RelativeEq, A, M> RelativeEq for Wrapper<T, A, M> {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         T::default_max_relative()
-    }
-
-    #[inline]
-    fn default_max_ulps() -> u32 {
-        T::default_max_ulps()
     }
 
     #[inline]
@@ -81,6 +83,13 @@ impl<T: ApproxEq, A, M> ApproxEq for Wrapper<T, A, M> {
         max_relative: Self::Epsilon,
     ) -> bool {
         self.val.relative_eq(&other.val, epsilon, max_relative)
+    }
+}
+
+impl<T: UlpsEq, A, M> UlpsEq for Wrapper<T, A, M> {
+    #[inline]
+    fn default_max_ulps() -> u32 {
+        T::default_max_ulps()
     }
 
     #[inline]

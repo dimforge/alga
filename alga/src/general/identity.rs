@@ -1,16 +1,20 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
-use std::marker::PhantomData;
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
+use std::marker::PhantomData;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
 
 use num::{Num, One, Zero};
+
+#[cfg(feature = "std")]
 use num_complex::Complex;
 
-use approx::ApproxEq;
+use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
-use general::{AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
-              AbstractQuasigroup, AbstractSemigroup, Additive, Inverse, JoinSemilattice, Lattice,
-              MeetSemilattice, Multiplicative, Operator, SubsetOf};
+use general::{
+    AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
+    AbstractQuasigroup, AbstractSemigroup, Additive, Inverse, JoinSemilattice, Lattice,
+    MeetSemilattice, Multiplicative, Operator, SubsetOf,
+};
 
 /// A type that is equipped with identity.
 pub trait Identity<O: Operator> {
@@ -36,6 +40,7 @@ impl_ident!(Multiplicative; 1.; f32, f64);
 #[cfg(decimal)]
 impl_ident!(Multiplicative; 1.; decimal::d128);
 
+#[cfg(feature = "std")]
 impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     #[inline]
     fn identity() -> Self {
@@ -46,6 +51,7 @@ impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     }
 }
 
+#[cfg(feature = "std")]
 impl<N: Num + Clone> Identity<Multiplicative> for Complex<N> {
     #[inline]
     fn identity() -> Self {
@@ -111,7 +117,7 @@ impl<O: Operator> Identity<O> for Id<O> {
     }
 }
 
-impl<O: Operator> ApproxEq for Id<O> {
+impl<O: Operator> AbsDiffEq for Id<O> {
     type Epsilon = Id<O>;
 
     #[inline]
@@ -120,18 +126,27 @@ impl<O: Operator> ApproxEq for Id<O> {
     }
 
     #[inline]
+    fn abs_diff_eq(&self, _: &Self, _: Self::Epsilon) -> bool {
+        true
+    }
+}
+
+impl<O: Operator> RelativeEq for Id<O> {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         Id::new()
     }
 
     #[inline]
-    fn default_max_ulps() -> u32 {
-        0
-    }
-
-    #[inline]
     fn relative_eq(&self, _: &Self, _: Self::Epsilon, _: Self::Epsilon) -> bool {
         true
+    }
+}
+
+impl<O: Operator> UlpsEq for Id<O> {
+    #[inline]
+    fn default_max_ulps() -> u32 {
+        0
     }
 
     #[inline]

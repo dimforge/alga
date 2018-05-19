@@ -6,7 +6,7 @@ extern crate quickcheck;
 
 use alga::general::{AbstractMagma, Additive, Identity, Inverse, Multiplicative};
 
-use approx::ApproxEq;
+use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use quickcheck::{Arbitrary, Gen};
 
@@ -15,22 +15,30 @@ use quickcheck::{Arbitrary, Gen};
 #[alga_quickcheck]
 struct W(f64);
 
-impl ApproxEq for W {
+impl AbsDiffEq for W {
     type Epsilon = W;
     fn default_epsilon() -> W {
         W(0.0000000001)
     }
 
+    fn abs_diff_eq(&self, other: &W, epsilon: W) -> bool {
+        self.0.abs_diff_eq(&other.0, epsilon.0)
+    }
+}
+
+impl RelativeEq for W {
     fn default_max_relative() -> W {
         W(0.0000000001)
     }
 
-    fn default_max_ulps() -> u32 {
-        40
-    }
-
     fn relative_eq(&self, other: &Self, epsilon: W, max_relative: W) -> bool {
         self.0.relative_eq(&other.0, epsilon.0, max_relative.0)
+    }
+}
+
+impl UlpsEq for W {
+    fn default_max_ulps() -> u32 {
+        40
     }
 
     fn ulps_eq(&self, other: &Self, epsilon: W, max_ulps: u32) -> bool {

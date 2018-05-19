@@ -7,10 +7,10 @@ extern crate quickcheck;
 
 use std::fmt::{Display, Error, Formatter};
 
-use alga::general::*;
 use alga::general::wrapper::Wrapper as W;
+use alga::general::*;
 
-use approx::ApproxEq;
+use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use quickcheck::{Arbitrary, Gen};
 
@@ -49,7 +49,7 @@ impl<Scalar: AbstractField + Display> Display for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: AbstractField + ApproxEq> ApproxEq for Vec2<Scalar>
+impl<Scalar: AbstractField + AbsDiffEq> AbsDiffEq for Vec2<Scalar>
 where
     Scalar::Epsilon: Clone,
 {
@@ -59,12 +59,17 @@ where
         Scalar::default_epsilon()
     }
 
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        self.x.abs_diff_eq(&other.x, epsilon.clone()) && self.y.abs_diff_eq(&other.y, epsilon)
+    }
+}
+
+impl<Scalar: AbstractField + RelativeEq> RelativeEq for Vec2<Scalar>
+where
+    Scalar::Epsilon: Clone,
+{
     fn default_max_relative() -> Self::Epsilon {
         Scalar::default_max_relative()
-    }
-
-    fn default_max_ulps() -> u32 {
-        Scalar::default_max_ulps()
     }
 
     fn relative_eq(
@@ -76,6 +81,15 @@ where
         self.x
             .relative_eq(&other.x, epsilon.clone(), max_relative.clone())
             && self.y.relative_eq(&other.y, epsilon, max_relative)
+    }
+}
+
+impl<Scalar: AbstractField + UlpsEq> UlpsEq for Vec2<Scalar>
+where
+    Scalar::Epsilon: Clone,
+{
+    fn default_max_ulps() -> u32 {
+        Scalar::default_max_ulps()
     }
 
     fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
@@ -272,19 +286,23 @@ impl PartialEq for Rational {
     }
 }
 
-impl ApproxEq for Rational {
+impl AbsDiffEq for Rational {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
         ::std::f64::EPSILON
     }
 
+    fn abs_diff_eq(&self, other: &Self, epsilon: f64) -> bool {
+        let us = self.a as f64 / self.b as f64;
+        let them = other.a as f64 / other.b as f64;
+        us.abs_diff_eq(&them, epsilon)
+    }
+}
+
+impl RelativeEq for Rational {
     fn default_max_relative() -> Self::Epsilon {
         ::std::f64::EPSILON
-    }
-
-    fn default_max_ulps() -> u32 {
-        4
     }
 
     fn relative_eq(
@@ -296,6 +314,12 @@ impl ApproxEq for Rational {
         let us = self.a as f64 / self.b as f64;
         let them = other.a as f64 / other.b as f64;
         us.relative_eq(&them, epsilon, max_relative)
+    }
+}
+
+impl UlpsEq for Rational {
+    fn default_max_ulps() -> u32 {
+        4
     }
 
     fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
