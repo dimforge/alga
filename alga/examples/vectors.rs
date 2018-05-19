@@ -5,7 +5,7 @@ extern crate alga_derive;
 extern crate approx;
 extern crate quickcheck;
 
-use std::fmt::{Display, Error, Formatter};
+use core::fmt::{Display, Error, Formatter};
 
 use alga::general::wrapper::Wrapper as W;
 use alga::general::*;
@@ -290,7 +290,7 @@ impl AbsDiffEq for Rational {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
-        ::std::f64::EPSILON
+        ::core::f64::EPSILON
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: f64) -> bool {
@@ -302,7 +302,7 @@ impl AbsDiffEq for Rational {
 
 impl RelativeEq for Rational {
     fn default_max_relative() -> Self::Epsilon {
-        ::std::f64::EPSILON
+        ::core::f64::EPSILON
     }
 
     fn relative_eq(

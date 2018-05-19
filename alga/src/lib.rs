@@ -19,18 +19,14 @@
 #![deny(non_upper_case_globals)]
 #![deny(unused_results)]
 #![deny(missing_docs)]
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 
 #[macro_use]
 extern crate approx;
 #[cfg(decimal)]
 extern crate decimal;
-#[cfg(feature = "std")]
 extern crate num_complex;
 extern crate num_traits as num;
-
-#[cfg(not(feature = "std"))]
-use core as std;
 
 #[macro_use]
 mod macros;

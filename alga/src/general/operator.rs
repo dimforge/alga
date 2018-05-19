@@ -1,8 +1,7 @@
 //! Operators traits and structures.
-pub use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
+pub use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
 
 use num::Num;
-#[cfg(feature = "std")]
 use num_complex::Complex;
 
 /// Trait implemented by types representing abstract operators.
@@ -78,7 +77,6 @@ impl_additive_inverse!(i8, i16, i32, i64, isize, f32, f64);
 #[cfg(decimal)]
 impl_additive_inverse!(decimal::d128);
 
-#[cfg(feature = "std")]
 impl<N: Inverse<Additive>> Inverse<Additive> for Complex<N> {
     #[inline]
     fn inverse(&self) -> Complex<N> {
@@ -111,7 +109,6 @@ impl Inverse<Multiplicative> for decimal::d128 {
     }
 }
 
-#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg> Inverse<Multiplicative> for Complex<N> {
     #[inline]
     fn inverse(&self) -> Self {

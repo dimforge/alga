@@ -1,5 +1,4 @@
 use num::Zero;
-#[cfg(feature = "std")]
 use num_complex::Complex;
 
 /// Nested sets and conversions between them (using an injective mapping). Useful to work with
@@ -163,7 +162,6 @@ impl_subset!(
     decimal::d128 as decimal::d128;
 );
 
-#[cfg(feature = "std")]
 impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
     #[inline]
     fn to_superset(&self) -> Complex<N2> {
@@ -187,7 +185,6 @@ impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
     }
 }
 
-#[cfg(feature = "std")]
 macro_rules! impl_scalar_subset_of_complex(
     ($($t: ident),*) => {$(
         impl<N2: Zero + SupersetOf<$t>> SubsetOf<Complex<N2>> for $t {
@@ -212,8 +209,6 @@ macro_rules! impl_scalar_subset_of_complex(
     )*}
 );
 
-#[cfg(feature = "std")]
 impl_scalar_subset_of_complex!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
-#[cfg(feature = "std")]
 #[cfg(decimal)]
 impl_scalar_subset_of_complex!(decimal::d128);

@@ -1,8 +1,8 @@
+use core::any::Any;
+use core::fmt::{Debug, Display};
+use core::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
+use core::{f32, f64};
 use num::{Bounded, FromPrimitive, Num, Signed};
-use std::any::Any;
-use std::fmt::{Debug, Display};
-use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
-use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 

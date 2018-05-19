@@ -1,12 +1,12 @@
-use std::ops::Mul;
+use core::ops::Mul;
 
 use general::{Field, MultiplicativeGroup, MultiplicativeMonoid};
 use linear::FiniteDimVectorSpace;
 
 /// The space of all matrices.
-pub trait Matrix
-    : Sized + Clone + Mul<<Self as Matrix>::Row, Output = <Self as Matrix>::Column>
-    {
+pub trait Matrix:
+    Sized + Clone + Mul<<Self as Matrix>::Row, Output = <Self as Matrix>::Column>
+{
     /// The underlying field.
     type Field: Field;
 
@@ -87,13 +87,14 @@ pub trait MatrixMut: Matrix {
 }
 
 /// The monoid of all square matrices, including non-inversible ones.
-pub trait SquareMatrix
-    : Matrix<
-    Row = <Self as SquareMatrix>::Vector,
-    Column = <Self as SquareMatrix>::Vector,
-    Transpose = Self,
->
-    + MultiplicativeMonoid {
+pub trait SquareMatrix:
+    Matrix<
+        Row = <Self as SquareMatrix>::Vector,
+        Column = <Self as SquareMatrix>::Vector,
+        Transpose = Self,
+    >
+    + MultiplicativeMonoid
+{
     /// The type of rows, column, and diagonal of this matrix.
     type Vector: FiniteDimVectorSpace<Field = Self::Field>;
 
@@ -122,13 +123,14 @@ pub trait SquareMatrix
 }
 
 /// The monoid of all mutable square matrices that are stable under modification of its diagonal.
-pub trait SquareMatrixMut
-    : SquareMatrix
+pub trait SquareMatrixMut:
+    SquareMatrix
     + MatrixMut<
-    Row = <Self as SquareMatrix>::Vector,
-    Column = <Self as SquareMatrix>::Vector,
-    Transpose = Self,
-> {
+        Row = <Self as SquareMatrix>::Vector,
+        Column = <Self as SquareMatrix>::Vector,
+        Transpose = Self,
+    >
+{
     /// Constructs a new diagonal matrix.
     fn from_diagonal(diag: &Self::Vector) -> Self;
 
