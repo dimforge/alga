@@ -1,6 +1,5 @@
 use approx::RelativeEq;
 use num::Num;
-#[cfg(feature = "std")]
 use num_complex::Complex;
 
 use general::wrapper::Wrapper as W;
@@ -262,9 +261,6 @@ impl_field!(<Additive, Multiplicative> for f32; f64);
 #[cfg(decimal)]
 impl_field!(<Additive, Multiplicative> for decimal::d128);
 
-#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg + AbstractRing> AbstractRing for Complex<N> {}
-#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg + AbstractRingCommutative> AbstractRingCommutative for Complex<N> {}
-#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg + AbstractField> AbstractField for Complex<N> {}

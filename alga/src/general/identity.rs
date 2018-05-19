@@ -1,11 +1,10 @@
-use std::cmp::{Ordering, PartialOrd};
-use std::fmt;
-use std::marker::PhantomData;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
+use core::cmp::{Ordering, PartialOrd};
+use core::fmt;
+use core::marker::PhantomData;
+use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
 
 use num::{Num, One, Zero};
 
-#[cfg(feature = "std")]
 use num_complex::Complex;
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
@@ -40,7 +39,6 @@ impl_ident!(Multiplicative; 1.; f32, f64);
 #[cfg(decimal)]
 impl_ident!(Multiplicative; 1.; decimal::d128);
 
-#[cfg(feature = "std")]
 impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     #[inline]
     fn identity() -> Self {
@@ -51,7 +49,6 @@ impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     }
 }
 
-#[cfg(feature = "std")]
 impl<N: Num + Clone> Identity<Multiplicative> for Complex<N> {
     #[inline]
     fn identity() -> Self {

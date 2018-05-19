@@ -27,7 +27,7 @@
 /// ```
 /// # #[macro_use]
 /// # extern crate alga;
-/// # use std::fmt::Debug;
+/// # use core::fmt::Debug;
 /// # fn main() {}
 /// trait Marker<T: Debug> {}
 /// struct Struct<T>(T);

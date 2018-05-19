@@ -1,13 +1,15 @@
+use core::ops::{
+    Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
+};
 use num;
-use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub,
-               SubAssign};
 
 use general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real};
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
 /* +
-                       ClosedDiv<<Self as VectorSpace>::Field> */ {
+                       ClosedDiv<<Self as VectorSpace>::Field> */
+{
     /// The underlying scalar field.
     type Field: Field;
 }
@@ -70,10 +72,11 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
 }
 
 /// A finite-dimensional vector space.
-pub trait FiniteDimVectorSpace
-    : VectorSpace
+pub trait FiniteDimVectorSpace:
+    VectorSpace
     + Index<usize, Output = <Self as VectorSpace>::Field>
-    + IndexMut<usize, Output = <Self as VectorSpace>::Field> {
+    + IndexMut<usize, Output = <Self as VectorSpace>::Field>
+{
     /// The vector space dimension.
     fn dimension() -> usize;
 
@@ -103,8 +106,9 @@ pub trait FiniteDimVectorSpace
 
 /// A finite-dimensional vector space equipped with an inner product that must coincide
 /// with the dot product.
-pub trait FiniteDimInnerSpace
-    : InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real> {
+pub trait FiniteDimInnerSpace:
+    InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real>
+{
     /// Orthonormalizes the given family of vectors. The largest free family of vectors is moved at
     /// the beginning of the array and its size is returned. Vectors at an indices larger or equal to
     /// this length can be modified to an arbitrary value.
@@ -119,12 +123,13 @@ pub trait FiniteDimInnerSpace
 
 /// A set points associated with a vector space and a transitive and free additive group action
 /// (the translation).
-pub trait AffineSpace
-    : Sized
+pub trait AffineSpace:
+    Sized
     + Clone
     + PartialEq
     + Sub<Self, Output = <Self as AffineSpace>::Translation>
-    + ClosedAdd<<Self as AffineSpace>::Translation> {
+    + ClosedAdd<<Self as AffineSpace>::Translation>
+{
     /// The associated vector space.
     type Translation: VectorSpace;
 

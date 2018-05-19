@@ -1,7 +1,6 @@
+use core::ops::{Add, Mul};
 use num::Num;
-#[cfg(feature = "std")]
 use num_complex::Complex;
-use std::ops::{Add, Mul};
 
 use approx::RelativeEq;
 
@@ -382,7 +381,6 @@ impl_ident!(Multiplicative; mul; decimal::d128);
 impl_monoid!(<Additive> for u8; u16; u32; u64; usize);
 impl_monoid!(<Multiplicative> for u8; u16; u32; u64; usize);
 
-#[cfg(feature = "std")]
 impl<N: AbstractMagma<Additive>> AbstractMagma<Additive> for Complex<N> {
     #[inline]
     fn operate(&self, lhs: &Self) -> Self {
@@ -393,7 +391,6 @@ impl<N: AbstractMagma<Additive>> AbstractMagma<Additive> for Complex<N> {
     }
 }
 
-#[cfg(feature = "std")]
 impl<N: Num + Clone> AbstractMagma<Multiplicative> for Complex<N> {
     #[inline]
     fn operate(&self, lhs: &Self) -> Self {
@@ -401,7 +398,5 @@ impl<N: Num + Clone> AbstractMagma<Multiplicative> for Complex<N> {
     }
 }
 
-#[cfg(feature = "std")]
 impl_abelian!(<Multiplicative> for Complex<N> where N: Num + Clone + ClosedNeg);
-#[cfg(feature = "std")]
 impl_abelian!(<Additive> for Complex<N> where N: AbstractGroupAbelian<Additive>);
