@@ -4,6 +4,6 @@ version = "0.1.0"
 authors = ["Wadelma <delma@del.ma>"]
 
 [dependencies]
-alga = { path = "../alga" }
+alga = { path = "../alga", default_features = false }
 alga_derive = { path = "../alga_derive" }
-compiletest_rs = "0.2"
+compiletest_rs = "0.3"

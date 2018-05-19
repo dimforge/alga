@@ -1,9 +1,12 @@
+use approx::RelativeEq;
 use num::Num;
+#[cfg(feature = "std")]
 use num_complex::Complex;
-use approx::ApproxEq;
 
-use general::{AbstractGroupAbelian, AbstractMonoid, Additive, ClosedNeg, Multiplicative, Operator};
 use general::wrapper::Wrapper as W;
+use general::{
+    AbstractGroupAbelian, AbstractMonoid, Additive, ClosedNeg, Multiplicative, Operator,
+};
 
 /// A ring is the combination of an abelian group and a multiplicative monoid structure.
 ///
@@ -11,13 +14,14 @@ use general::wrapper::Wrapper as W;
 ///
 /// * A abstract operator (usually the addition) that fulfills the constraints of an abelian group.
 /// * A second abstract operator (usually the multiplication) that fulfills the constraints of a monoid.
-pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>
-    : AbstractGroupAbelian<A> + AbstractMonoid<M> {
+pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
+    AbstractGroupAbelian<A> + AbstractMonoid<M>
+{
     /// Returns `true` if the multiplication and addition operators are distributive for
     /// the given argument tuple. Approximate equality is used for verifications.
     fn prop_mul_and_add_are_distributive_approx(args: (Self, Self, Self)) -> bool
     where
-        Self: ApproxEq,
+        Self: RelativeEq,
     {
         let (a, b, c) = args;
         let a = || W::<_, A, M>::new(a.clone());
@@ -104,13 +108,14 @@ macro_rules! impl_ring(
 /// ```notrust
 /// ∀ a, b ∈ Self, a × b = b × a
 /// ```
-pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multiplicative>
-    : AbstractRing<A, M> {
+pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multiplicative>:
+    AbstractRing<A, M>
+{
     /// Returns `true` if the multiplication operator is commutative for the given argument tuple.
     /// Approximate equality is used for verifications.
     fn prop_mul_is_commutative_approx(args: (Self, Self)) -> bool
     where
-        Self: ApproxEq,
+        Self: RelativeEq,
     {
         let (a, b) = args;
         let a = || W::<_, A, M>::new(a.clone());
@@ -183,8 +188,9 @@ macro_rules! impl_ring_commutative(
 );
 
 /// A field is a commutative ring, and an abelian group under both operators.
-pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>
-    : AbstractRingCommutative<A, M> + AbstractGroupAbelian<M> {
+pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>:
+    AbstractRingCommutative<A, M> + AbstractGroupAbelian<M>
+{
 }
 
 /// Implements the field trait for types provided.
@@ -256,6 +262,9 @@ impl_field!(<Additive, Multiplicative> for f32; f64);
 #[cfg(decimal)]
 impl_field!(<Additive, Multiplicative> for decimal::d128);
 
+#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg + AbstractRing> AbstractRing for Complex<N> {}
+#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg + AbstractRingCommutative> AbstractRingCommutative for Complex<N> {}
+#[cfg(feature = "std")]
 impl<N: Num + Clone + ClosedNeg + AbstractField> AbstractField for Complex<N> {}

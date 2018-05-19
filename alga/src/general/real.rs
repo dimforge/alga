@@ -1,10 +1,10 @@
-use std::any::Any;
 use num::{Bounded, FromPrimitive, Num, Signed};
-use std::{f32, f64};
+use std::any::Any;
 use std::fmt::{Debug, Display};
 use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
+use std::{f32, f64};
 
-use approx::ApproxEq;
+use approx::{RelativeEq, UlpsEq};
 
 use general::{Field, Lattice, SubsetOf, SupersetOf};
 
@@ -17,8 +17,8 @@ use general::{Field, Lattice, SubsetOf, SupersetOf};
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
 // allow a blancket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 // NOTE: make all types debuggable/'static/Any ? This seems essencial for any kind of generic programming.
-pub trait Real
-    : SubsetOf<Self>
+pub trait Real:
+    SubsetOf<Self>
     + SupersetOf<f64>
     + Field
     + Copy
@@ -29,7 +29,8 @@ pub trait Real
     + MulAssign
     + SubAssign
     + DivAssign
-    + ApproxEq<Epsilon = Self>
+    + RelativeEq<Epsilon = Self>
+    + UlpsEq<Epsilon = Self>
     + Lattice
     + PartialEq
     + Signed
@@ -39,7 +40,8 @@ pub trait Real
     + 'static
     + Debug
     + Display
-    + Bounded {
+    + Bounded
+{
     // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
     fn floor(self) -> Self;
     fn ceil(self) -> Self;

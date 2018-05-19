@@ -1,8 +1,9 @@
-use std::ops::{Add, Mul};
 use num::Num;
+#[cfg(feature = "std")]
 use num_complex::Complex;
+use std::ops::{Add, Mul};
 
-use approx::ApproxEq;
+use approx::RelativeEq;
 
 use general::{Additive, ClosedNeg, Identity, Inverse, Multiplicative, Operator};
 
@@ -29,13 +30,12 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
 /// ```notrust
 /// ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
 /// ```
-pub trait AbstractQuasigroup<O: Operator>
-    : PartialEq + AbstractMagma<O> + Inverse<O> {
+pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Inverse<O> {
     /// Returns `true` if latin squareness holds for the given arguments. Approximate
     /// equality is used for verifications.
     fn prop_inv_is_latin_square_approx(args: (Self, Self)) -> bool
     where
-        Self: ApproxEq,
+        Self: RelativeEq,
     {
         let (a, b) = args;
         relative_eq!(a, a.operate(&b.inverse()).operate(&b))
@@ -97,7 +97,7 @@ pub trait AbstractSemigroup<O: Operator>: PartialEq + AbstractMagma<O> {
     /// for verifications.
     fn prop_is_associative_approx(args: (Self, Self, Self)) -> bool
     where
-        Self: ApproxEq,
+        Self: RelativeEq,
     {
         let (a, b, c) = args;
         relative_eq!(a.operate(&b).operate(&c), a.operate(&b.operate(&c)))
@@ -196,7 +196,7 @@ pub trait AbstractMonoid<O: Operator>: AbstractSemigroup<O> + Identity<O> {
     /// argument. Approximate equality is used for verifications.
     fn prop_operating_identity_element_is_noop_approx(args: (Self,)) -> bool
     where
-        Self: ApproxEq,
+        Self: RelativeEq,
     {
         let (a,) = args;
         relative_eq!(a.operate(&Self::identity()), a)
@@ -299,7 +299,7 @@ pub trait AbstractGroupAbelian<O: Operator>: AbstractGroup<O> {
     /// equality is used for verifications.
     fn prop_is_commutative_approx(args: (Self, Self)) -> bool
     where
-        Self: ApproxEq,
+        Self: RelativeEq,
     {
         let (a, b) = args;
         relative_eq!(a.operate(&b), b.operate(&a))
@@ -382,6 +382,7 @@ impl_ident!(Multiplicative; mul; decimal::d128);
 impl_monoid!(<Additive> for u8; u16; u32; u64; usize);
 impl_monoid!(<Multiplicative> for u8; u16; u32; u64; usize);
 
+#[cfg(feature = "std")]
 impl<N: AbstractMagma<Additive>> AbstractMagma<Additive> for Complex<N> {
     #[inline]
     fn operate(&self, lhs: &Self) -> Self {
@@ -392,6 +393,7 @@ impl<N: AbstractMagma<Additive>> AbstractMagma<Additive> for Complex<N> {
     }
 }
 
+#[cfg(feature = "std")]
 impl<N: Num + Clone> AbstractMagma<Multiplicative> for Complex<N> {
     #[inline]
     fn operate(&self, lhs: &Self) -> Self {
@@ -399,5 +401,7 @@ impl<N: Num + Clone> AbstractMagma<Multiplicative> for Complex<N> {
     }
 }
 
+#[cfg(feature = "std")]
 impl_abelian!(<Multiplicative> for Complex<N> where N: Num + Clone + ClosedNeg);
+#[cfg(feature = "std")]
 impl_abelian!(<Additive> for Complex<N> where N: AbstractGroupAbelian<Additive>);
