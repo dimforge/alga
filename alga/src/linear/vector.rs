@@ -1,7 +1,7 @@
-use core::ops::{
+use num;
+use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
-use num;
 
 use general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real};
 
