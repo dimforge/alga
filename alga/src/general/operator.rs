@@ -1,5 +1,5 @@
 //! Operators traits and structures.
-pub use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
+pub use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
 
 use num::Num;
 use num_complex::Complex;

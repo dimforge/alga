@@ -1,9 +1,9 @@
 //! Wrappers that attach an algebraic structure with a value type.
 
-use core::cmp::{Ordering, PartialOrd};
-use core::fmt::{Display, Error, Formatter};
-use core::marker::PhantomData;
-use core::ops::{Add, Div, Mul, Neg, Sub};
+use std::cmp::{Ordering, PartialOrd};
+use std::fmt::{Display, Error, Formatter};
+use std::marker::PhantomData;
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 

@@ -1,7 +1,7 @@
-use core::cmp::{Ordering, PartialOrd};
-use core::fmt;
-use core::marker::PhantomData;
-use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
+use std::cmp::{Ordering, PartialOrd};
+use std::fmt;
+use std::marker::PhantomData;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
 
 use num::{Num, One, Zero};
 

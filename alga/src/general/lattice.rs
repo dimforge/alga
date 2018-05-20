@@ -1,4 +1,4 @@
-use core::cmp::{Ordering, PartialOrd};
+use std::cmp::{Ordering, PartialOrd};
 
 /// A set where every two elements have an infimum (i.e. greatest lower bound).
 pub trait MeetSemilattice: Sized {

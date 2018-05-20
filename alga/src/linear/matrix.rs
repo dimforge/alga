@@ -1,4 +1,4 @@
-use core::ops::Mul;
+use std::ops::Mul;
 
 use general::{Field, MultiplicativeGroup, MultiplicativeMonoid};
 use linear::FiniteDimVectorSpace;

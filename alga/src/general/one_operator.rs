@@ -1,6 +1,6 @@
-use core::ops::{Add, Mul};
 use num::Num;
 use num_complex::Complex;
+use std::ops::{Add, Mul};
 
 use approx::RelativeEq;
 
