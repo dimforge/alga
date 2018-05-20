@@ -417,7 +417,6 @@ macro_rules! impl_real_core(
        $_alga_acos: ident,
        $_alga_atan: ident,
        $_alga_atan2: ident,
-       $_alga_sin_cos: ident,
        $_alga_exp_m1: ident,
        $_alga_ln_1p: ident,
        $_alga_sinh: ident,
@@ -633,12 +632,12 @@ macro_rules! impl_real_core(
 
             #[inline]
             fn atan2(self, other: Self) -> Self {
-                unsafe { $_alga_atan2(other, other) }
+                unsafe { $_alga_atan2(self, other) }
             }
 
             #[inline]
             fn sin_cos(self) -> (Self, Self) {
-                (self.sin(), self.cos())
+                unsafe { ($_alga_sin(self), $_alga_cos(self)) }
             }
 
             #[inline]
@@ -787,7 +786,6 @@ impl_real_core!(
     _alga_acos_f32,
     _alga_atan_f32,
     _alga_atan2_f32,
-    _alga_sin_cos_f32,
     _alga_exp_m1_f32,
     _alga_ln_1p_f32,
     _alga_sinh_f32,
@@ -823,7 +821,6 @@ impl_real_core!(
     _alga_acos_f64,
     _alga_atan_f64,
     _alga_atan2_f64,
-    _alga_sin_cos_f64,
     _alga_exp_m1_f64,
     _alga_ln_1p_f64,
     _alga_sinh_f64,
