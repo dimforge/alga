@@ -408,111 +408,111 @@ impl_real!(decimal::d128, decimal::d128);
 #[cfg(not(feature = "std"))]
 macro_rules! impl_real_core(
     ($($T:ty, $M: ident,
-       $_alga_cbrt: ident,
-       $_alga_hypot: ident,
-       $_alga_sin: ident,
-       $_alga_cos: ident,
-       $_alga_tan: ident,
-       $_alga_asin: ident,
-       $_alga_acos: ident,
-       $_alga_atan: ident,
-       $_alga_atan2: ident,
-       $_alga_exp_m1: ident,
-       $_alga_ln_1p: ident,
-       $_alga_sinh: ident,
-       $_alga_cosh: ident,
-       $_alga_tanh: ident,
-       $_alga_asinh: ident,
-       $_alga_acosh: ident,
-       $_alga_atanh: ident,
-       $_alga_powi: ident,
-       $_alga_powf: ident,
-       $_alga_sqrt: ident,
-       $_alga_exp: ident,
-       $_alga_exp2: ident,
-       $_alga_ln: ident,
-       $_alga_log: ident,
-       $_alga_log2: ident,
-       $_alga_log10: ident,
-       $_alga_mul_add: ident,
-       $_alga_floor: ident,
-       $_alga_ceil: ident,
-       $_alga_round: ident,
-       $_alga_trunc: ident,
-       $_alga_fract: ident,
-       $_alga_abs: ident,
-       $_alga_signum: ident);*) => ($(
+       $alga_cbrt: ident,
+       $alga_hypot: ident,
+       $alga_sin: ident,
+       $alga_cos: ident,
+       $alga_tan: ident,
+       $alga_asin: ident,
+       $alga_acos: ident,
+       $alga_atan: ident,
+       $alga_atan2: ident,
+       $alga_exp_m1: ident,
+       $alga_ln_1p: ident,
+       $alga_sinh: ident,
+       $alga_cosh: ident,
+       $alga_tanh: ident,
+       $alga_asinh: ident,
+       $alga_acosh: ident,
+       $alga_atanh: ident,
+       $alga_powi: ident,
+       $alga_powf: ident,
+       $alga_sqrt: ident,
+       $alga_exp: ident,
+       $alga_exp2: ident,
+       $alga_ln: ident,
+       $alga_log: ident,
+       $alga_log2: ident,
+       $alga_log10: ident,
+       $alga_mul_add: ident,
+       $alga_floor: ident,
+       $alga_ceil: ident,
+       $alga_round: ident,
+       $alga_trunc: ident,
+       $alga_fract: ident,
+       $alga_abs: ident,
+       $alga_signum: ident);*) => ($(
         extern "Rust" {
-            fn $_alga_cbrt(val: $T) -> $T;
-            fn $_alga_hypot(val: $T, other: $T) -> $T;
-            fn $_alga_sin(val: $T) -> $T;
-            fn $_alga_cos(val: $T) -> $T;
-            fn $_alga_tan(val: $T) -> $T;
-            fn $_alga_asin(val: $T) -> $T;
-            fn $_alga_acos(val: $T) -> $T;
-            fn $_alga_atan(val: $T) -> $T;
-            fn $_alga_atan2(val: $T, other: $T) -> $T;
-            fn $_alga_exp_m1(val: $T) -> $T;
-            fn $_alga_ln_1p(val: $T) -> $T;
-            fn $_alga_sinh(val: $T) -> $T;
-            fn $_alga_cosh(val: $T) -> $T;
-            fn $_alga_tanh(val: $T) -> $T;
-            fn $_alga_asinh(val: $T) -> $T;
-            fn $_alga_acosh(val: $T) -> $T;
-            fn $_alga_atanh(val: $T) -> $T;
-            fn $_alga_powi(val: $T, n: i32) -> $T;
-            fn $_alga_powf(val: $T, n: $T) -> $T;
-            fn $_alga_sqrt(val: $T) -> $T;
-            fn $_alga_exp(val: $T) -> $T;
-            fn $_alga_exp2(val: $T) -> $T;
-            fn $_alga_ln(val: $T) -> $T;
-            fn $_alga_log(val: $T, base: $T) -> $T;
-            fn $_alga_log2(val: $T) -> $T;
-            fn $_alga_log10(val: $T) -> $T;
-            fn $_alga_mul_add(val: $T, a: $T, b: $T) -> $T;
-            fn $_alga_floor(val: $T) -> $T;
-            fn $_alga_ceil(val: $T) -> $T;
-            fn $_alga_round(val: $T) -> $T;
-            fn $_alga_trunc(val: $T) -> $T;
-            fn $_alga_fract(val: $T) -> $T;
-            fn $_alga_abs(val: $T) -> $T;
-            fn $_alga_signum(val: $T) -> $T;
+            fn $alga_cbrt(val: $T) -> $T;
+            fn $alga_hypot(val: $T, other: $T) -> $T;
+            fn $alga_sin(val: $T) -> $T;
+            fn $alga_cos(val: $T) -> $T;
+            fn $alga_tan(val: $T) -> $T;
+            fn $alga_asin(val: $T) -> $T;
+            fn $alga_acos(val: $T) -> $T;
+            fn $alga_atan(val: $T) -> $T;
+            fn $alga_atan2(val: $T, other: $T) -> $T;
+            fn $alga_exp_m1(val: $T) -> $T;
+            fn $alga_ln_1p(val: $T) -> $T;
+            fn $alga_sinh(val: $T) -> $T;
+            fn $alga_cosh(val: $T) -> $T;
+            fn $alga_tanh(val: $T) -> $T;
+            fn $alga_asinh(val: $T) -> $T;
+            fn $alga_acosh(val: $T) -> $T;
+            fn $alga_atanh(val: $T) -> $T;
+            fn $alga_powi(val: $T, n: i32) -> $T;
+            fn $alga_powf(val: $T, n: $T) -> $T;
+            fn $alga_sqrt(val: $T) -> $T;
+            fn $alga_exp(val: $T) -> $T;
+            fn $alga_exp2(val: $T) -> $T;
+            fn $alga_ln(val: $T) -> $T;
+            fn $alga_log(val: $T, base: $T) -> $T;
+            fn $alga_log2(val: $T) -> $T;
+            fn $alga_log10(val: $T) -> $T;
+            fn $alga_mul_add(val: $T, a: $T, b: $T) -> $T;
+            fn $alga_floor(val: $T) -> $T;
+            fn $alga_ceil(val: $T) -> $T;
+            fn $alga_round(val: $T) -> $T;
+            fn $alga_trunc(val: $T) -> $T;
+            fn $alga_fract(val: $T) -> $T;
+            fn $alga_abs(val: $T) -> $T;
+            fn $alga_signum(val: $T) -> $T;
         }
 
         impl Real for $T {
             #[inline]
             fn floor(self) -> Self {
-                unsafe { $_alga_floor(self) }
+                unsafe { $alga_floor(self) }
             }
 
             #[inline]
             fn ceil(self) -> Self {
-                unsafe { $_alga_ceil(self) }
+                unsafe { $alga_ceil(self) }
             }
 
             #[inline]
             fn round(self) -> Self {
-                unsafe { $_alga_round(self) }
+                unsafe { $alga_round(self) }
             }
 
             #[inline]
             fn trunc(self) -> Self {
-                unsafe { $_alga_trunc(self) }
+                unsafe { $alga_trunc(self) }
             }
 
             #[inline]
             fn fract(self) -> Self {
-                unsafe { $_alga_fract(self) }
+                unsafe { $alga_fract(self) }
             }
 
             #[inline]
             fn abs(self) -> Self {
-                unsafe { $_alga_abs(self) }
+                unsafe { $alga_abs(self) }
             }
 
             #[inline]
             fn signum(self) -> Self {
-                unsafe { $_alga_signum(self) }
+                unsafe { $alga_signum(self) }
             }
 
             #[inline]
@@ -527,7 +527,7 @@ macro_rules! impl_real_core(
 
             #[inline]
             fn mul_add(self, a: Self, b: Self) -> Self {
-                unsafe { $_alga_mul_add(self, a, b) }
+                unsafe { $alga_mul_add(self, a, b) }
             }
 
             #[inline]
@@ -537,47 +537,47 @@ macro_rules! impl_real_core(
 
             #[inline]
             fn powi(self, n: i32) -> Self {
-                unsafe { $_alga_powi(self, n) }
+                unsafe { $alga_powi(self, n) }
             }
 
             #[inline]
             fn powf(self, n: Self) -> Self {
-                unsafe { $_alga_powf(self, n) }
+                unsafe { $alga_powf(self, n) }
             }
 
             #[inline]
             fn sqrt(self) -> Self {
-                unsafe { $_alga_sqrt(self) }
+                unsafe { $alga_sqrt(self) }
             }
 
             #[inline]
             fn exp(self) -> Self {
-                unsafe { $_alga_exp(self) }
+                unsafe { $alga_exp(self) }
             }
 
             #[inline]
             fn exp2(self) -> Self {
-                unsafe { $_alga_exp2(self) }
+                unsafe { $alga_exp2(self) }
             }
 
             #[inline]
             fn ln(self) -> Self {
-                unsafe { $_alga_ln(self) }
+                unsafe { $alga_ln(self) }
             }
 
             #[inline]
             fn log(self, base: Self) -> Self {
-                unsafe { $_alga_log(self, base) }
+                unsafe { $alga_log(self, base) }
             }
 
             #[inline]
             fn log2(self) -> Self {
-                unsafe { $_alga_log2(self) }
+                unsafe { $alga_log2(self) }
             }
 
             #[inline]
             fn log10(self) -> Self {
-                unsafe { $_alga_log10(self) }
+                unsafe { $alga_log10(self) }
             }
 
             #[inline]
@@ -592,92 +592,92 @@ macro_rules! impl_real_core(
 
             #[inline]
             fn cbrt(self) -> Self {
-                unsafe { $_alga_cbrt(self) }
+                unsafe { $alga_cbrt(self) }
             }
 
             #[inline]
             fn hypot(self, other: Self) -> Self {
-                unsafe { $_alga_hypot(self, other) }
+                unsafe { $alga_hypot(self, other) }
             }
 
             #[inline]
             fn sin(self) -> Self {
-                unsafe { $_alga_sin(self) }
+                unsafe { $alga_sin(self) }
             }
 
             #[inline]
             fn cos(self) -> Self {
-                unsafe { $_alga_cos(self) }
+                unsafe { $alga_cos(self) }
             }
 
             #[inline]
             fn tan(self) -> Self {
-                unsafe { $_alga_tan(self) }
+                unsafe { $alga_tan(self) }
             }
 
             #[inline]
             fn asin(self) -> Self {
-                unsafe { $_alga_asin(self) }
+                unsafe { $alga_asin(self) }
             }
 
             #[inline]
             fn acos(self) -> Self {
-                unsafe { $_alga_acos(self) }
+                unsafe { $alga_acos(self) }
             }
 
             #[inline]
             fn atan(self) -> Self {
-                unsafe { $_alga_atan(self) }
+                unsafe { $alga_atan(self) }
             }
 
             #[inline]
             fn atan2(self, other: Self) -> Self {
-                unsafe { $_alga_atan2(self, other) }
+                unsafe { $alga_atan2(self, other) }
             }
 
             #[inline]
             fn sin_cos(self) -> (Self, Self) {
-                unsafe { ($_alga_sin(self), $_alga_cos(self)) }
+                unsafe { ($alga_sin(self), $alga_cos(self)) }
             }
 
             #[inline]
             fn exp_m1(self) -> Self {
-                unsafe { $_alga_exp_m1(self) }
+                unsafe { $alga_exp_m1(self) }
             }
 
             #[inline]
             fn ln_1p(self) -> Self {
-                unsafe { $_alga_ln_1p(self) }
+                unsafe { $alga_ln_1p(self) }
             }
 
             #[inline]
             fn sinh(self) -> Self {
-                unsafe { $_alga_sinh(self) }
+                unsafe { $alga_sinh(self) }
             }
 
             #[inline]
             fn cosh(self) -> Self {
-                unsafe { $_alga_cosh(self) }
+                unsafe { $alga_cosh(self) }
             }
 
             #[inline]
             fn tanh(self) -> Self {
-                unsafe { $_alga_tanh(self) }
+                unsafe { $alga_tanh(self) }
             }
 
             #[inline]
             fn asinh(self) -> Self {
-                unsafe { $_alga_asinh(self) }
+                unsafe { $alga_asinh(self) }
             }
 
             #[inline]
             fn acosh(self) -> Self {
-                unsafe { $_alga_acosh(self) }
+                unsafe { $alga_acosh(self) }
             }
 
             #[inline]
             fn atanh(self) -> Self {
-                unsafe { $_alga_atanh(self) }
+                unsafe { $alga_atanh(self) }
             }
 
             /// Archimedes' constant.
@@ -777,73 +777,73 @@ macro_rules! impl_real_core(
 #[cfg(not(feature = "std"))]
 impl_real_core!(
     f32, f32,
-    _alga_cbrt_f32,
-    _alga_hypot_f32,
-    _alga_sin_f32,
-    _alga_cos_f32,
-    _alga_tan_f32,
-    _alga_asin_f32,
-    _alga_acos_f32,
-    _alga_atan_f32,
-    _alga_atan2_f32,
-    _alga_exp_m1_f32,
-    _alga_ln_1p_f32,
-    _alga_sinh_f32,
-    _alga_cosh_f32,
-    _alga_tanh_f32,
-    _alga_asinh_f32,
-    _alga_acosh_f32,
-    _alga_atanh_f32,
-    _alga_powi_f32,
-    _alga_powf_f32,
-    _alga_sqrt_f32,
-    _alga_exp_f32,
-    _alga_exp2_f32,
-    _alga_ln_f32,
-    _alga_log_f32,
-    _alga_log2_f32,
-    _alga_log10_f32,
-    _alga_mul_add_f32,
-    _alga_floor_f32,
-    _alga_ceil_f32,
-    _alga_round_f32,
-    _alga_trunc_f32,
-    _alga_fract_f32,
-    _alga_abs_f32,
-    _alga_signum_f32;
+    alga_cbrt_f32,
+    alga_hypot_f32,
+    alga_sin_f32,
+    alga_cos_f32,
+    alga_tan_f32,
+    alga_asin_f32,
+    alga_acos_f32,
+    alga_atan_f32,
+    alga_atan2_f32,
+    alga_exp_m1_f32,
+    alga_ln_1p_f32,
+    alga_sinh_f32,
+    alga_cosh_f32,
+    alga_tanh_f32,
+    alga_asinh_f32,
+    alga_acosh_f32,
+    alga_atanh_f32,
+    alga_powi_f32,
+    alga_powf_f32,
+    alga_sqrt_f32,
+    alga_exp_f32,
+    alga_exp2_f32,
+    alga_ln_f32,
+    alga_log_f32,
+    alga_log2_f32,
+    alga_log10_f32,
+    alga_mul_add_f32,
+    alga_floor_f32,
+    alga_ceil_f32,
+    alga_round_f32,
+    alga_trunc_f32,
+    alga_fract_f32,
+    alga_abs_f32,
+    alga_signum_f32;
     f64, f64,
-    _alga_cbrt_f64,
-    _alga_hypot_f64,
-    _alga_sin_f64,
-    _alga_cos_f64,
-    _alga_tan_f64,
-    _alga_asin_f64,
-    _alga_acos_f64,
-    _alga_atan_f64,
-    _alga_atan2_f64,
-    _alga_exp_m1_f64,
-    _alga_ln_1p_f64,
-    _alga_sinh_f64,
-    _alga_cosh_f64,
-    _alga_tanh_f64,
-    _alga_asinh_f64,
-    _alga_acosh_f64,
-    _alga_atanh_f64,
-    _alga_powi_f64,
-    _alga_powf_f64,
-    _alga_sqrt_f64,
-    _alga_exp_f64,
-    _alga_exp2_f64,
-    _alga_ln_f64,
-    _alga_log_f64,
-    _alga_log2_f64,
-    _alga_log10_f64,
-    _alga_mul_add_f64,
-    _alga_floor_f64,
-    _alga_ceil_f64,
-    _alga_round_f64,
-    _alga_trunc_f64,
-    _alga_fract_f64,
-    _alga_abs_f64,
-    _alga_signum_f64
+    alga_cbrt_f64,
+    alga_hypot_f64,
+    alga_sin_f64,
+    alga_cos_f64,
+    alga_tan_f64,
+    alga_asin_f64,
+    alga_acos_f64,
+    alga_atan_f64,
+    alga_atan2_f64,
+    alga_exp_m1_f64,
+    alga_ln_1p_f64,
+    alga_sinh_f64,
+    alga_cosh_f64,
+    alga_tanh_f64,
+    alga_asinh_f64,
+    alga_acosh_f64,
+    alga_atanh_f64,
+    alga_powi_f64,
+    alga_powf_f64,
+    alga_sqrt_f64,
+    alga_exp_f64,
+    alga_exp2_f64,
+    alga_ln_f64,
+    alga_log_f64,
+    alga_log2_f64,
+    alga_log10_f64,
+    alga_mul_add_f64,
+    alga_floor_f64,
+    alga_ceil_f64,
+    alga_round_f64,
+    alga_trunc_f64,
+    alga_fract_f64,
+    alga_abs_f64,
+    alga_signum_f64
 );
