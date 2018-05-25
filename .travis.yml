@@ -1,25 +1,23 @@
 sudo: false
 language: rust
+
+rust:
+    - nightly
+    - beta
+    - stable
+
+env:
+  -
+  - NO_STD=1
+
 matrix:
-  include:
-    - rust: nightly
-      env: TEST_SUITE=suite_nightly
+  exclude:
     - rust: beta
-      env: TEST_SUITE=suite_beta
+      env: NO_STD=1
     - rust: stable
-      env: TEST_SUITE=suite_stable
-  allow_failures:
-    - rust: nightly
-    - rust: beta
+      env: NO_STD=1
+
 script:
-  - export DIR="$(pwd)"
-  - cargo build --verbose
-  - cargo test --verbose
-  - cd "$DIR/alga" && cargo run --example vectors;
-  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
-      cd "$DIR/alga_derive_test" && cargo test --verbose;
-    fi
-  - cargo install xargo
-  - cd "$DIR/alga" && xargo build --no-default-features --target x86_64-unknown-linux-gnu
-  - cd "$DIR/alga_derive" && xargo build --no-default-features --target x86_64-unknown-linux-gnu
+  - ./ci/build.sh
+  - ./ci/test.sh
 
