@@ -25,4 +25,4 @@ num-complex = { version = "0.2", default-features = false }
 
 [dev-dependencies]
 quickcheck  = "0.3"
-alga_derive = { version = "0.5", path = "../alga_derive" }
+alga_derive = { version = "0.6", path = "../alga_derive" }
