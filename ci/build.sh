@@ -5,6 +5,7 @@ set -ev
 DIR=`pwd`;
 
 if [ -z "$NO_STD" ]; then
+    cd "$DIR/alga" && cargo build --verbose --features "decimal";
     cd "$DIR/alga" && cargo build --verbose;
     cd "$DIR/alga_derive" && cargo build --verbose;
     rustup target install wasm32-unknown-unknown
