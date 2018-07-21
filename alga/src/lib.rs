@@ -25,6 +25,8 @@
 extern crate approx;
 #[cfg(decimal)]
 extern crate decimal;
+#[cfg(not(feature = "std"))]
+extern crate libm;
 extern crate num_complex;
 extern crate num_traits as num;
 
