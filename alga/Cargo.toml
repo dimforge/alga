@@ -25,5 +25,5 @@ num-complex = { version = "0.2", default-features = false }
 libm        = "0.1"
 
 [dev-dependencies]
-quickcheck  = "0.3"
+quickcheck  = "0.7"
 alga_derive = { version = "0.7", path = "../alga_derive" }
