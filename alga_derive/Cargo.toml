@@ -16,5 +16,5 @@ proc-macro = true
 [dependencies]
 quote         = "0.3"
 syn           = "0.11"
-edit-distance = "1.0"
+edit-distance = "2.0"
 quickcheck    = "0.7"
