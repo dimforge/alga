@@ -2,8 +2,8 @@
     <a href="https://crates.io/crates/alga-derive">
          <img src="http://meritbadge.herokuapp.com/alga-derive?style=flat-square" alt="crates.io">
     </a>
-    <a href="https://travis-ci.org/sebcrozet/alga">
-        <img src="https://travis-ci.org/sebcrozet/alga.svg?branch=master" alt="Build status">
+    <a href="https://travis-ci.org/rustsim/alga">
+        <img src="https://travis-ci.org/rustsim/alga.svg?branch=master" alt="Build status">
     </a>
 </p>
 <p align = "center">
