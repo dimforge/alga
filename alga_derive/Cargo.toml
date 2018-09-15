@@ -6,7 +6,7 @@ description = "Derive attribute for implementing algebraic traits from the alga 
 keywords    = ["algebra", "monoids", "math"]
 categories  = ["Science"]
 readme      = "README.md"
-repository  = "https://github.com/sebcrozet/alga"
+repository  = "https://github.com/rustsim/alga"
 license     = "Apache-2.0"
 
 [lib]
