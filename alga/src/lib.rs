@@ -24,6 +24,7 @@
 #[macro_use]
 extern crate approx;
 #[cfg(feature = "decimal")]
+#[macro_use]
 extern crate decimal;
 #[cfg(not(feature = "std"))]
 extern crate libm;
