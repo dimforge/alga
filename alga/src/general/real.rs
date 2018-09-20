@@ -14,6 +14,8 @@ use libm::F32Ext;
 use libm::F64Ext;
 #[cfg(not(feature = "std"))]
 use num;
+//#[cfg(feature = "decimal")]
+//use decimal::d128;
 
 #[allow(missing_docs)]
 
@@ -418,5 +420,5 @@ macro_rules! impl_real(
 impl_real!(f32,f32,F32Ext; f64,f64,F64Ext);
 #[cfg(feature = "std")]
 impl_real!(f32,f32,f32; f64,f64,f64);
-#[cfg(decimal)]
-impl_real!(decimal::d128, decimal::d128);
+//#[cfg(feature = "decimal")]
+//impl_real!(d128, d128, d128);

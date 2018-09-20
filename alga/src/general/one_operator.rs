@@ -1,6 +1,8 @@
 use num::Num;
 use num_complex::Complex;
 use std::ops::{Add, Mul};
+#[cfg(feature = "decimal")]
+use decimal::d128;
 
 use approx::RelativeEq;
 
@@ -372,11 +374,11 @@ macro_rules! impl_magma(
 );
 
 impl_magma!(Additive; add; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
-#[cfg(decimal)]
-impl_ident!(Additive; add; decimal::d128);
+#[cfg(feature = "decimal")]
+impl_magma!(Additive; add; d128);
 impl_magma!(Multiplicative; mul; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
-#[cfg(decimal)]
-impl_ident!(Multiplicative; mul; decimal::d128);
+#[cfg(feature = "decimal")]
+impl_magma!(Multiplicative; mul; d128);
 
 impl_monoid!(<Additive> for u8; u16; u32; u64; usize);
 impl_monoid!(<Multiplicative> for u8; u16; u32; u64; usize);

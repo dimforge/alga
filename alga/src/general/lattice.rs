@@ -1,4 +1,6 @@
 use std::cmp::{Ordering, PartialOrd};
+#[cfg(feature = "decimal")]
+use decimal::d128;
 
 /// A set where every two elements have an infimum (i.e. greatest lower bound).
 pub trait MeetSemilattice: Sized {
@@ -118,5 +120,5 @@ macro_rules! impl_lattice(
 );
 
 impl_lattice!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
-#[cfg(decimal)]
-impl_lattice!(decimal::d128);
+#[cfg(feature = "decimal")]
+impl_lattice!(d128);

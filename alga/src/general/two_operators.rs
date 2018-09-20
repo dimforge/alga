@@ -1,6 +1,8 @@
 use approx::RelativeEq;
 use num::Num;
 use num_complex::Complex;
+#[cfg(feature = "decimal")]
+use decimal::d128;
 
 use general::wrapper::Wrapper as W;
 use general::{
@@ -258,8 +260,8 @@ macro_rules! impl_field(
  */
 impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64; isize);
 impl_field!(<Additive, Multiplicative> for f32; f64);
-#[cfg(decimal)]
-impl_field!(<Additive, Multiplicative> for decimal::d128);
+#[cfg(feature = "decimal")]
+impl_field!(<Additive, Multiplicative> for d128);
 
 impl<N: Num + Clone + ClosedNeg + AbstractRing> AbstractRing for Complex<N> {}
 impl<N: Num + Clone + ClosedNeg + AbstractRingCommutative> AbstractRingCommutative for Complex<N> {}

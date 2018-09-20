@@ -2,6 +2,8 @@ use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
+#[cfg(feature = "decimal")]
+use decimal::d128;
 
 use num::{Num, One, Zero};
 
@@ -32,12 +34,12 @@ pub trait Identity<O: Operator> {
 
 impl_ident!(Additive; 0; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 impl_ident!(Additive; 0.; f32, f64);
-#[cfg(decimal)]
-impl_ident!(Additive; 0.; decimal::d128);
+#[cfg(feature = "decimal")]
+impl_ident!(Additive; d128!(0.); d128);
 impl_ident!(Multiplicative; 1; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
 impl_ident!(Multiplicative; 1.; f32, f64);
-#[cfg(decimal)]
-impl_ident!(Multiplicative; 1.; decimal::d128);
+#[cfg(feature = "decimal")]
+impl_ident!(Multiplicative; d128!(1.); d128);
 
 impl<N: Identity<Additive>> Identity<Additive> for Complex<N> {
     #[inline]
