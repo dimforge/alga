@@ -14,8 +14,8 @@ use libm::F32Ext;
 use libm::F64Ext;
 #[cfg(not(feature = "std"))]
 use num;
-//#[cfg(feature = "decimal")]
-//use decimal::d128;
+#[cfg(feature = "decimal")]
+use decimal::d128;
 
 #[allow(missing_docs)]
 
@@ -420,5 +420,297 @@ macro_rules! impl_real(
 impl_real!(f32,f32,F32Ext; f64,f64,F64Ext);
 #[cfg(feature = "std")]
 impl_real!(f32,f32,f32; f64,f64,f64);
-//#[cfg(feature = "decimal")]
-//impl_real!(d128, d128, d128);
+
+#[cfg(feature = "decimal")]
+impl Real for d128 {
+    #[inline]
+    fn floor(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn ceil(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn round(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn trunc(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn fract(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn abs(self) -> Self {
+        self.abs()
+    }
+
+    #[inline]
+    fn signum(self) -> Self {
+        Signed::signum(&self)
+    }
+
+    #[inline]
+    fn is_sign_positive(self) -> bool {
+        self.is_positive()
+    }
+
+    #[inline]
+    fn is_sign_negative(self) -> bool {
+        self.is_negative()
+    }
+
+    #[inline]
+    fn mul_add(self, a: Self, b: Self) -> Self {
+        self.mul_add(a, b)
+    }
+
+    #[inline]
+    fn recip(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn powi(self, n: i32) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn powf(self, n: Self) -> Self {
+        self.pow(n)
+    }
+
+    #[inline]
+    fn sqrt(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn exp(self) -> Self {
+        unimplemented!() // There is an `exp` method for d128, but for some reasons it takes an extra parameter.
+    }
+
+    #[inline]
+    fn exp2(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn ln(self) -> Self {
+        self.ln()
+    }
+
+    #[inline]
+    fn log(self, base: Self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn log2(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn log10(self) -> Self {
+        self.log10()
+    }
+
+    #[inline]
+    fn max(self, other: Self) -> Self {
+        self.max(other)
+    }
+
+    #[inline]
+    fn min(self, other: Self) -> Self {
+        self.min(other)
+    }
+
+    #[inline]
+    fn cbrt(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn hypot(self, other: Self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn sin(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn cos(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn tan(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn asin(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn acos(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn atan(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn atan2(self, other: Self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn sin_cos(self) -> (Self, Self) {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn exp_m1(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn ln_1p(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn sinh(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn cosh(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn tanh(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn asinh(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn acosh(self) -> Self {
+        unimplemented!()
+    }
+
+    #[inline]
+    fn atanh(self) -> Self {
+        unimplemented!()
+    }
+
+    /// Archimedes' constant.
+    #[inline]
+    fn pi() -> Self {
+        unimplemented!()
+    }
+
+    /// 2.0 * pi.
+    #[inline]
+    fn two_pi() -> Self {
+        d128!(f64::two_pi())
+    }
+
+    /// pi / 2.0.
+    #[inline]
+    fn frac_pi_2() -> Self {
+        d128!(f64::frac_pi_2())
+    }
+
+    /// pi / 3.0.
+    #[inline]
+    fn frac_pi_3() -> Self {
+        d128!(f64::frac_pi_3())
+    }
+
+    /// pi / 4.0.
+    #[inline]
+    fn frac_pi_4() -> Self {
+        d128!(f64::frac_pi_4())
+    }
+
+    /// pi / 6.0.
+    #[inline]
+    fn frac_pi_6() -> Self {
+        d128!(f64::frac_pi_6())
+    }
+
+    /// pi / 8.0.
+    #[inline]
+    fn frac_pi_8() -> Self {
+        d128!(f64::frac_pi_8())
+    }
+
+    /// 1.0 / pi.
+    #[inline]
+    fn frac_1_pi() -> Self {
+        d128!(f64::frac_1_pi())
+    }
+
+    /// 2.0 / pi.
+    #[inline]
+    fn frac_2_pi() -> Self {
+        d128!(f64::frac_2_pi())
+    }
+
+    /// 2.0 / sqrt(pi).
+    #[inline]
+    fn frac_2_sqrt_pi() -> Self {
+        d128!(f64::frac_2_sqrt_pi())
+    }
+
+
+    /// Euler's number.
+    #[inline]
+    fn e() -> Self {
+        d128!(f64::e())
+    }
+
+    /// log2(e).
+    #[inline]
+    fn log2_e() -> Self {
+        d128!(f64::log2_e())
+    }
+
+    /// log10(e).
+    #[inline]
+    fn log10_e() -> Self {
+        d128!(f64::log10_e())
+    }
+
+    /// ln(2.0).
+    #[inline]
+    fn ln_2() -> Self {
+        d128!(f64::ln_2())
+    }
+
+    /// ln(10.0).
+    #[inline]
+    fn ln_10() -> Self {
+        d128!(f64::ln_10())
+    }
+}

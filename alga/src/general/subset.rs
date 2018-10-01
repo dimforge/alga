@@ -145,24 +145,48 @@ impl_subset!(
     f32 as f32, f64;
     f64 as f32, f64;
 );
-//#[cfg(feature = "decimal")]
-//impl_subset!(
-//    u8 as d128;
-//    u16 as d128;
-//    u32 as d128;
-//    u64 as d128;
-//    usize as d128;
-//
-//    i8 as d128;
-//    i16 as d128;
-//    i32 as d128;
-//    i64 as d128;
-//    isize as d128;
-//
-//    f32 as d128;
-//    f64 as d128;
-//    d128 as d128;
-//);
+
+
+macro_rules! impl_subset_using_from_primitive(
+    ($($subset: ty as $( $superset: ty),+ );* $(;)*) => {
+        $($(
+        impl SubsetOf<$superset> for $subset {
+            #[inline]
+            fn to_superset(&self) -> $superset {
+                d128!(*self)
+            }
+
+            #[inline]
+            unsafe fn from_superset_unchecked(element: &$superset) -> $subset {
+                unimplemented!("Conversion from a d128 to a lower-precision number is not yet implemented.")
+            }
+
+            #[inline]
+            fn is_in_subset(_: &$superset) -> bool {
+                true
+            }
+        }
+        )+)*
+    }
+);
+#[cfg(feature = "decimal")]
+impl_subset_using_from_primitive!(
+    u8 as d128;
+    u16 as d128;
+    u32 as d128;
+    u64 as d128;
+    usize as d128;
+
+    i8 as d128;
+    i16 as d128;
+    i32 as d128;
+    i64 as d128;
+    isize as d128;
+
+    f32 as d128;
+    f64 as d128;
+    d128 as d128;
+);
 
 impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
     #[inline]
