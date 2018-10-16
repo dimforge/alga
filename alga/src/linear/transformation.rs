@@ -228,7 +228,7 @@ pub trait Translation<E: EuclideanSpace>
     : DirectIsometry<E, Translation = Self, Rotation = Id> /* + SubsetOf<E::Coordinates> */ {
     // NOTE: we must define those two conversions here (instead of just using SubsetOf) because the
     // structure of Self uses the multiplication for composition, while E::Coordinates uses addition.
-    // Having a trait that sais "remap this operator to this other one" does not seem to be
+    // Having a trait that says "remap this operator to this other one" does not seem to be
     // possible without higher kinded traits.
     /// Converts this translation to a vector.
     fn to_vector(&self) -> E::Coordinates;

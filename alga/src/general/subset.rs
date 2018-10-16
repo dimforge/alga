@@ -15,11 +15,11 @@ use decimal::d128;
 /// practice f64 has more elements).
 /// * u32 and i8 are respectively supposed to represent natural and relative numbers. Thus, u32 is
 /// a subset of i8.
-/// * A quaterion and a 3x3 orthogonal matrix with unit determinant are both sets of rotations.
+/// * A quaternion and a 3x3 orthogonal matrix with unit determinant are both sets of rotations.
 /// They can thus be considered equal.
 ///
 /// In other words, implementation details due to machine limitations are ignored (otherwise we
-/// could not even, e.g., convert a u64 to an i64). If considering those limintations are
+/// could not even, e.g., convert a u64 to an i64). If considering those limitations are
 /// important, other crates allowing you to query the limitations of given types should be used.
 pub trait SubsetOf<T>: Sized {
     /// The inclusion map: converts `self` to the equivalent element of its superset.
@@ -55,11 +55,11 @@ pub trait SubsetOf<T>: Sized {
 /// practice f64 has more elements).
 /// * u32 and i8 are respectively supposed to represent natural and relative numbers. Thus, i8 is
 /// a superset of u32.
-/// * A quaterion and a 3x3 orthogonal matrix with unit determinant are both sets of rotations.
+/// * A quaternion and a 3x3 orthogonal matrix with unit determinant are both sets of rotations.
 /// They can thus be considered equal.
 ///
 /// In other words, implementation details due to machine limitations are ignored (otherwise we
-/// could not even, e.g., convert a u64 to an i64). If considering those limintations are
+/// could not even, e.g., convert a u64 to an i64). If considering those limitations are
 /// important, other crates allowing you to query the limitations of given types should be used.
 pub trait SupersetOf<T>: Sized {
     /// The inverse inclusion map: attempts to construct `self` from the equivalent element of its

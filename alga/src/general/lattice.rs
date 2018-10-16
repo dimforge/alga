@@ -8,13 +8,13 @@ pub trait MeetSemilattice: Sized {
     fn meet(&self, other: &Self) -> Self;
 }
 
-/// A set where every two elements have a suppremum (i.e. smallest upper bound).
+/// A set where every two elements have a supremum (i.e. smallest upper bound).
 pub trait JoinSemilattice: Sized {
     /// Returns the join (aka. supremum) of two values.
     fn join(&self, other: &Self) -> Self;
 }
 
-/// Partially orderable sets where every two elements have a suppremum and infimum.
+/// Partially orderable sets where every two elements have a supremum and infimum.
 pub trait Lattice: MeetSemilattice + JoinSemilattice + PartialOrd {
     /// Returns the infimum and the supremum simultaneously.
     #[inline]

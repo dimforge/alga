@@ -23,7 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   * The `Affine` trait now has methods for appending/prepending pure
     translation/rotation/scaling.
   * `EuclideanSpace::Vector` has been renamed `EuclideanSpace::Coordinates`.
-  * Added `Rotation::scaled_rotation_between` wich is a combination of
+  * Added `Rotation::scaled_rotation_between` which is a combination of
     `Rotation::rotation_between` and `Rotation::powf`.
   * `FiniteDimVectorSpace` looses `::component` but gains the
     `::component_unchecked_mut` method (for mutable compoent borrowing without

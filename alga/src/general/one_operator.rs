@@ -114,7 +114,7 @@ pub trait AbstractSemigroup<O: Operator>: PartialEq + AbstractMagma<O> {
     }
 }
 
-/// Implements the semigroup trait for types provded.
+/// Implements the semigroup trait for types provided.
 /// # Examples
 ///
 /// ```

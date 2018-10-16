@@ -33,14 +33,14 @@ pub trait NormedSpace: VectorSpace {
 
     /// Normalizes this vector in-place or does nothing if its norm is smaller or equal to `eps`.
     ///
-    /// If the normalization succeded, returns the old normal of this vector.
+    /// If the normalization succeeded, returns the old normal of this vector.
     fn try_normalize_mut(&mut self, eps: Self::Field) -> Option<Self::Field>;
 }
 
-/// A vector space aquipped with an inner product.
+/// A vector space equipped with an inner product.
 ///
 /// It must be a normed space as well and the norm must agree with the inner product.
-/// The inner product must be symmetric, linear in its first agurment, and positive definite.
+/// The inner product must be symmetric, linear in its first aguement, and positive definite.
 pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
     /// The result of inner product (same as the field used by this vector space).
     type Real: Real;
