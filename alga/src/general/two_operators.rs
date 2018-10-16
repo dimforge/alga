@@ -9,11 +9,11 @@ use general::{
     AbstractGroupAbelian, AbstractMonoid, Additive, ClosedNeg, Multiplicative, Operator,
 };
 
-/// A ring is the combination of an abelian group and a multiplicative monoid structure.
+/// A ring is the combination of an Abelian group and a multiplicative monoid structure.
 ///
 /// A ring is equipped with:
 ///
-/// * A abstract operator (usually the addition) that fulfills the constraints of an abelian group.
+/// * A abstract operator (usually the addition) that fulfills the constraints of an Abelian group.
 /// * A second abstract operator (usually the multiplication) that fulfills the constraints of a monoid.
 pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
     AbstractGroupAbelian<A> + AbstractMonoid<M>
@@ -188,7 +188,7 @@ macro_rules! impl_ring_commutative(
     }
 );
 
-/// A field is a commutative ring, and an abelian group under both operators.
+/// A field is a commutative ring, and an Abelian group under both operators.
 pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>:
     AbstractRingCommutative<A, M> + AbstractGroupAbelian<M>
 {

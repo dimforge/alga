@@ -1,9 +1,9 @@
 use general::{AbstractGroupAbelian, AbstractRingCommutative, Additive, Multiplicative, Operator};
 
-/// A module combines two sets: one with an abelian group structure and another with a
+/// A module combines two sets: one with an Abelian group structure and another with a
 /// commutative ring structure.
 ///
-/// `OpGroup` denotes the abelian group operator (usually the addition). In addition, and external
+/// `OpGroup` denotes the Abelian group operator (usually the addition). In addition, and external
 /// multiplicative law noted `∘` is defined. Let `S` be the ring with multiplicative operator
 /// `OpMul` noted `×`, multiplicative identity element noted `1`, and additive operator `OpAdd`.
 /// Then:
