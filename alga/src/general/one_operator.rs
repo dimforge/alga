@@ -316,7 +316,7 @@ pub trait AbstractGroupAbelian<O: Operator>: AbstractGroup<O> {
     }
 }
 
-/// Implements the abelian group trait for types provided.
+/// Implements the Abelian group trait for types provided.
 /// # Examples
 ///
 /// ```
