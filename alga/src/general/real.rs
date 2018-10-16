@@ -24,8 +24,8 @@ use num;
 /// Reals are equipped with functions that are commonly used on reals. The results of those
 /// functions only have to be approximately equal to the actual theoretical values.
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
-// allow a blancket impl: impl<T: Clone> SubsetOf<T> for T { ... }
-// NOTE: make all types debuggable/'static/Any ? This seems essencial for any kind of generic programming.
+// allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
+// NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
 pub trait Real:
     SubsetOf<Self>
     + SupersetOf<f64>

@@ -19,7 +19,7 @@ pub trait Inverse<O: Operator>: Sized {
     /// Returns the inverse of `self`, relative to the operator `O`.
     fn inverse(&self) -> Self;
 
-    /// In-place inversin of `self`.
+    /// In-place inversion of `self`.
     #[inline]
     fn inverse_mut(&mut self) {
         *self = self.inverse()
@@ -118,16 +118,16 @@ impl<N: Num + Clone + ClosedNeg> Inverse<Multiplicative> for Complex<N> {
     }
 }
 
-/// [Alias] Trait alias for `Add` and `AddAsign` with result of type `Self`.
+/// [Alias] Trait alias for `Add` and `AddAssign` with result of type `Self`.
 pub trait ClosedAdd<Right = Self>: Sized + Add<Right, Output = Self> + AddAssign<Right> {}
 
-/// [Alias] Trait alias for `Sub` and `SubAsign` with result of type `Self`.
+/// [Alias] Trait alias for `Sub` and `SubAssign` with result of type `Self`.
 pub trait ClosedSub<Right = Self>: Sized + Sub<Right, Output = Self> + SubAssign<Right> {}
 
-/// [Alias] Trait alias for `Mul` and `MulAsign` with result of type `Self`.
+/// [Alias] Trait alias for `Mul` and `MulAssign` with result of type `Self`.
 pub trait ClosedMul<Right = Self>: Sized + Mul<Right, Output = Self> + MulAssign<Right> {}
 
-/// [Alias] Trait alias for `Div` and `DivAsign` with result of type `Self`.
+/// [Alias] Trait alias for `Div` and `DivAssign` with result of type `Self`.
 pub trait ClosedDiv<Right = Self>: Sized + Div<Right, Output = Self> + DivAssign<Right> {}
 
 /// [Alias] Trait alias for `Neg` with result of type `Self`.

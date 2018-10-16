@@ -35,7 +35,7 @@
 //! If `#[alga_quickcheck]` attribute is added for the target of the derive,
 //! then `quickcheck` tests will be generated.
 //! These tests will check that the algebraic properties of the derived trait are true for the type.
-//! This attribute requires `quickcheck`s `Arbitary` trait to be implemented for the target of the derive.
+//! This attribute requires `quickcheck`s `Arbitrary` trait to be implemented for the target of the derive.
 //!
 //! ~~~.ignore
 //! extern crate alga;
