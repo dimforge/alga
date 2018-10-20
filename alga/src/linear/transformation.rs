@@ -1,4 +1,4 @@
-use general::{ClosedDiv, ClosedMul, ClosedNeg, Id, Inverse, MultiplicativeGroup,
+use general::{ClosedDiv, ClosedMul, ClosedNeg, Id, TwoSidedInverse, MultiplicativeGroup,
               MultiplicativeMonoid, Real, SubsetOf};
 use linear::{EuclideanSpace, NormedSpace};
 
@@ -19,10 +19,10 @@ pub trait Transformation<E: EuclideanSpace>: MultiplicativeMonoid {
 /// The most general form of inversible transformations on an euclidean space.
 pub trait ProjectiveTransformation<E: EuclideanSpace>
     : MultiplicativeGroup + Transformation<E> {
-    /// Applies this group's inverse action on a point from the euclidean space.
+    /// Applies this group's two_sided_inverse action on a point from the euclidean space.
     fn inverse_transform_point(&self, pt: &E) -> E;
 
-    /// Applies this group's inverse action on a vector from the euclidean space.
+    /// Applies this group's two_sided_inverse action on a vector from the euclidean space.
     ///
     /// If `v` is a vector and `a, b` two point such that `v = a - b`, the action `∘` on a vector
     /// is defined as `self ∘ v = (self × a) - (self × b)`.
@@ -80,7 +80,7 @@ pub trait AffineTransformation<E: EuclideanSpace>: ProjectiveTransformation<E> {
     #[inline]
     fn append_rotation_wrt_point(&self, r: &Self::Rotation, p: &E) -> Option<Self> {
         if let Some(t) = Self::Translation::from_vector(p.coordinates()) {
-            let it = t.inverse();
+            let it = t.two_sided_inverse();
             Some(
                 self.append_translation(&it)
                     .append_rotation(&r)

@@ -9,7 +9,7 @@ use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use general::AbstractMagma;
 use general::AbstractQuasigroup;
-use general::{Inverse, Operator};
+use general::{Inverse, TwoSidedInverse, Operator};
 
 /// Wrapper that allows to use operators on algebraic types.
 #[derive(Debug)]
@@ -118,7 +118,7 @@ where
 
     #[inline]
     fn neg(mut self) -> Self {
-        self.val = self.val.inverse();
+        self.val = self.val.two_sided_inverse();
         self
     }
 }
@@ -153,7 +153,7 @@ where
 {
     #[inline]
     fn inverse(&self) -> Self {
-        Wrapper::new(self.val.inverse())
+        Wrapper::new(self.val.two_sided_inverse())
     }
 }
 
@@ -165,6 +165,6 @@ where
 
     #[inline]
     fn div(self, lhs: Self) -> Self {
-        self * lhs.inverse()
+        self * lhs.two_sided_inverse()
     }
 }

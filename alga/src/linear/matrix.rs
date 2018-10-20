@@ -105,7 +105,7 @@ pub trait SquareMatrix:
     fn determinant(&self) -> Self::Field;
 
     // FIXME: add an epsilon value (as for try_normalize)?
-    /// Attempts to inverse `self`.
+    /// Attempts to two_sided_inverse `self`.
     #[inline]
     fn try_inverse(&self) -> Option<Self>;
 

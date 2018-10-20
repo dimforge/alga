@@ -6,7 +6,7 @@ use decimal::d128;
 
 use approx::RelativeEq;
 
-use general::{Additive, ClosedNeg, Identity, Inverse, Multiplicative, Operator};
+use general::{Additive, ClosedNeg, Identity, TwoSidedInverse, Multiplicative, Operator};
 
 /// A magma is an algebraic structure which consists of a set equipped with a binary operation, ∘,
 /// which must be closed.
@@ -45,7 +45,7 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
 /// ```
 /// 
 /// where "\" and "/" are respectively the **left** and **right** division. 
-pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Inverse<O> {
+pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + TwoSidedInverse<O> {
     /// Returns `true` if latin squareness holds for the given arguments. Approximate
     /// equality is used for verifications.
     /// 
@@ -57,8 +57,8 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Invers
         Self: RelativeEq,
     {
         let (a, b) = args;
-        relative_eq!(a, a.operate(&b.inverse()).operate(&b))
-            && relative_eq!(a, a.operate(&b.operate(&b.inverse())))
+        relative_eq!(a, a.operate(&b.two_sided_inverse()).operate(&b))
+            && relative_eq!(a, a.operate(&b.operate(&b.two_sided_inverse())))
 
         // TODO: pseudo inverse?
     }
@@ -73,7 +73,7 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Invers
         Self: Eq,
     {
         let (a, b) = args;
-        a == a.operate(&b.inverse()).operate(&b) && a == a.operate(&b.operate(&b.inverse()))
+        a == a.operate(&b.two_sided_inverse()).operate(&b) && a == a.operate(&b.operate(&b.two_sided_inverse()))
 
         // TODO: pseudo inverse?
     }
@@ -85,7 +85,7 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Invers
 /// ```
 /// # #[macro_use]
 /// # extern crate alga;
-/// # use alga::general::{AbstractMagma, AbstractQuasigroup, Additive, Inverse};
+/// # use alga::general::{AbstractMagma, AbstractQuasigroup, Additive, TwoSidedInverse};
 /// # fn main() {}
 /// #[derive(PartialEq, Clone)]
 /// struct Wrapper<T>(T);
@@ -96,9 +96,9 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Invers
 ///     }
 /// }
 ///
-/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
-///     fn inverse(&self) -> Self {
-///         Wrapper(self.0.inverse())
+/// impl<T: TwoSidedInverse<Additive>> TwoSidedInverse<Additive> for Wrapper<T> {
+///     fn two_sided_inverse(&self) -> Self {
+///         Wrapper(self.0.two_sided_inverse())
 ///     }
 /// }
 ///
@@ -191,7 +191,7 @@ pub trait AbstractLoop<O: Operator>: AbstractQuasigroup<O> + Identity<O> {}
 /// ```
 /// # #[macro_use]
 /// # extern crate alga;
-/// # use alga::general::{AbstractMagma, AbstractLoop, Additive, Inverse, Identity};
+/// # use alga::general::{AbstractMagma, AbstractLoop, Additive, TwoSidedInverse, Identity};
 /// # fn main() {}
 /// #[derive(PartialEq, Clone)]
 /// struct Wrapper<T>(T);
@@ -202,9 +202,9 @@ pub trait AbstractLoop<O: Operator>: AbstractQuasigroup<O> + Identity<O> {}
 ///     }
 /// }
 ///
-/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
-///     fn inverse(&self) -> Self {
-///         Wrapper(self.0.inverse())
+/// impl<T: TwoSidedInverse<Additive>> TwoSidedInverse<Additive> for Wrapper<T> {
+///     fn two_sided_inverse(&self) -> Self {
+///         Wrapper(self.0.two_sided_inverse())
 ///     }
 /// }
 ///
@@ -299,7 +299,7 @@ pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 /// ```
 /// # #[macro_use]
 /// # extern crate alga;
-/// # use alga::general::{AbstractMagma, AbstractGroup, Additive, Inverse, Identity};
+/// # use alga::general::{AbstractMagma, AbstractGroup, Additive, TwoSidedInverse, Identity};
 /// # fn main() {}
 /// #[derive(PartialEq, Clone)]
 /// struct Wrapper<T>(T);
@@ -310,9 +310,9 @@ pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 ///     }
 /// }
 ///
-/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
-///     fn inverse(&self) -> Self {
-///         Wrapper(self.0.inverse())
+/// impl<T: TwoSidedInverse<Additive>> TwoSidedInverse<Additive> for Wrapper<T> {
+///     fn two_sided_inverse(&self) -> Self {
+///         Wrapper(self.0.two_sided_inverse())
 ///     }
 /// }
 ///
@@ -369,7 +369,7 @@ pub trait AbstractGroupAbelian<O: Operator>: AbstractGroup<O> {
 /// ```
 /// # #[macro_use]
 /// # extern crate alga;
-/// # use alga::general::{AbstractMagma, AbstractGroupAbelian, Additive, Inverse, Identity};
+/// # use alga::general::{AbstractMagma, AbstractGroupAbelian, Additive, TwoSidedInverse, Identity};
 /// # fn main() {}
 /// #[derive(PartialEq, Clone)]
 /// struct Wrapper<T>(T);
@@ -380,9 +380,9 @@ pub trait AbstractGroupAbelian<O: Operator>: AbstractGroup<O> {
 ///     }
 /// }
 ///
-/// impl<T: Inverse<Additive>> Inverse<Additive> for Wrapper<T> {
-///     fn inverse(&self) -> Self {
-///         Wrapper(self.0.inverse())
+/// impl<T: TwoSidedInverse<Additive>> TwoSidedInverse<Additive> for Wrapper<T> {
+///     fn two_sided_inverse(&self) -> Self {
+///         Wrapper(self.0.two_sided_inverse())
 ///     }
 /// }
 ///
