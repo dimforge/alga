@@ -45,7 +45,7 @@
 //! use alga::general::{Additive, AbstractGroup};
 //!
 //! #[derive(Alga)]
-//! #[alga_traits(Group(Additive)), Where = "T: AbstractGroup"]
+//! #[alga_traits(Group(Additive), Where = "T: AbstractGroup")]
 //! #[alga_quickcheck(check(i32), check(i64))]
 //! struct Struct<T>;
 //! ~~~
