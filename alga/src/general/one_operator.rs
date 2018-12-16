@@ -24,16 +24,28 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
     }
 }
 
-/// A magma with the divisibility property.
+/// A magma with the divisibility property (or Latin square property).
 ///
 /// Divisibility is a weak form of right and left invertibility:
 ///
 /// ```notrust
 /// ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
 /// ```
+/// 
+/// The solution to these equations can be written as 
+/// 
+/// ```notrust
+/// r = a \ b and l = b / a
+/// ```
+/// 
+/// where "\" and "/" are respectively the left and right division. 
 pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Inverse<O> {
     /// Returns `true` if latin squareness holds for the given arguments. Approximate
     /// equality is used for verifications.
+    /// 
+    /// ```notrust
+    /// a ~= a / b * b && a ~= a * b / b
+    /// ```
     fn prop_inv_is_latin_square_approx(args: (Self, Self)) -> bool
     where
         Self: RelativeEq,
@@ -46,6 +58,10 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Invers
     }
 
     /// Returns `true` if latin squareness holds for the given arguments.
+    /// 
+    /// ```notrust
+    /// a == a / b * b && a === a * b / b
+    /// ```
     fn prop_inv_is_latin_square(args: (Self, Self)) -> bool
     where
         Self: Eq,
