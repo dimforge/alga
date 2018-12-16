@@ -8,7 +8,8 @@ use approx::RelativeEq;
 
 use general::{Additive, ClosedNeg, Identity, Inverse, Multiplicative, Operator};
 
-/// Types that are closed under a given operator.
+/// A magma is an algebraic structure which consists of a set equipped with a binary operation
+/// which must be closed. In other terms:
 ///
 /// ~~~notrust
 /// a, b ∈ Self ⇒ a ∘ b ∈ Self
@@ -24,7 +25,7 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
     }
 }
 
-/// A magma with the divisibility property (or Latin square property).
+/// A magma which equipped binary operation has the divisibility property (or Latin square property).
 ///
 /// Divisibility is a weak form of right and left invertibility:
 ///
@@ -44,7 +45,7 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + Invers
     /// equality is used for verifications.
     /// 
     /// ```notrust
-    /// a ~= a / b * b && a ~= a * b / b
+    /// a ~= a / b ∘ b && a ~= a ∘ b / b
     /// ```
     fn prop_inv_is_latin_square_approx(args: (Self, Self)) -> bool
     where
@@ -104,7 +105,7 @@ macro_rules! impl_quasigroup(
     }
 );
 
-/// An associative magma.
+/// A semigroup is a magma which equipped binary operation is associative.
 ///
 /// ~~~notrust
 /// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)
@@ -155,14 +156,14 @@ macro_rules! impl_semigroup(
     }
 );
 
-/// A quasigroup with an unique identity element.
-///
-/// The left inverse `r` and right inverse `l` are not required to be equal.
-/// The following property is added to the quasigroup structure:
+/// A loop is a quasigroup (a magma quipped with a binary operation such possessing the divisibility property) 
+/// with an unique identity element, e, defined as.
 ///
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
 /// ~~~
+/// 
+/// The left inverse `r` and right inverse `l` are not required to be equal.
 pub trait AbstractLoop<O: Operator>: AbstractQuasigroup<O> + Identity<O> {}
 
 /// Implements the loop trait for types provided.
@@ -203,7 +204,8 @@ macro_rules! impl_loop(
     }
 );
 
-/// A semigroup equipped with an identity element.
+/// A monoid is a semigroup (a magma equipped with an associative binary operation) equipped with an 
+/// identity element, e, defined as
 ///
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
@@ -263,7 +265,8 @@ macro_rules! impl_monoid(
     }
 );
 
-/// A group is a loop and a monoid at the same time.
+/// A group is a loop (a magma with the divisibility property and an identity element) 
+/// and a monoid (an associative magma equipped with an identity element) at the same time.
 pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 
 /// Implements the group trait for types provided.
@@ -306,7 +309,8 @@ macro_rules! impl_group(
     }
 );
 
-/// An commutative group.
+/// An commutative group: a commutative and associative magma with the divisibility property
+/// equipped with an identity element.
 ///
 /// ```notrust
 /// ∀ a, b ∈ Self, a ∘ b = b ∘ a
