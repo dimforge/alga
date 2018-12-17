@@ -333,7 +333,7 @@ macro_rules! impl_group(
     }
 );
 
-/// An abelian group is a **commutative** group.
+/// An Abelian group is a **commutative** group.
 /// 
 /// *An commutative group is a set with a closed commutative and associative binary operation with the divisibility property and an identity element.*
 ///
