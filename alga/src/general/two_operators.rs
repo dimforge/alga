@@ -13,12 +13,20 @@ use general::{
 ///
 /// A ring is equipped with:
 ///
-/// * An abstract operator (usually the addition) that fulfills the constraints of an Abelian group.
+/// * An abstract operator (usually the addition, "+") that fulfills the constraints of an Abelian group.
 /// 
 ///     *An Abelian group is a set with a closed commutative and associative addition with the divisibility property and an identity element.*
-/// * A second abstract operator (usually the multiplication) that fulfills the constraints of a monoid.
+/// * A second abstract operator (usually the multiplication, "×") that fulfills the constraints of a monoid.
 /// 
 ///     *A set equipped with a closed associative multiplication with the divisibility property and an identity element.*
+/// 
+/// The multiplication is distributive over the addition:
+/// 
+/// # Distributivity
+/// 
+/// ~~~notrust
+/// a, b, c ∈ Self, a × (b + c) = a × b + a × c.
+/// ~~~
 pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
     AbstractGroupAbelian<A> + AbstractMonoid<M>
 {
