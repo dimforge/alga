@@ -15,10 +15,10 @@ use general::{
 ///
 /// * An abstract operator (usually the addition) that fulfills the constraints of an Abelian group.
 /// 
-///     *An Abelian group is a set with a closed commutative and associative binary operation with the divisibility property and an identity element.*
+///     *An Abelian group is a set with a closed commutative and associative addition with the divisibility property and an identity element.*
 /// * A second abstract operator (usually the multiplication) that fulfills the constraints of a monoid.
 /// 
-///     *A set equipped with a closed associative binary operation with the divisibility property and an identity element.*
+///     *A set equipped with a closed associative multiplication with the divisibility property and an identity element.*
 pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
     AbstractGroupAbelian<A> + AbstractMonoid<M>
 {
