@@ -8,7 +8,7 @@ use approx::RelativeEq;
 
 use general::{Additive, ClosedNeg, Identity, Inverse, Multiplicative, Operator};
 
-/// A magma is an algebraic structure which consists of a set equipped with a binary operation
+/// A magma is an algebraic structure which consists of a set equipped with a binary operation, ∘,
 /// which must be closed. In other terms:
 ///
 /// ~~~notrust
@@ -25,7 +25,8 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
     }
 }
 
-/// A magma which equipped binary operation has the divisibility property (or Latin square property).
+/// A magma which that has the divisibility property (or Latin square property).
+/// (A set with a closed binary operation with the divisibility property.)
 ///
 /// Divisibility is a weak form of right and left invertibility:
 ///
@@ -105,8 +106,11 @@ macro_rules! impl_quasigroup(
     }
 );
 
-/// A semigroup is a magma which equipped binary operation is associative.
+/// A semigroup that is associative.
+/// (A set equipped with a closed associative binary operation and that has the divisibility property.)
 ///
+/// # Associativity
+/// 
 /// ~~~notrust
 /// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)
 /// ~~~
@@ -156,9 +160,12 @@ macro_rules! impl_semigroup(
     }
 );
 
-/// A loop is a quasigroup (a magma quipped with a binary operation such possessing the divisibility property) 
-/// with an unique identity element, e, defined as.
+/// A loop is a quasigroup with an unique identity element, e.
+/// (A set equipped with a closed binary operation possessing the divisibility property
+/// and a unique identity element.) 
 ///
+/// # Identity element
+/// 
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e
 /// ~~~
@@ -204,9 +211,12 @@ macro_rules! impl_loop(
     }
 );
 
-/// A monoid is a semigroup (a magma equipped with an associative binary operation) equipped with an 
-/// identity element, e, defined as
+/// A monoid is a semigroup equipped with an identity element, e.
+/// (A set equipped with a closed associative binary operation with the divisibility property and
+/// an identity element.) 
 ///
+/// # Identity element
+/// 
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 /// ~~~
@@ -265,8 +275,8 @@ macro_rules! impl_monoid(
     }
 );
 
-/// A group is a loop (a magma with the divisibility property and an identity element) 
-/// and a monoid (an associative magma equipped with an identity element) at the same time.
+/// A group is a loop and a monoid  at the same time.
+/// (A set with a closed associative binary operation with the divisibility property and an identity element.)
 pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 
 /// Implements the group trait for types provided.
@@ -309,9 +319,12 @@ macro_rules! impl_group(
     }
 );
 
-/// An commutative group: a commutative and associative magma with the divisibility property
-/// equipped with an identity element.
+/// An abelian group is a commutative group.
+/// 
+/// A commutative group is a set with a closed commutative and associative binary operation with the divisibility property and an identity element.
 ///
+/// # Commutativity
+/// 
 /// ```notrust
 /// ∀ a, b ∈ Self, a ∘ b = b ∘ a
 /// ```
