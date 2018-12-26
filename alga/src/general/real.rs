@@ -109,6 +109,8 @@ pub trait Real:
     fn log10_e() -> Self;
     fn ln_2() -> Self;
     fn ln_10() -> Self;
+
+    fn is_finite(&self) -> bool;
 }
 
 macro_rules! impl_real(
@@ -411,6 +413,10 @@ macro_rules! impl_real(
             #[inline]
             fn ln_10() -> Self {
                 $M::consts::LN_10
+            }
+
+            fn is_finite(&self) -> bool {
+                $M::is_finite(*self)
             }
         }
     )*)
