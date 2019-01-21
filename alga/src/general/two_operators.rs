@@ -59,7 +59,7 @@ pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
         let c = || W::<_, A, M>::new(c.clone());
 
         // Left distributivity
-        (a() * b()) + c() == (a() * b()) + (a() * c()) &&
+        a() * (b() + c()) == (a() * b()) + (a() * c()) &&
         // Right distributivity
         (b() + c()) * a() == (b() * a()) + (c() * a())
     }
