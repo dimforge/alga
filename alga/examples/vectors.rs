@@ -104,11 +104,11 @@ impl<Scalar: AbstractField> AbstractMagma<Additive> for Vec2<Scalar> {
     }
 }
 
-impl<Scalar: AbstractField> Inverse<Additive> for Vec2<Scalar> {
-    fn inverse(&self) -> Self {
+impl<Scalar: AbstractField> TwoSidedInverse<Additive> for Vec2<Scalar> {
+    fn two_sided_inverse(&self) -> Self {
         Vec2::new(
-            Inverse::<Additive>::inverse(&self.x),
-            Inverse::<Additive>::inverse(&self.y),
+            TwoSidedInverse::<Additive>::two_sided_inverse(&self.x),
+            TwoSidedInverse::<Additive>::two_sided_inverse(&self.y),
         )
     }
 }
@@ -338,8 +338,8 @@ impl AbstractMagma<Additive> for Rational {
     }
 }
 
-impl Inverse<Additive> for Rational {
-    fn inverse(&self) -> Self {
+impl TwoSidedInverse<Additive> for Rational {
+    fn two_sided_inverse(&self) -> Self {
         Rational::new(-self.a, self.b)
     }
 }
@@ -359,8 +359,8 @@ impl AbstractMagma<Multiplicative> for Rational {
     }
 }
 
-impl Inverse<Multiplicative> for Rational {
-    fn inverse(&self) -> Self {
+impl TwoSidedInverse<Multiplicative> for Rational {
+    fn two_sided_inverse(&self) -> Self {
         if self.a == 0 {
             self.clone()
         } else {

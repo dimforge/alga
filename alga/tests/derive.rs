@@ -4,7 +4,7 @@ extern crate alga_derive;
 extern crate approx;
 extern crate quickcheck;
 
-use alga::general::{AbstractMagma, Additive, Identity, Inverse, Multiplicative};
+use alga::general::{AbstractMagma, Additive, Identity, TwoSidedInverse, Multiplicative};
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
@@ -66,14 +66,14 @@ impl AbstractMagma<Multiplicative> for W {
     }
 }
 
-impl Inverse<Additive> for W {
-    fn inverse(&self) -> Self {
+impl TwoSidedInverse<Additive> for W {
+    fn two_sided_inverse(&self) -> Self {
         W(-self.0)
     }
 }
 
-impl Inverse<Multiplicative> for W {
-    fn inverse(&self) -> Self {
+impl TwoSidedInverse<Multiplicative> for W {
+    fn two_sided_inverse(&self) -> Self {
         W(1. / self.0)
     }
 }

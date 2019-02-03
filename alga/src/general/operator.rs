@@ -15,7 +15,7 @@ pub trait Operator: Copy {
 /// Trait used to define the two_sided_inverse element relative to the given operator.
 ///
 /// The operator, e.g., `Additive` or `Multiplicative`, is identified by the type parameter `O`.
-pub trait TwoSidedInverse<O: Operator>: Sized + Inverse<O> {
+pub trait TwoSidedInverse<O: Operator>: Sized {
     /// Returns the two_sided_inverse of `self`, relative to the operator `O`.
     ///
     /// The parameter `O` is generally either `Additive` or `Multiplicative`.
@@ -27,39 +27,6 @@ pub trait TwoSidedInverse<O: Operator>: Sized + Inverse<O> {
     #[inline]
     fn two_sided_inverse_mut(&mut self) {
         *self = self.two_sided_inverse()
-    }
-}
-
-/// Trait used to define the two_sided_inverse element relative to the given operator.
-///
-/// The operator, e.g., `Multiplicative` or `Additive`, is identified by the type parameter `O`.
-#[deprecated(note = "This trait will be replaced by the `TwoSidedInverse` trait to avoid some confusions.")]
-pub trait Inverse<O: Operator>: Sized {
-    /// Returns the two_sided_inverse of `self`, relative to the operator `O`.
-    #[inline]
-    #[deprecated(note = "This method is likely **not** what you are looking for. Use `.two_sided_inverse` if you really want the inverse from abstract algebra. \
-                         If you are calling this method on a matrix from the nalgebra crate, you are probably searching for `.try_inverse` instead.")]
-    fn inverse(&self) -> Self;
-
-    /// In-place inversion of `self`.
-    #[inline]
-    #[deprecated(note = "This method is likely **not** what you are looking for. Use `.two_sided_inverse_mut` if you really want the inverse from abstract algebra. \
-                         If you are calling this method on a matrix from the nalgebra crate, you are probably searching for `.try_inverse_mut` instead.")]
-    fn inverse_mut(&mut self) {
-        *self = self.inverse()
-    }
-
-}
-
-impl<T: Inverse<O>, O: Operator> TwoSidedInverse<O> for T {
-    #[inline]
-    fn two_sided_inverse(&self) -> Self {
-        self.inverse()
-    }
-
-    #[inline]
-    fn two_sided_inverse_mut(&mut self) {
-        self.inverse_mut()
     }
 }
 
@@ -104,8 +71,8 @@ impl Operator for AbstractOperator {
 
 macro_rules! impl_additive_inverse(
     ($($T:ty),* $(,)*) => {$(
-        impl Inverse<Additive> for $T {
-            fn inverse(&self) -> Self {
+        impl TwoSidedInverse<Additive> for $T {
+            fn two_sided_inverse(&self) -> Self {
                 -*self
             }
         }
@@ -116,9 +83,9 @@ impl_additive_inverse!(i8, i16, i32, i64, isize, f32, f64);
 #[cfg(feature = "decimal")]
 impl_additive_inverse!(d128);
 
-impl<N: TwoSidedInverse<Additive>> Inverse<Additive> for Complex<N> {
+impl<N: TwoSidedInverse<Additive>> TwoSidedInverse<Additive> for Complex<N> {
     #[inline]
-    fn inverse(&self) -> Complex<N> {
+    fn two_sided_inverse(&self) -> Complex<N> {
         Complex {
             re: self.re.two_sided_inverse(),
             im: self.im.two_sided_inverse(),
@@ -126,31 +93,31 @@ impl<N: TwoSidedInverse<Additive>> Inverse<Additive> for Complex<N> {
     }
 }
 
-impl Inverse<Multiplicative> for f32 {
+impl TwoSidedInverse<Multiplicative> for f32 {
     #[inline]
-    fn inverse(&self) -> f32 {
+    fn two_sided_inverse(&self) -> f32 {
         1.0 / self
     }
 }
 
-impl Inverse<Multiplicative> for f64 {
+impl TwoSidedInverse<Multiplicative> for f64 {
     #[inline]
-    fn inverse(&self) -> f64 {
+    fn two_sided_inverse(&self) -> f64 {
         1.0 / self
     }
 }
 
 #[cfg(feature = "decimal")]
-impl Inverse<Multiplicative> for d128 {
+impl TwoSidedInverse<Multiplicative> for d128 {
     #[inline]
-    fn inverse(&self) -> d128 {
+    fn two_sided_inverse(&self) -> d128 {
         d128!(1.0) / self
     }
 }
 
-impl<N: Num + Clone + ClosedNeg> Inverse<Multiplicative> for Complex<N> {
+impl<N: Num + Clone + ClosedNeg> TwoSidedInverse<Multiplicative> for Complex<N> {
     #[inline]
-    fn inverse(&self) -> Self {
+    fn two_sided_inverse(&self) -> Self {
         self.inv()
     }
 }
