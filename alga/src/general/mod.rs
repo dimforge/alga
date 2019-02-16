@@ -156,7 +156,7 @@
 //! }
 //! ~~~
 
-pub use self::operator::{Additive, ClosedAdd, ClosedDiv, ClosedMul, ClosedNeg, ClosedSub, Inverse,
+pub use self::operator::{Additive, ClosedAdd, ClosedDiv, ClosedMul, ClosedNeg, ClosedSub, TwoSidedInverse,
                          Multiplicative, Operator};
 pub use self::identity::{Id, Identity};
 pub use self::subset::{SubsetOf, SupersetOf};

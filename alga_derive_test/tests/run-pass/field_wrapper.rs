@@ -2,7 +2,7 @@ extern crate alga;
 #[macro_use]
 extern crate alga_derive;
 
-use alga::general::{Inverse, Identity, Additive, Multiplicative, AbstractMagma};
+use alga::general::{TwoSidedInverse, Identity, Additive, Multiplicative, AbstractMagma};
 
 #[derive(Alga, Clone, PartialEq, Debug)]
 #[alga_traits(Field(Additive, Multiplicative))]
@@ -19,14 +19,14 @@ impl AbstractMagma<Multiplicative> for W {
     }
 }
 
-impl Inverse<Additive> for W {
-    fn inverse(&self) -> Self {
+impl TwoSidedInverse<Additive> for W {
+    fn two_sided_inverse(&self) -> Self {
         W(-self.0)
     }
 }
 
-impl Inverse<Multiplicative> for W {
-    fn inverse(&self) -> Self {
+impl TwoSidedInverse<Multiplicative> for W {
+    fn two_sided_inverse(&self) -> Self {
         W(1. / self.0)
     }
 }

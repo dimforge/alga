@@ -1,6 +1,6 @@
 [package]
 name = "alga"
-version = "0.7.2"
+version = "0.8.1"
 authors = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet", "Wadelma <delma@del.ma>"]
 description = "Abstract algebra for Rust"
 keywords = ["algebra", "monoids", "math"]
@@ -26,4 +26,4 @@ libm        = "0.1"
 
 [dev-dependencies]
 quickcheck  = "0.7"
-alga_derive = { version = "0.7", path = "../alga_derive" }
+alga_derive = { version = "0.8", path = "../alga_derive" }

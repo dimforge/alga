@@ -13,7 +13,7 @@ use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use general::{
     AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
-    AbstractQuasigroup, AbstractSemigroup, Additive, Inverse, JoinSemilattice, Lattice,
+    AbstractQuasigroup, AbstractSemigroup, Additive, TwoSidedInverse, JoinSemilattice, Lattice,
     MeetSemilattice, Multiplicative, Operator, SubsetOf,
 };
 
@@ -208,14 +208,14 @@ impl<O: Operator> AbstractMagma<O> for Id<O> {
     }
 }
 
-impl<O: Operator> Inverse<O> for Id<O> {
+impl<O: Operator> TwoSidedInverse<O> for Id<O> {
     #[inline]
-    fn inverse(&self) -> Self {
+    fn two_sided_inverse(&self) -> Self {
         Id::new()
     }
 
     #[inline]
-    fn inverse_mut(&mut self) {
+    fn two_sided_inverse_mut(&mut self) {
         // no-op
     }
 }

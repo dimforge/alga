@@ -30,7 +30,7 @@
 //! marker traits required by the algebraic groupness property
 //! (`AbstractMonoid`, `AbstractSemigroup`, `AbstractLoop` and `AbstractQuasigroup`) for the target of the derive.
 //!
-//! Traits required by these marker traits (`Identity`, `PartialEq`, `Inverse` and `AbstractMagma`) should be implemented manually.
+//! Traits required by these marker traits (`Identity`, `PartialEq`, `TwoSidedInverse` and `AbstractMagma`) should be implemented manually.
 //!
 //! If `#[alga_quickcheck]` attribute is added for the target of the derive,
 //! then `quickcheck` tests will be generated.
