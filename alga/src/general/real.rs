@@ -50,7 +50,6 @@ pub trait Real:
     + Debug
     + Display
     + Bounded
-    + Default
 {
     // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
     fn floor(self) -> Self;
