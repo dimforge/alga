@@ -1,6 +1,6 @@
 [package]
 name        = "alga_derive"
-version     = "0.8.1"
+version     = "0.8.2"
 authors     = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet", "Wadelma <delma@del.ma>"]
 description = "Derive attribute for implementing algebraic traits from the alga crate."
 keywords    = ["algebra", "monoids", "math"]
