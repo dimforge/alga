@@ -1,7 +1,7 @@
-use num::{Bounded, FromPrimitive, Num, Signed};
+use num::{Bounded, FromPrimitive, Num, NumAssign, Signed};
 use std::any::Any;
 use std::fmt::{Debug, Display};
-use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
+use std::ops::Neg;
 use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
@@ -32,16 +32,12 @@ pub trait Real:
     + Field
     + Copy
     + Num
+    + NumAssign
     + FromPrimitive
     + Neg<Output = Self>
-    + AddAssign
-    + MulAssign
-    + SubAssign
-    + DivAssign
     + RelativeEq<Epsilon = Self>
     + UlpsEq<Epsilon = Self>
     + Lattice
-    + PartialEq
     + Signed
     + Send
     + Sync
