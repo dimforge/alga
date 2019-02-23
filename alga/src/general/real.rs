@@ -1,4 +1,4 @@
-use num::{Bounded, FromPrimitive, Num, Signed};
+use num::{Bounded, FromPrimitive, Num, Signed, Zero};
 use std::any::Any;
 use std::fmt::{Debug, Display};
 use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
@@ -109,6 +109,9 @@ pub trait Real:
     fn log10_e() -> Self;
     fn ln_2() -> Self;
     fn ln_10() -> Self;
+
+    fn sinc(self) -> Self;
+    fn sinhc(self) -> Self;
 }
 
 macro_rules! impl_real(
@@ -411,6 +414,27 @@ macro_rules! impl_real(
             #[inline]
             fn ln_10() -> Self {
                 $M::consts::LN_10
+            }
+
+            /// Cardinal sine
+            #[inline]
+            fn sinc(self) -> Self {
+                if self == Self::zero() {
+                    Self::zero()
+                }
+                else {
+                    self.sin() / self
+                }
+            }
+
+            #[inline]
+            fn sinhc(self) -> Self {
+                if self == Self::zero() {
+                    Self::zero()
+                }
+                else {
+                    self.sinh() / self
+                }
             }
         }
     )*)
