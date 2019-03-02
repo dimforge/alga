@@ -5,7 +5,7 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-use general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real};
+use general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real, Complex as ComplexTrait};
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
@@ -17,38 +17,40 @@ pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
 }
 
 /// A normed vector space.
-pub trait NormedSpace: VectorSpace {
+pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::Complex> {
+    /// The result of the norm (not necessarily the same same as the field used by this vector space).
+    type Real: Real;
+    /// The field of this space must be this complex number.
+    type Complex: ComplexTrait<Real = Self::Real>;
+
     /// The squared norm of this vector.
-    fn norm_squared(&self) -> Self::Field;
+    fn norm_squared(&self) -> Self::Real;
 
     /// The norm of this vector.
-    fn norm(&self) -> Self::Field;
+    fn norm(&self) -> Self::Real;
 
     /// Returns a normalized version of this vector.
     fn normalize(&self) -> Self;
 
     /// Normalizes this vector in-place and returns its norm.
-    fn normalize_mut(&mut self) -> Self::Field;
+    fn normalize_mut(&mut self) -> Self::Real;
 
     /// Returns a normalized version of this vector unless its norm as smaller or equal to `eps`.
-    fn try_normalize(&self, eps: Self::Field) -> Option<Self>;
+    fn try_normalize(&self, eps: Self::Real) -> Option<Self>;
 
     /// Normalizes this vector in-place or does nothing if its norm is smaller or equal to `eps`.
     ///
     /// If the normalization succeeded, returns the old normal of this vector.
-    fn try_normalize_mut(&mut self, eps: Self::Field) -> Option<Self::Field>;
+    fn try_normalize_mut(&mut self, eps: Self::Real) -> Option<Self::Real>;
 }
 
 /// A vector space equipped with an inner product.
 ///
 /// It must be a normed space as well and the norm must agree with the inner product.
 /// The inner product must be symmetric, linear in its first argument, and positive definite.
-pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
-    /// The result of inner product (same as the field used by this vector space).
-    type Real: Real;
-
+pub trait InnerSpace: NormedSpace {
     /// Computes the inner product of `self` with `other`.
-    fn inner_product(&self, other: &Self) -> Self::Real;
+    fn inner_product(&self, other: &Self) -> Self::Complex;
 
     /// Measures the angle between two vectors.
     #[inline]
@@ -60,7 +62,7 @@ pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
         if n1 == num::zero() || n2 == num::zero() {
             num::zero()
         } else {
-            let cang = prod / (n1 * n2);
+            let cang = prod.real() * n1 * n2;
 
             if cang > num::one() {
                 num::zero()
@@ -109,7 +111,7 @@ pub trait FiniteDimVectorSpace:
 /// A finite-dimensional vector space equipped with an inner product that must coincide
 /// with the dot product.
 pub trait FiniteDimInnerSpace:
-    InnerSpace + FiniteDimVectorSpace<Field = <Self as InnerSpace>::Real>
+    InnerSpace + FiniteDimVectorSpace<Field = <Self as NormedSpace>::Complex>
 {
     /// Orthonormalizes the given family of vectors. The largest free family of vectors is moved at
     /// the beginning of the array and its size is returned. Vectors at an indices larger or equal to
@@ -159,7 +161,7 @@ pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Co
                           // Equivalent to `.scale_by(-1.0)`.
                           Neg<Output = Self> {
     /// The underlying finite vector space.
-    type Coordinates: FiniteDimInnerSpace<Real = Self::Real> +
+    type Coordinates: FiniteDimInnerSpace<Real = Self::Real, Complex = Self::Real> +
                  // XXX: the following bounds should not be necessary but the compiler does not
                  // seem to be able to find them (from supertraits of VectorSpace)… Also, it won't
                  // find them even if we add ClosedMul instead of Mul and MulAssign separately…
@@ -228,13 +230,16 @@ impl<N: Field + num::NumAssign> VectorSpace for Complex<N> {
 
 
 impl<N: Real> NormedSpace for Complex<N> {
+    type Real = N;
+    type Complex = N;
+
     #[inline]
-    fn norm_squared(&self) -> Self::Field {
+    fn norm_squared(&self) -> Self::Real {
         self.norm_sqr()
     }
 
     #[inline]
-    fn norm(&self) -> Self::Field {
+    fn norm(&self) -> Self::Real {
         self.norm_sqr().sqrt()
     }
 
@@ -244,14 +249,14 @@ impl<N: Real> NormedSpace for Complex<N> {
     }
 
     #[inline]
-    fn normalize_mut(&mut self) -> Self::Field {
+    fn normalize_mut(&mut self) -> Self::Real {
         let norm = self.norm();
         *self /= norm;
         norm
     }
 
     #[inline]
-    fn try_normalize(&self, eps: Self::Field) -> Option<Self> {
+    fn try_normalize(&self, eps: Self::Real) -> Option<Self> {
         let norm = self.norm_sqr();
         if norm > eps * eps {
             Some(*self / norm.sqrt())
@@ -261,7 +266,7 @@ impl<N: Real> NormedSpace for Complex<N> {
     }
 
     #[inline]
-    fn try_normalize_mut(&mut self, eps: Self::Field) -> Option<Self::Field> {
+    fn try_normalize_mut(&mut self, eps: Self::Real) -> Option<Self::Real> {
         let sq_norm = self.norm_sqr();
         if sq_norm > eps * eps {
             let norm = sq_norm.sqrt();
@@ -270,16 +275,6 @@ impl<N: Real> NormedSpace for Complex<N> {
         } else {
             None
         }
-    }
-}
-
-
-impl<N: Real> InnerSpace for Complex<N> {
-    type Real = N;
-
-    #[inline]
-    fn inner_product(&self, other: &Self) -> Self::Real {
-        self.re * other.re + self.im * other.im
     }
 }
 

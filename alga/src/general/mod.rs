@@ -172,6 +172,7 @@ pub use self::specialized::{AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, A
                             MultiplicativeMagma, MultiplicativeMonoid, MultiplicativeQuasigroup,
                             MultiplicativeSemigroup, Ring, RingCommutative};
 pub use self::real::Real;
+pub use self::complex::Complex;
 
 #[macro_use]
 mod one_operator;
@@ -180,6 +181,7 @@ mod module;
 mod identity;
 mod operator;
 mod real;
+mod complex;
 mod lattice;
 mod subset;
 mod specialized;

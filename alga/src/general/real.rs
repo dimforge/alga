@@ -6,7 +6,7 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use general::{Field, Lattice, SubsetOf, SupersetOf};
+use general::{Field, Complex, Lattice, SubsetOf, SupersetOf};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -27,24 +27,11 @@ use num;
 // allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 // NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
 pub trait Real:
-    SubsetOf<Self>
-    + SupersetOf<f64>
-    + Field
-    + Copy
-    + Num
-    + NumAssign
-    + FromPrimitive
-    + Neg<Output = Self>
+    Complex<Real = Self>
     + RelativeEq<Epsilon = Self>
     + UlpsEq<Epsilon = Self>
     + Lattice
     + Signed
-    + Send
-    + Sync
-    + Any
-    + 'static
-    + Debug
-    + Display
     + Bounded
 {
     // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
@@ -54,17 +41,13 @@ pub trait Real:
     fn trunc(self) -> Self;
     fn fract(self) -> Self;
     fn abs(self) -> Self;
-    fn signum(self) -> Self;
     fn is_sign_positive(self) -> bool;
     fn is_sign_negative(self) -> bool;
     fn mul_add(self, a: Self, b: Self) -> Self;
     fn recip(self) -> Self;
     fn powi(self, n: i32) -> Self;
     fn powf(self, n: Self) -> Self;
-    fn sqrt(self) -> Self;
-    fn exp(self) -> Self;
     fn exp2(self) -> Self;
-    fn ln(self) -> Self;
     fn log(self, base: Self) -> Self;
     fn log2(self) -> Self;
     fn log10(self) -> Self;
@@ -72,22 +55,17 @@ pub trait Real:
     fn min(self, other: Self) -> Self;
     fn cbrt(self) -> Self;
     fn hypot(self, other: Self) -> Self;
-    fn sin(self) -> Self;
-    fn cos(self) -> Self;
-    fn tan(self) -> Self;
-    fn asin(self) -> Self;
-    fn acos(self) -> Self;
-    fn atan(self) -> Self;
+
     fn atan2(self, other: Self) -> Self;
     fn sin_cos(self) -> (Self, Self);
+
+    #[inline]
+    fn sinh_cosh(self) -> (Self, Self) {
+        (self.sinh(), self.cosh())
+    }
+
     fn exp_m1(self) -> Self;
     fn ln_1p(self) -> Self;
-    fn sinh(self) -> Self;
-    fn cosh(self) -> Self;
-    fn tanh(self) -> Self;
-    fn asinh(self) -> Self;
-    fn acosh(self) -> Self;
-    fn atanh(self) -> Self;
 
     fn pi() -> Self;
     fn two_pi() -> Self;
@@ -141,11 +119,6 @@ macro_rules! impl_real(
             }
 
             #[inline]
-            fn signum(self) -> Self {
-                Signed::signum(&self)
-            }
-
-            #[inline]
             fn is_sign_positive(self) -> bool {
                 $M::is_sign_positive(self)
             }
@@ -184,23 +157,8 @@ macro_rules! impl_real(
             }
 
             #[inline]
-            fn sqrt(self) -> Self {
-                $libm::sqrt(self)
-            }
-
-            #[inline]
-            fn exp(self) -> Self {
-                $libm::exp(self)
-            }
-
-            #[inline]
             fn exp2(self) -> Self {
                 $libm::exp2(self)
-            }
-
-            #[inline]
-            fn ln(self) -> Self {
-                $libm::ln(self)
             }
 
             #[inline]
@@ -239,36 +197,6 @@ macro_rules! impl_real(
             }
 
             #[inline]
-            fn sin(self) -> Self {
-                $libm::sin(self)
-            }
-
-            #[inline]
-            fn cos(self) -> Self {
-                $libm::cos(self)
-            }
-
-            #[inline]
-            fn tan(self) -> Self {
-                $libm::tan(self)
-            }
-
-            #[inline]
-            fn asin(self) -> Self {
-                $libm::asin(self)
-            }
-
-            #[inline]
-            fn acos(self) -> Self {
-                $libm::acos(self)
-            }
-
-            #[inline]
-            fn atan(self) -> Self {
-                $libm::atan(self)
-            }
-
-            #[inline]
             fn atan2(self, other: Self) -> Self {
                 $libm::atan2(self, other)
             }
@@ -286,36 +214,6 @@ macro_rules! impl_real(
             #[inline]
             fn ln_1p(self) -> Self {
                 $libm::ln_1p(self)
-            }
-
-            #[inline]
-            fn sinh(self) -> Self {
-                $libm::sinh(self)
-            }
-
-            #[inline]
-            fn cosh(self) -> Self {
-                $libm::cosh(self)
-            }
-
-            #[inline]
-            fn tanh(self) -> Self {
-                $libm::tanh(self)
-            }
-
-            #[inline]
-            fn asinh(self) -> Self {
-                $libm::asinh(self)
-            }
-
-            #[inline]
-            fn acosh(self) -> Self {
-                $libm::acosh(self)
-            }
-
-            #[inline]
-            fn atanh(self) -> Self {
-                $libm::atanh(self)
             }
 
             /// Archimedes' constant.
