@@ -54,7 +54,6 @@ pub trait Real:
     fn max(self, other: Self) -> Self;
     fn min(self, other: Self) -> Self;
     fn cbrt(self) -> Self;
-    fn hypot(self, other: Self) -> Self;
 
     fn atan2(self, other: Self) -> Self;
     fn sin_cos(self) -> (Self, Self);
@@ -189,11 +188,6 @@ macro_rules! impl_real(
             #[inline]
             fn cbrt(self) -> Self {
                 $libm::cbrt(self)
-            }
-
-            #[inline]
-            fn hypot(self, other: Self) -> Self {
-                $libm::hypot(self, other)
             }
 
             #[inline]

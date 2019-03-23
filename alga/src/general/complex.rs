@@ -69,7 +69,7 @@ pub trait Complex:
     fn argument(self) -> Self::Real;
 
     /// The sum of the absolute value of this complex number's real and imaginary part.
-    fn asum(self) -> Self::Real;
+    fn norm1(self) -> Self::Real;
 
     /// Multiplies this complex number by `factor`.
     fn scale(self, factor: Self::Real) -> Self;
@@ -85,13 +85,22 @@ pub trait Complex:
     /// The exponential form of this complex number: (modulus, e^{i arg})
     fn to_exp(self) -> (Self::Real, Self) {
         let m = self.modulus();
-        (m, self.unscale(m))
+
+        if !m.is_zero() {
+            (m, self.unscale(m))
+        } else {
+            (Self::Real::zero(), Self::one())
+        }
     }
 
     /// The exponential part of this complex number: `self / self.modulus()`
     fn signum(self) -> Self {
         self.to_exp().1
     }
+
+
+    // Computes (self.conjugate() * self + other.conjugate() * other).sqrt()
+    fn hypot(self, other: Self) -> Self::Real;
 
     /// The exponential form of this complex number
     fn conjugate(self) -> Self;
@@ -135,7 +144,7 @@ macro_rules! impl_complex(
             }
 
             #[inline]
-            fn asum(self) -> Self::Real {
+            fn norm1(self) -> Self::Real {
                 self.abs()
             }
 
@@ -308,11 +317,11 @@ macro_rules! impl_complex(
 //            fn cbrt(self) -> Self {
 //                $libm::cbrt(self)
 //            }
-//
-//            #[inline]
-//            fn hypot(self, other: Self) -> Self {
-//                $libm::hypot(self, other)
-//            }
+
+            #[inline]
+            fn hypot(self, other: Self) -> Self::Real {
+                $libm::hypot(self, other)
+            }
 
             #[inline]
             fn sin(self) -> Self {
@@ -538,7 +547,7 @@ impl<N: Real> Complex for num_complex::Complex<N> {
     }
 
     #[inline]
-    fn asum(self) -> Self::Real {
+    fn norm1(self) -> Self::Real {
         self.re.abs() + self.im.abs()
     }
 
@@ -602,6 +611,11 @@ impl<N: Real> Complex for num_complex::Complex<N> {
     #[inline]
     fn try_sqrt(self) -> Option<Self> {
         Some(self.sqrt())
+    }
+
+    #[inline]
+    fn hypot(self, b: Self) -> Self::Real {
+        (self.modulus_squared() + b.modulus_squared()).sqrt()
     }
 
     /*
