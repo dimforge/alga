@@ -1,7 +1,7 @@
 use num;
 
-use general::{Id, Identity};
-use linear::{AffineTransformation, DirectIsometry, EuclideanSpace, InnerSpace, Isometry,
+use crate::general::{Id, Identity};
+use crate::linear::{AffineTransformation, DirectIsometry, EuclideanSpace, InnerSpace, Isometry,
              OrthogonalTransformation, ProjectiveTransformation, Rotation, Scaling, Similarity,
              Transformation, Translation};
 

@@ -5,7 +5,7 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-use general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real, Complex as ComplexTrait};
+use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real, Complex as ComplexTrait};
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>

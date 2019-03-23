@@ -1,6 +1,6 @@
-use general::{ClosedDiv, ClosedMul, ClosedNeg, Id, TwoSidedInverse, MultiplicativeGroup,
+use crate::general::{ClosedDiv, ClosedMul, ClosedNeg, Id, TwoSidedInverse, MultiplicativeGroup,
               MultiplicativeMonoid, Real, SubsetOf};
-use linear::{EuclideanSpace, NormedSpace};
+use crate::linear::{EuclideanSpace, NormedSpace};
 
 // NOTE: A subgroup trait inherit from its parent groups.
 

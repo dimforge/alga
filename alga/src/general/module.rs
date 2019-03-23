@@ -1,4 +1,4 @@
-use general::{AbstractGroupAbelian, AbstractRingCommutative, Additive, Multiplicative, Operator};
+use crate::general::{AbstractGroupAbelian, AbstractRingCommutative, Additive, Multiplicative, Operator};
 
 /// A module combines two sets: one with an Abelian group structure and another with a
 /// commutative ring structure.

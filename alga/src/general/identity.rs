@@ -11,7 +11,7 @@ use num_complex::Complex;
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
-use general::{
+use crate::general::{
     AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
     AbstractQuasigroup, AbstractSemigroup, Additive, TwoSidedInverse, JoinSemilattice, Lattice,
     MeetSemilattice, Multiplicative, Operator, SubsetOf,

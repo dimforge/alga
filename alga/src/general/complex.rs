@@ -6,7 +6,7 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use general::{Field, Lattice, SubsetOf, SupersetOf, Real};
+use crate::general::{Field, Lattice, SubsetOf, SupersetOf, Real};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
