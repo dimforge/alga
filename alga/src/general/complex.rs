@@ -6,7 +6,7 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use crate::general::{Field, Lattice, SubsetOf, SupersetOf, Real};
+use crate::general::{Field, Lattice, SubsetOf, SupersetOf, RealField};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -48,48 +48,48 @@ pub trait ComplexField:
 //    + Bounded
 {
     /// Type of the coefficients of a complex number.
-    type Real: Real;
+    type RealField: RealField;
 
     /// Builds a pure-real complex number from the given value.
-    fn from_real(re: Self::Real) -> Self;
+    fn from_real(re: Self::RealField) -> Self;
 
     /// The real part of this complex number.
-    fn real(self) -> Self::Real;
+    fn real(self) -> Self::RealField;
 
     /// The imaginary part of this complex number.
-    fn imaginary(self) -> Self::Real;
+    fn imaginary(self) -> Self::RealField;
 
     /// The modulus of this complex number.
-    fn modulus(self) -> Self::Real;
+    fn modulus(self) -> Self::RealField;
 
     /// The squared modulus of this complex number.
-    fn modulus_squared(self) -> Self::Real;
+    fn modulus_squared(self) -> Self::RealField;
 
     /// The argument of this complex number.
-    fn argument(self) -> Self::Real;
+    fn argument(self) -> Self::RealField;
 
     /// The sum of the absolute value of this complex number's real and imaginary part.
-    fn norm1(self) -> Self::Real;
+    fn norm1(self) -> Self::RealField;
 
     /// Multiplies this complex number by `factor`.
-    fn scale(self, factor: Self::Real) -> Self;
+    fn scale(self, factor: Self::RealField) -> Self;
 
     /// Multiplies this complex number by `factor`.
-    fn unscale(self, factor: Self::Real) -> Self;
+    fn unscale(self, factor: Self::RealField) -> Self;
 
     /// The polar form of this complex number: (modulus, arg)
-    fn to_polar(self) -> (Self::Real, Self::Real) {
+    fn to_polar(self) -> (Self::RealField, Self::RealField) {
         (self.modulus(), self.argument())
     }
 
     /// The exponential form of this complex number: (modulus, e^{i arg})
-    fn to_exp(self) -> (Self::Real, Self) {
+    fn to_exp(self) -> (Self::RealField, Self) {
         let m = self.modulus();
 
         if !m.is_zero() {
             (m, self.unscale(m))
         } else {
-            (Self::Real::zero(), Self::one())
+            (Self::RealField::zero(), Self::one())
         }
     }
 
@@ -100,7 +100,7 @@ pub trait ComplexField:
 
 
     // Computes (self.conjugate() * self + other.conjugate() * other).sqrt()
-    fn hypot(self, other: Self) -> Self::Real;
+    fn hypot(self, other: Self) -> Self::RealField;
 
     /// The exponential form of this complex number
     fn conjugate(self) -> Self;
@@ -126,40 +126,40 @@ pub trait ComplexField:
 macro_rules! impl_complex(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
         impl ComplexField for $T {
-            type Real = $T;
+            type RealField = $T;
 
             #[inline]
-            fn from_real(re: Self::Real) -> Self {
+            fn from_real(re: Self::RealField) -> Self {
                 re
             }
 
             #[inline]
-            fn real(self) -> Self::Real {
+            fn real(self) -> Self::RealField {
                 self
             }
 
             #[inline]
-            fn imaginary(self) -> Self::Real {
+            fn imaginary(self) -> Self::RealField {
                 Self::zero()
             }
 
             #[inline]
-            fn norm1(self) -> Self::Real {
+            fn norm1(self) -> Self::RealField {
                 self.abs()
             }
 
             #[inline]
-            fn modulus(self) -> Self::Real {
+            fn modulus(self) -> Self::RealField {
                 self.abs()
             }
 
             #[inline]
-            fn modulus_squared(self) -> Self::Real {
+            fn modulus_squared(self) -> Self::RealField {
                 self * self
             }
 
             #[inline]
-            fn argument(self) -> Self::Real {
+            fn argument(self) -> Self::RealField {
                 if self >= Self::zero() {
                     Self::zero()
                 } else {
@@ -182,12 +182,12 @@ macro_rules! impl_complex(
             }
 
             #[inline]
-            fn scale(self, factor: Self::Real) -> Self {
+            fn scale(self, factor: Self::RealField) -> Self {
                 self * factor
             }
 
             #[inline]
-            fn unscale(self, factor: Self::Real) -> Self {
+            fn unscale(self, factor: Self::RealField) -> Self {
                 self / factor
             }
 
@@ -319,7 +319,7 @@ macro_rules! impl_complex(
 //            }
 
             #[inline]
-            fn hypot(self, other: Self) -> Self::Real {
+            fn hypot(self, other: Self) -> Self::RealField {
                 $libm::hypot(self, other)
             }
 
@@ -513,41 +513,41 @@ impl_complex!(
 //impl_real!(d128, d128, d128);
 
 
-impl<N: Real> ComplexField for num_complex::Complex<N> {
-    type Real = N;
+impl<N: RealField> ComplexField for num_complex::Complex<N> {
+    type RealField = N;
 
     #[inline]
-    fn from_real(re: Self::Real) -> Self {
-        Self::new(re, Self::Real::zero())
+    fn from_real(re: Self::RealField) -> Self {
+        Self::new(re, Self::RealField::zero())
     }
 
     #[inline]
-    fn real(self) -> Self::Real {
+    fn real(self) -> Self::RealField {
         self.re
     }
 
     #[inline]
-    fn imaginary(self) -> Self::Real {
+    fn imaginary(self) -> Self::RealField {
         self.im
     }
 
     #[inline]
-    fn argument(self) -> Self::Real {
+    fn argument(self) -> Self::RealField {
         self.im.atan2(self.re)
     }
 
     #[inline]
-    fn modulus(self) -> Self::Real {
+    fn modulus(self) -> Self::RealField {
         self.re.hypot(self.im)
     }
 
     #[inline]
-    fn modulus_squared(self) -> Self::Real {
+    fn modulus_squared(self) -> Self::RealField {
         self.re * self.re + self.im * self.im
     }
 
     #[inline]
-    fn norm1(self) -> Self::Real {
+    fn norm1(self) -> Self::RealField {
         self.re.abs() + self.im.abs()
     }
 
@@ -557,12 +557,12 @@ impl<N: Real> ComplexField for num_complex::Complex<N> {
     }
 
     #[inline]
-    fn scale(self, factor: Self::Real) -> Self {
+    fn scale(self, factor: Self::RealField) -> Self {
         self * factor
     }
 
     #[inline]
-    fn unscale(self, factor: Self::Real) -> Self {
+    fn unscale(self, factor: Self::RealField) -> Self {
         self / factor
     }
 
@@ -614,7 +614,7 @@ impl<N: Real> ComplexField for num_complex::Complex<N> {
     }
 
     #[inline]
-    fn hypot(self, b: Self) -> Self::Real {
+    fn hypot(self, b: Self) -> Self::RealField {
         (self.modulus_squared() + b.modulus_squared()).sqrt()
     }
 
@@ -833,6 +833,6 @@ impl<N: Real> ComplexField for num_complex::Complex<N> {
 }
 
 #[inline]
-fn complex_from_polar<N: Real>(r: N, theta: N) -> num_complex::Complex<N> {
+fn complex_from_polar<N: RealField>(r: N, theta: N) -> num_complex::Complex<N> {
     num_complex::Complex::new(r * theta.cos(), r * theta.sin())
 }

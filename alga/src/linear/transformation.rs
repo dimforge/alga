@@ -1,5 +1,5 @@
 use crate::general::{ClosedDiv, ClosedMul, ClosedNeg, Id, TwoSidedInverse, MultiplicativeGroup,
-              MultiplicativeMonoid, Real, SubsetOf};
+              MultiplicativeMonoid, RealField, SubsetOf};
 use crate::linear::{EuclideanSpace, NormedSpace};
 
 // NOTE: A subgroup trait inherit from its parent groups.
@@ -194,24 +194,24 @@ pub trait OrthogonalTransformation<E: EuclideanSpace>
 /// Subgroups of the (signed) uniform scaling group.
 pub trait Scaling<E: EuclideanSpace>
     : AffineTransformation<E, NonUniformScaling = Self, Translation = Id, Rotation = Id>
-    + SubsetOf<E::Real> {
+    + SubsetOf<E::RealField> {
     /// Converts this scaling factor to a real. Same as `self.to_superset()`.
     #[inline]
-    fn to_real(&self) -> E::Real {
+    fn to_real(&self) -> E::RealField {
         self.to_superset()
     }
 
     /// Attempts to convert a real to an element of this scaling subgroup. Same as
     /// `Self::from_superset()`. Returns `None` if no such scaling is possible for this subgroup.
     #[inline]
-    fn from_real(r: E::Real) -> Option<Self> {
+    fn from_real(r: E::RealField) -> Option<Self> {
         Self::from_superset(&r)
     }
 
     /// Raises the scaling to a power. The result must be equivalent to
     /// `self.to_superset().powf(n)`. Returns `None` if the result is not representable by `Self`.
     #[inline]
-    fn powf(&self, n: E::Real) -> Option<Self> {
+    fn powf(&self, n: E::RealField) -> Option<Self> {
         Self::from_superset(&self.to_superset().powf(n))
     }
 
@@ -240,7 +240,7 @@ pub trait Translation<E: EuclideanSpace>
     /// Raises the translation to a power. The result must be equivalent to
     /// `self.to_superset() * n`.  Returns `None` if the result is not representable by `Self`.
     #[inline]
-    fn powf(&self, n: E::Real) -> Option<Self> {
+    fn powf(&self, n: E::RealField) -> Option<Self> {
         Self::from_vector(self.to_vector() * n)
     }
 
@@ -257,7 +257,7 @@ pub trait Rotation<E: EuclideanSpace>
     {
     /// Raises this rotation to a power. If this is a simple rotation, the result must be
     /// equivalent to multiplying the rotation angle by `n`.
-    fn powf(&self, n: E::Real) -> Option<Self>;
+    fn powf(&self, n: E::RealField) -> Option<Self>;
 
     /// Computes a simple rotation that makes the angle between `a` and `b` equal to zero, i.e.,
     /// `b.angle(a * delta_rotation(a, b)) = 0`. If `a` and `b` are collinear, the computed
@@ -270,7 +270,7 @@ pub trait Rotation<E: EuclideanSpace>
     /// This is equivalent to calling `self.rotation_between(a, b)` followed by `.powf(n)` but will
     /// usually be much more efficient.
     #[inline]
-    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, s: E::Real) -> Option<Self>;
+    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, s: E::RealField) -> Option<Self>;
 
     // FIXME: add a function that computes the rotation with the axis orthogonal to Span(a, b) and
     // with angle equal to `n`?
@@ -284,8 +284,8 @@ pub trait Rotation<E: EuclideanSpace>
 
 impl<R, E> Transformation<E> for R
 where
-    R: Real,
-    E: EuclideanSpace<Real = R>,
+    R: RealField,
+    E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
     #[inline]
@@ -301,8 +301,8 @@ where
 
 impl<R, E> ProjectiveTransformation<E> for R
 where
-    R: Real,
-    E: EuclideanSpace<Real = R>,
+    R: RealField,
+    E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
     #[inline]
@@ -320,8 +320,8 @@ where
 
 impl<R, E> AffineTransformation<E> for R
 where
-    R: Real,
-    E: EuclideanSpace<Real = R>,
+    R: RealField,
+    E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
     type Rotation = Id;
@@ -366,22 +366,22 @@ where
 
 impl<R, E> Scaling<E> for R
 where
-    R: Real + SubsetOf<R>,
-    E: EuclideanSpace<Real = R>,
+    R: RealField + SubsetOf<R>,
+    E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
     #[inline]
-    fn to_real(&self) -> E::Real {
+    fn to_real(&self) -> E::RealField {
         *self
     }
 
     #[inline]
-    fn from_real(r: E::Real) -> Option<Self> {
+    fn from_real(r: E::RealField) -> Option<Self> {
         Some(r)
     }
 
     #[inline]
-    fn powf(&self, n: E::Real) -> Option<Self> {
+    fn powf(&self, n: E::RealField) -> Option<Self> {
         Some(n.powf(n))
     }
 
@@ -393,8 +393,8 @@ where
 
 impl<R, E> Similarity<E> for R
 where
-    R: Real + SubsetOf<R>,
-    E: EuclideanSpace<Real = R>,
+    R: RealField + SubsetOf<R>,
+    E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
     type Scaling = R;

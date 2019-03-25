@@ -99,7 +99,7 @@ impl<E: EuclideanSpace> OrthogonalTransformation<E> for Id {}
 
 impl<E: EuclideanSpace> Rotation<E> for Id {
     #[inline]
-    fn powf(&self, _: E::Real) -> Option<Self> {
+    fn powf(&self, _: E::RealField) -> Option<Self> {
         Some(Id::new())
     }
 
@@ -113,7 +113,7 @@ impl<E: EuclideanSpace> Rotation<E> for Id {
     }
 
     #[inline]
-    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, _: E::Real) -> Option<Self> {
+    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, _: E::RealField) -> Option<Self> {
         Rotation::<E>::rotation_between(a, b)
     }
 }

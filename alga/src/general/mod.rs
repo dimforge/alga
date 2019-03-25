@@ -14,7 +14,7 @@
 
 //! Fundamental algebraic structures.
 //!
-//! For most applications requiring an abstraction over the reals, `Real`
+//! For most applications requiring an abstraction over the reals, `RealField`
 //! should be sufficient.
 //!
 //! ## Algebraic properties
@@ -171,7 +171,7 @@ pub use self::specialized::{AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, A
                             MultiplicativeGroup, MultiplicativeGroupAbelian, MultiplicativeLoop,
                             MultiplicativeMagma, MultiplicativeMonoid, MultiplicativeQuasigroup,
                             MultiplicativeSemigroup, Ring, RingCommutative};
-pub use self::real::Real;
+pub use self::real::RealField;
 pub use self::complex::ComplexField;
 
 #[macro_use]
