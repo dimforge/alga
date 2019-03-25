@@ -172,7 +172,7 @@ pub use self::specialized::{AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, A
                             MultiplicativeMagma, MultiplicativeMonoid, MultiplicativeQuasigroup,
                             MultiplicativeSemigroup, Ring, RingCommutative};
 pub use self::real::Real;
-pub use self::complex::Complex;
+pub use self::complex::ComplexField;
 
 #[macro_use]
 mod one_operator;

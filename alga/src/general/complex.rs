@@ -26,7 +26,7 @@ use num;
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
 // allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 // NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
-pub trait Complex:
+pub trait ComplexField:
     SubsetOf<Self>
     + SupersetOf<f64>
     + Field
@@ -125,7 +125,7 @@ pub trait Complex:
 
 macro_rules! impl_complex(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
-        impl Complex for $T {
+        impl ComplexField for $T {
             type Real = $T;
 
             #[inline]
@@ -513,7 +513,7 @@ impl_complex!(
 //impl_real!(d128, d128, d128);
 
 
-impl<N: Real> Complex for num_complex::Complex<N> {
+impl<N: Real> ComplexField for num_complex::Complex<N> {
     type Real = N;
 
     #[inline]

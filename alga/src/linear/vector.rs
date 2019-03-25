@@ -5,7 +5,7 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real, Complex as ComplexTrait};
+use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, Real, ComplexField};
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
@@ -17,11 +17,11 @@ pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
 }
 
 /// A normed vector space.
-pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::Complex> {
+pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::ComplexField> {
     /// The result of the norm (not necessarily the same same as the field used by this vector space).
     type Real: Real;
     /// The field of this space must be this complex number.
-    type Complex: ComplexTrait<Real = Self::Real>;
+    type ComplexField: ComplexField<Real = Self::Real>;
 
     /// The squared norm of this vector.
     fn norm_squared(&self) -> Self::Real;
@@ -50,7 +50,7 @@ pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::Complex> {
 /// The inner product must be symmetric, linear in its first argument, and positive definite.
 pub trait InnerSpace: NormedSpace {
     /// Computes the inner product of `self` with `other`.
-    fn inner_product(&self, other: &Self) -> Self::Complex;
+    fn inner_product(&self, other: &Self) -> Self::ComplexField;
 
     /// Measures the angle between two vectors.
     #[inline]
@@ -111,7 +111,7 @@ pub trait FiniteDimVectorSpace:
 /// A finite-dimensional vector space equipped with an inner product that must coincide
 /// with the dot product.
 pub trait FiniteDimInnerSpace:
-    InnerSpace + FiniteDimVectorSpace<Field = <Self as NormedSpace>::Complex>
+    InnerSpace + FiniteDimVectorSpace<Field = <Self as NormedSpace>::ComplexField>
 {
     /// Orthonormalizes the given family of vectors. The largest free family of vectors is moved at
     /// the beginning of the array and its size is returned. Vectors at an indices larger or equal to
@@ -161,7 +161,7 @@ pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Co
                           // Equivalent to `.scale_by(-1.0)`.
                           Neg<Output = Self> {
     /// The underlying finite vector space.
-    type Coordinates: FiniteDimInnerSpace<Real = Self::Real, Complex = Self::Real> +
+    type Coordinates: FiniteDimInnerSpace<Real = Self::Real, ComplexField = Self::Real> +
                  // XXX: the following bounds should not be necessary but the compiler does not
                  // seem to be able to find them (from supertraits of VectorSpace)… Also, it won't
                  // find them even if we add ClosedMul instead of Mul and MulAssign separately…
@@ -231,7 +231,7 @@ impl<N: Field + num::NumAssign> VectorSpace for Complex<N> {
 
 impl<N: Real> NormedSpace for Complex<N> {
     type Real = N;
-    type Complex = N;
+    type ComplexField = N;
 
     #[inline]
     fn norm_squared(&self) -> Self::Real {

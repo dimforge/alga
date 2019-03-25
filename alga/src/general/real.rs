@@ -6,7 +6,7 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use crate::general::{Field, Complex, Lattice, SubsetOf, SupersetOf};
+use crate::general::{Field, ComplexField, Lattice, SubsetOf, SupersetOf};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -27,7 +27,7 @@ use num;
 // allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 // NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
 pub trait Real:
-    Complex<Real = Self>
+    ComplexField<Real = Self>
     + RelativeEq<Epsilon = Self>
     + UlpsEq<Epsilon = Self>
     + Lattice
