@@ -1,5 +1,5 @@
 use crate::general::{ClosedDiv, ClosedMul, ClosedNeg, Id, TwoSidedInverse, MultiplicativeGroup,
-              MultiplicativeMonoid, RealField, SubsetOf};
+              MultiplicativeMonoid, RealField, SubsetOf, ComplexField};
 use crate::linear::{EuclideanSpace, NormedSpace};
 
 // NOTE: A subgroup trait inherit from its parent groups.
@@ -16,7 +16,7 @@ pub trait Transformation<E: EuclideanSpace>: MultiplicativeMonoid {
     fn transform_vector(&self, v: &E::Coordinates) -> E::Coordinates;
 }
 
-/// The most general form of inversible transformations on an euclidean space.
+/// The most general form of invertible transformations on an euclidean space.
 pub trait ProjectiveTransformation<E: EuclideanSpace>
     : MultiplicativeGroup + Transformation<E> {
     /// Applies this group's two_sided_inverse action on a point from the euclidean space.

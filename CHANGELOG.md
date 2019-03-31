@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.9]
   * Add the `ComplexField` trait.
   * Rename the `Real` trait to `RealField` for more clarity.
+  * Rename `Real::powf` to `ComplexField::pow`.
 
 ## [0.5.2]
   * Add feature-gated support for the `decimal` crate.

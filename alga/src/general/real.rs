@@ -1,12 +1,9 @@
-use num::{Bounded, FromPrimitive, Num, NumAssign, Signed};
-use std::any::Any;
-use std::fmt::{Debug, Display};
-use std::ops::Neg;
+use num::{Bounded, Signed};
 use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use crate::general::{Field, ComplexField, Lattice, SubsetOf, SupersetOf};
+use crate::general::{ComplexField, Lattice};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -35,36 +32,12 @@ pub trait RealField:
     + Bounded
 {
     // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
-    fn floor(self) -> Self;
-    fn ceil(self) -> Self;
-    fn round(self) -> Self;
-    fn trunc(self) -> Self;
-    fn fract(self) -> Self;
-    fn abs(self) -> Self;
+
     fn is_sign_positive(self) -> bool;
     fn is_sign_negative(self) -> bool;
-    fn mul_add(self, a: Self, b: Self) -> Self;
-    fn recip(self) -> Self;
-    fn powi(self, n: i32) -> Self;
-    fn powf(self, n: Self) -> Self;
-    fn exp2(self) -> Self;
-    fn log(self, base: Self) -> Self;
-    fn log2(self) -> Self;
-    fn log10(self) -> Self;
     fn max(self, other: Self) -> Self;
     fn min(self, other: Self) -> Self;
-    fn cbrt(self) -> Self;
-
     fn atan2(self, other: Self) -> Self;
-    fn sin_cos(self) -> (Self, Self);
-
-    #[inline]
-    fn sinh_cosh(self) -> (Self, Self) {
-        (self.sinh(), self.cosh())
-    }
-
-    fn exp_m1(self) -> Self;
-    fn ln_1p(self) -> Self;
 
     fn pi() -> Self;
     fn two_pi() -> Self;
@@ -88,36 +61,6 @@ macro_rules! impl_real(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
         impl RealField for $T {
             #[inline]
-            fn floor(self) -> Self {
-                $libm::floor(self)
-            }
-
-            #[inline]
-            fn ceil(self) -> Self {
-                $libm::ceil(self)
-            }
-
-            #[inline]
-            fn round(self) -> Self {
-                $libm::round(self)
-            }
-
-            #[inline]
-            fn trunc(self) -> Self {
-                $libm::trunc(self)
-            }
-
-            #[inline]
-            fn fract(self) -> Self {
-                $libm::fract(self)
-            }
-
-            #[inline]
-            fn abs(self) -> Self {
-                $libm::abs(self)
-            }
-
-            #[inline]
             fn is_sign_positive(self) -> bool {
                 $M::is_sign_positive(self)
             }
@@ -125,54 +68,6 @@ macro_rules! impl_real(
             #[inline]
             fn is_sign_negative(self) -> bool {
                 $M::is_sign_negative(self)
-            }
-
-            #[inline]
-            fn mul_add(self, a: Self, b: Self) -> Self {
-                $libm::mul_add(self, a, b)
-            }
-
-            #[inline]
-            fn recip(self) -> Self {
-                $M::recip(self)
-            }
-
-            #[cfg(feature = "std")]
-            #[inline]
-            fn powi(self, n: i32) -> Self {
-                self.powi(n)
-            }
-
-            #[cfg(not(feature = "std"))]
-            #[inline]
-            fn powi(self, n: i32) -> Self {
-                // FIXME: is there a more efficient solution?
-                num::pow(self, n as usize)
-            }
-
-            #[inline]
-            fn powf(self, n: Self) -> Self {
-                $libm::powf(self, n)
-            }
-
-            #[inline]
-            fn exp2(self) -> Self {
-                $libm::exp2(self)
-            }
-
-            #[inline]
-            fn log(self, base: Self) -> Self {
-                $libm::log(self, base)
-            }
-
-            #[inline]
-            fn log2(self) -> Self {
-                $libm::log2(self)
-            }
-
-            #[inline]
-            fn log10(self) -> Self {
-                $libm::log10(self)
             }
 
             #[inline]
@@ -186,28 +81,8 @@ macro_rules! impl_real(
             }
 
             #[inline]
-            fn cbrt(self) -> Self {
-                $libm::cbrt(self)
-            }
-
-            #[inline]
             fn atan2(self, other: Self) -> Self {
                 $libm::atan2(self, other)
-            }
-
-            #[inline]
-            fn sin_cos(self) -> (Self, Self) {
-                $libm::sin_cos(self)
-            }
-
-            #[inline]
-            fn exp_m1(self) -> Self {
-                $libm::exp_m1(self)
-            }
-
-            #[inline]
-            fn ln_1p(self) -> Self {
-                $libm::ln_1p(self)
             }
 
             /// Archimedes' constant.

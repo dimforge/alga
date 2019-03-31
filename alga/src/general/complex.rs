@@ -1,12 +1,10 @@
-use num::{Bounded, FromPrimitive, Num, NumAssign, Signed, Zero, One};
+use num::{FromPrimitive, Num, NumAssign, Signed, Zero, One};
 use std::any::Any;
 use std::fmt::{Debug, Display};
-use std::ops::{Neg, Mul, Div};
+use std::ops::Neg;
 use std::{f32, f64};
 
-use approx::{RelativeEq, UlpsEq};
-
-use crate::general::{Field, Lattice, SubsetOf, SupersetOf, RealField};
+use crate::general::{Field, SubsetOf, SupersetOf, RealField, MeetSemilattice, JoinSemilattice};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -35,10 +33,11 @@ pub trait ComplexField:
     + NumAssign
     + FromPrimitive
     + Neg<Output = Self>
+    + MeetSemilattice
+    + JoinSemilattice
 //    + RelativeEq<Epsilon = Self>
 //    + UlpsEq<Epsilon = Self>
 //    + Lattice
-//    + Signed
     + Send
     + Sync
     + Any
@@ -99,13 +98,30 @@ pub trait ComplexField:
     }
 
 
-    // Computes (self.conjugate() * self + other.conjugate() * other).sqrt()
+    fn floor(self) -> Self;
+    fn ceil(self) -> Self;
+    fn round(self) -> Self;
+    fn trunc(self) -> Self;
+    fn fract(self) -> Self;
+    fn mul_add(self, a: Self, b: Self) -> Self;
+
+    /// The absolute value of this complex number: `self / self.signum()`.
+    ///
+    /// This is equivalent to `self.modulus()`.
+    fn abs(self) -> Self::RealField;
+
+    /// Computes (self.conjugate() * self + other.conjugate() * other).sqrt()
     fn hypot(self, other: Self) -> Self::RealField;
 
-    /// The exponential form of this complex number
+    fn recip(self) -> Self;
     fn conjugate(self) -> Self;
     fn sin(self) -> Self;
     fn cos(self) -> Self;
+    fn sin_cos(self) -> (Self, Self);
+    #[inline]
+    fn sinh_cosh(self) -> (Self, Self) {
+        (self.sinh(), self.cosh())
+    }
     fn tan(self) -> Self;
     fn asin(self) -> Self;
     fn acos(self) -> Self;
@@ -117,10 +133,21 @@ pub trait ComplexField:
     fn acosh(self) -> Self;
     fn atanh(self) -> Self;
 
+
+    fn log(self, base: Self::RealField) -> Self;
+    fn log2(self) -> Self;
+    fn log10(self) -> Self;
     fn ln(self) -> Self;
+    fn ln_1p(self) -> Self;
     fn sqrt(self) -> Self;
     fn try_sqrt(self) -> Option<Self>;
     fn exp(self) -> Self;
+    fn exp2(self) -> Self;
+    fn exp_m1(self) -> Self;
+    fn powi(self, n: i32) -> Self;
+    fn powf(self, n: Self::RealField) -> Self;
+    fn powc(self, n: Self) -> Self;
+    fn cbrt(self) -> Self;
 }
 
 macro_rules! impl_complex(
@@ -177,6 +204,11 @@ macro_rules! impl_complex(
             }
 
             #[inline]
+            fn recip(self) -> Self {
+                $M::recip(self)
+            }
+
+            #[inline]
             fn conjugate(self) -> Self {
                 self
             }
@@ -191,78 +223,69 @@ macro_rules! impl_complex(
                 self / factor
             }
 
-//            #[inline]
-//            fn floor(self) -> Self {
-//                $libm::floor(self)
-//            }
-//
-//            #[inline]
-//            fn ceil(self) -> Self {
-//                $libm::ceil(self)
-//            }
-//
-//            #[inline]
-//            fn round(self) -> Self {
-//                $libm::round(self)
-//            }
-//
-//            #[inline]
-//            fn trunc(self) -> Self {
-//                $libm::trunc(self)
-//            }
-//
-//            #[inline]
-//            fn fract(self) -> Self {
-//                $libm::fract(self)
-//            }
-//
-//            #[inline]
-//            fn abs(self) -> Self {
-//                $libm::abs(self)
-//            }
-//
+            #[inline]
+            fn floor(self) -> Self {
+                $libm::floor(self)
+            }
+
+            #[inline]
+            fn ceil(self) -> Self {
+                $libm::ceil(self)
+            }
+
+            #[inline]
+            fn round(self) -> Self {
+                $libm::round(self)
+            }
+
+            #[inline]
+            fn trunc(self) -> Self {
+                $libm::trunc(self)
+            }
+
+            #[inline]
+            fn fract(self) -> Self {
+                $libm::fract(self)
+            }
+
+            #[inline]
+            fn abs(self) -> Self {
+                $libm::abs(self)
+            }
+
             #[inline]
             fn signum(self) -> Self {
                 Signed::signum(&self)
             }
-//
-//            #[inline]
-//            fn is_sign_positive(self) -> bool {
-//                $M::is_sign_positive(self)
-//            }
-//
-//            #[inline]
-//            fn is_sign_negative(self) -> bool {
-//                $M::is_sign_negative(self)
-//            }
-//
-//            #[inline]
-//            fn mul_add(self, a: Self, b: Self) -> Self {
-//                $libm::mul_add(self, a, b)
-//            }
-//
-//            #[inline]
-//            fn recip(self) -> Self {
-//                $M::recip(self)
-//            }
-//
-//            #[cfg(feature = "std")]
-//            #[inline]
-//            fn powi(self, n: i32) -> Self {
-//                self.powi(n)
-//            }
-//
-//            #[cfg(not(feature = "std"))]
-//            #[inline]
-//            fn powi(self, n: i32) -> Self {
-//                // FIXME: is there a more efficient solution?
-//                num::pow(self, n as usize)
-//            }
-//
-//            #[inline]
-//            fn powf(self, n: Self) -> Self {
-//                $libm::powf(self, n)
-//            }
+
+            #[inline]
+            fn mul_add(self, a: Self, b: Self) -> Self {
+                $libm::mul_add(self, a, b)
+            }
+
+            #[cfg(feature = "std")]
+            #[inline]
+            fn powi(self, n: i32) -> Self {
+                self.powi(n)
+            }
+
+            #[cfg(not(feature = "std"))]
+            #[inline]
+            fn powi(self, n: i32) -> Self {
+                // FIXME: is there a more accurate solution?
+                num::powf(self, n as $T)
+            }
+
+            #[inline]
+            fn powf(self, n: Self) -> Self {
+                $libm::powf(self, n)
+            }
+
+            #[inline]
+            fn powc(self, n: Self) -> Self {
+                // Same as powf.
+                $libm::powf(self, n)
+            }
 
             #[inline]
             fn sqrt(self) -> Self {
@@ -283,40 +306,46 @@ macro_rules! impl_complex(
                 $libm::exp(self)
             }
 
-//            #[inline]
-//            fn exp2(self) -> Self {
-//                $libm::exp2(self)
-//            }
+            #[inline]
+            fn exp2(self) -> Self {
+                $libm::exp2(self)
+            }
+
+
+            #[inline]
+            fn exp_m1(self) -> Self {
+                $libm::exp_m1(self)
+            }
+
+            #[inline]
+            fn ln_1p(self) -> Self {
+                $libm::ln_1p(self)
+            }
 
             #[inline]
             fn ln(self) -> Self {
                 $libm::ln(self)
             }
 
-//            #[inline]
-//            fn log2(self) -> Self {
-//                $libm::log2(self)
-//            }
-//
-//            #[inline]
-//            fn log10(self) -> Self {
-//                $libm::log10(self)
-//            }
-//
-//            #[inline]
-//            fn max(self, other: Self) -> Self {
-//                $M::max(self, other)
-//            }
-//
-//            #[inline]
-//            fn min(self, other: Self) -> Self {
-//                $M::min(self, other)
-//            }
-//
-//            #[inline]
-//            fn cbrt(self) -> Self {
-//                $libm::cbrt(self)
-//            }
+            #[inline]
+            fn log(self, base: Self) -> Self {
+                $libm::log(self, base)
+            }
+
+            #[inline]
+            fn log2(self) -> Self {
+                $libm::log2(self)
+            }
+
+            #[inline]
+            fn log10(self) -> Self {
+                $libm::log10(self)
+            }
+
+            #[inline]
+            fn cbrt(self) -> Self {
+                $libm::cbrt(self)
+            }
 
             #[inline]
             fn hypot(self, other: Self) -> Self::RealField {
@@ -352,17 +381,12 @@ macro_rules! impl_complex(
             fn atan(self) -> Self {
                 $libm::atan(self)
             }
-//
-//            #[inline]
-//            fn atan2(self, other: Self) -> Self {
-//                $libm::atan2(self, other)
-//            }
-//
-//            #[inline]
-//            fn sin_cos(self) -> (Self, Self) {
-//                $libm::sin_cos(self)
-//            }
-//
+
+            #[inline]
+            fn sin_cos(self) -> (Self, Self) {
+                $libm::sin_cos(self)
+            }
+
 //            #[inline]
 //            fn exp_m1(self) -> Self {
 //                $libm::exp_m1(self)
@@ -552,6 +576,11 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
     }
 
     #[inline]
+    fn recip(self) -> Self {
+        Self::one() / self
+    }
+
+    #[inline]
     fn conjugate(self) -> Self {
         self.conj()
     }
@@ -566,10 +595,92 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         self / factor
     }
 
+    #[inline]
+    fn floor(self) -> Self {
+        Self::new(self.re.floor(), self.im.floor())
+    }
+
+    #[inline]
+    fn ceil(self) -> Self {
+        Self::new(self.re.ceil(), self.im.ceil())
+    }
+
+    #[inline]
+    fn round(self) -> Self {
+        Self::new(self.re.round(), self.im.round())
+    }
+
+    #[inline]
+    fn trunc(self) -> Self {
+        Self::new(self.re.trunc(), self.im.trunc())
+    }
+
+    #[inline]
+    fn fract(self) -> Self {
+        Self::new(self.re.fract(), self.im.fract())
+    }
+
+    #[inline]
+    fn mul_add(self, a: Self, b: Self) -> Self {
+        self * a + b
+    }
+
+
+    #[inline]
+    fn abs(self) -> Self::RealField {
+        self.modulus()
+    }
+
+    #[inline]
+    fn exp2(self) -> Self {
+        let _2 = N::one() + N::one();
+        num_complex::Complex::new(_2, N::zero()).powc(self)
+    }
+
+
+    #[inline]
+    fn exp_m1(self) -> Self {
+        self.exp() - Self::one()
+    }
+
+    #[inline]
+    fn ln_1p(self) -> Self {
+        (Self::one() + self).ln()
+    }
+
+    #[inline]
+    fn log2(self) -> Self {
+        let _2 = N::one() + N::one();
+        self.log(_2)
+    }
+
+    #[inline]
+    fn log10(self) -> Self {
+        let _10 = N::from_subset(&10.0f64);
+        self.log(_10)
+    }
+
+    #[inline]
+    fn cbrt(self) -> Self {
+        let one_third = N::from_subset(&(1.0 / 3.0));
+        self.powf(one_third)
+    }
+
+    #[inline]
+    fn powi(self, n: i32) -> Self {
+        // FIXME: is there a more accurate solution?
+        let n = N::from_subset(&(n as f64));
+        self.powf(n)
+    }
+
     /*
+     *
+     *
      * Unfortunately we are forced to copy-paste all
      * those impls from https://github.com/rust-num/num-complex/blob/master/src/lib.rs
      * to avoid requiring `std`.
+     *
+     *
      */
     /// Computes `e^(self)`, where `e` is the base of the natural logarithm.
     #[inline]
@@ -618,17 +729,14 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         (self.modulus_squared() + b.modulus_squared()).sqrt()
     }
 
-    /*
     /// Raises `self` to a floating point power.
     #[inline]
-    fn powf(&self, exp: T) -> Self {
+    fn powf(self, exp: Self::RealField) -> Self {
         // formula: x^y = (ρ e^(i θ))^y = ρ^y e^(i θ y)
         // = from_polar(ρ^y, θ y)
         let (r, theta) = self.to_polar();
-        Self::from_polar(&r.powf(exp), &(theta * exp))
+        complex_from_polar(r.powf(exp), theta * exp)
     }
-    */
-    /*
 
     /// Returns the logarithm of `self` with respect to an arbitrary base.
     #[inline]
@@ -642,7 +750,7 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
 
     /// Raises `self` to a complex power.
     #[inline]
-    fn powc(&self, exp: Self) -> Self {
+    fn powc(self, exp: Self) -> Self {
         // formula: x^y = (a + i b)^(c + i d)
         // = (ρ e^(i θ))^c (ρ e^(i θ))^(i d)
         //    where ρ=|x| and θ=arg(x)
@@ -655,12 +763,13 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         // = p^c e^(−d θ) (cos(c θ + d ln(ρ)) + i sin(c θ + d ln(ρ)))
         // = from_polar(p^c e^(−d θ), c θ + d ln(ρ))
         let (r, theta) = self.to_polar();
-        Self::from_polar(
-            &(r.powf(exp.re) * (-exp.im * theta).exp()),
-            &(exp.re * theta + exp.im * r.ln()),
+        complex_from_polar(
+            r.powf(exp.re) * (-exp.im * theta).exp(),
+            exp.re * theta + exp.im * r.ln(),
         )
     }
 
+/*
     /// Raises a floating point number to the complex power `self`.
     #[inline]
     fn expf(&self, base: T) -> Self {
@@ -688,6 +797,22 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
             self.re.cos() * self.im.cosh(),
             -self.re.sin() * self.im.sinh(),
         )
+    }
+
+    #[inline]
+    fn sin_cos(self) -> (Self, Self) {
+        let (rsin, rcos) = self.re.sin_cos();
+        let (isinh, icosh) = self.im.sinh_cosh();
+        let sin = Self::new(
+            rsin * icosh,
+            rcos * isinh,
+        );
+        let cos = Self::new(
+            rcos * icosh,
+            -rsin * isinh,
+        );
+
+        (sin, cos)
     }
 
     /// Computes the tangent of `self`.
@@ -770,6 +895,22 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
             self.re.cosh() * self.im.cos(),
             self.re.sinh() * self.im.sin(),
         )
+    }
+
+    #[inline]
+    fn sinh_cosh(self) -> (Self, Self) {
+        let (rsinh, rcosh) = self.re.sinh_cosh();
+        let (isin, icos) = self.im.sin_cos();
+        let sin = Self::new(
+            rsinh * icos,
+            rcosh * isin,
+        );
+        let cos = Self::new(
+            rcosh * icos,
+            rsinh * isin,
+        );
+
+        (sin, cos)
     }
 
     /// Computes the hyperbolic tangent of `self`.
