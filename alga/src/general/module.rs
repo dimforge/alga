@@ -28,3 +28,14 @@ pub trait AbstractModule<
     /// Multiplies an element of the ring with an element of the module.
     fn multiply_by(&self, r: Self::AbstractRing) -> Self;
 }
+
+impl<N: AbstractRingCommutative<Additive, Multiplicative> + num::Num + crate::general::ClosedNeg>
+    AbstractModule<Additive, Additive, Multiplicative> for num_complex::Complex<N> {
+    type AbstractRing = N;
+
+    #[inline]
+    fn multiply_by(&self, r: N) -> Self {
+        self.clone() * r
+    }
+
+}
