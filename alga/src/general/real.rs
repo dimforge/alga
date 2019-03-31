@@ -1,7 +1,4 @@
-use num::{Bounded, FromPrimitive, Num, NumAssign, Signed, Zero, One};
-use std::any::Any;
-use std::fmt::{Debug, Display};
-use std::ops::Neg;
+use num::{Bounded, Signed};
 use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
