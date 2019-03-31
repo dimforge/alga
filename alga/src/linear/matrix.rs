@@ -1,7 +1,7 @@
 use std::ops::Mul;
 
-use general::{Field, MultiplicativeGroup, MultiplicativeMonoid};
-use linear::FiniteDimVectorSpace;
+use crate::general::{Field, MultiplicativeGroup, MultiplicativeMonoid};
+use crate::linear::FiniteDimVectorSpace;
 
 /// The space of all matrices.
 pub trait Matrix:

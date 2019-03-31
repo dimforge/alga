@@ -1,12 +1,9 @@
-use num::{Bounded, FromPrimitive, Num, NumAssign, Signed, Zero, One};
-use std::any::Any;
-use std::fmt::{Debug, Display};
-use std::ops::Neg;
+use num::{Bounded, Signed};
 use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use general::{Field, Lattice, SubsetOf, SupersetOf};
+use crate::general::{ComplexField, Lattice};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -26,68 +23,21 @@ use num;
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
 // allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 // NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
-pub trait Real:
-    SubsetOf<Self>
-    + SupersetOf<f64>
-    + Field
-    + Copy
-    + Num
-    + NumAssign
-    + FromPrimitive
-    + Neg<Output = Self>
+pub trait RealField:
+    ComplexField<RealField = Self>
     + RelativeEq<Epsilon = Self>
     + UlpsEq<Epsilon = Self>
     + Lattice
     + Signed
-    + Send
-    + Sync
-    + Any
-    + 'static
-    + Debug
-    + Display
     + Bounded
 {
     // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
-    fn floor(self) -> Self;
-    fn ceil(self) -> Self;
-    fn round(self) -> Self;
-    fn trunc(self) -> Self;
-    fn fract(self) -> Self;
-    fn abs(self) -> Self;
-    fn signum(self) -> Self;
+
     fn is_sign_positive(self) -> bool;
     fn is_sign_negative(self) -> bool;
-    fn mul_add(self, a: Self, b: Self) -> Self;
-    fn recip(self) -> Self;
-    fn powi(self, n: i32) -> Self;
-    fn powf(self, n: Self) -> Self;
-    fn sqrt(self) -> Self;
-    fn exp(self) -> Self;
-    fn exp2(self) -> Self;
-    fn ln(self) -> Self;
-    fn log(self, base: Self) -> Self;
-    fn log2(self) -> Self;
-    fn log10(self) -> Self;
     fn max(self, other: Self) -> Self;
     fn min(self, other: Self) -> Self;
-    fn cbrt(self) -> Self;
-    fn hypot(self, other: Self) -> Self;
-    fn sin(self) -> Self;
-    fn cos(self) -> Self;
-    fn tan(self) -> Self;
-    fn asin(self) -> Self;
-    fn acos(self) -> Self;
-    fn atan(self) -> Self;
     fn atan2(self, other: Self) -> Self;
-    fn sin_cos(self) -> (Self, Self);
-    fn exp_m1(self) -> Self;
-    fn ln_1p(self) -> Self;
-    fn sinh(self) -> Self;
-    fn cosh(self) -> Self;
-    fn tanh(self) -> Self;
-    fn asinh(self) -> Self;
-    fn acosh(self) -> Self;
-    fn atanh(self) -> Self;
 
     fn pi() -> Self;
     fn two_pi() -> Self;
@@ -105,69 +55,11 @@ pub trait Real:
     fn log10_e() -> Self;
     fn ln_2() -> Self;
     fn ln_10() -> Self;
-
-    fn is_finite(&self) -> bool;
-
-    /// Cardinal sine
-    #[inline]
-    fn sinc(self) -> Self {
-        if self == Self::zero() {
-            Self::one()
-        }
-        else {
-            self.sin() / self
-        }
-    }
-
-    #[inline]
-    fn sinhc(self) -> Self {
-        if self == Self::zero() {
-            Self::one()
-        }
-        else {
-            self.sinh() / self
-        }
-    }
 }
 
 macro_rules! impl_real(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
-        impl Real for $T {
-            #[inline]
-            fn floor(self) -> Self {
-                $libm::floor(self)
-            }
-
-            #[inline]
-            fn ceil(self) -> Self {
-                $libm::ceil(self)
-            }
-
-            #[inline]
-            fn round(self) -> Self {
-                $libm::round(self)
-            }
-
-            #[inline]
-            fn trunc(self) -> Self {
-                $libm::trunc(self)
-            }
-
-            #[inline]
-            fn fract(self) -> Self {
-                $libm::fract(self)
-            }
-
-            #[inline]
-            fn abs(self) -> Self {
-                $libm::abs(self)
-            }
-
-            #[inline]
-            fn signum(self) -> Self {
-                Signed::signum(&self)
-            }
-
+        impl RealField for $T {
             #[inline]
             fn is_sign_positive(self) -> bool {
                 $M::is_sign_positive(self)
@@ -176,69 +68,6 @@ macro_rules! impl_real(
             #[inline]
             fn is_sign_negative(self) -> bool {
                 $M::is_sign_negative(self)
-            }
-
-            #[inline]
-            fn mul_add(self, a: Self, b: Self) -> Self {
-                $libm::mul_add(self, a, b)
-            }
-
-            #[inline]
-            fn recip(self) -> Self {
-                $M::recip(self)
-            }
-
-            #[cfg(feature = "std")]
-            #[inline]
-            fn powi(self, n: i32) -> Self {
-                self.powi(n)
-            }
-
-            #[cfg(not(feature = "std"))]
-            #[inline]
-            fn powi(self, n: i32) -> Self {
-                // FIXME: is there a more efficient solution?
-                num::pow(self, n as usize)
-            }
-
-            #[inline]
-            fn powf(self, n: Self) -> Self {
-                $libm::powf(self, n)
-            }
-
-            #[inline]
-            fn sqrt(self) -> Self {
-                $libm::sqrt(self)
-            }
-
-            #[inline]
-            fn exp(self) -> Self {
-                $libm::exp(self)
-            }
-
-            #[inline]
-            fn exp2(self) -> Self {
-                $libm::exp2(self)
-            }
-
-            #[inline]
-            fn ln(self) -> Self {
-                $libm::ln(self)
-            }
-
-            #[inline]
-            fn log(self, base: Self) -> Self {
-                $libm::log(self, base)
-            }
-
-            #[inline]
-            fn log2(self) -> Self {
-                $libm::log2(self)
-            }
-
-            #[inline]
-            fn log10(self) -> Self {
-                $libm::log10(self)
             }
 
             #[inline]
@@ -252,93 +81,8 @@ macro_rules! impl_real(
             }
 
             #[inline]
-            fn cbrt(self) -> Self {
-                $libm::cbrt(self)
-            }
-
-            #[inline]
-            fn hypot(self, other: Self) -> Self {
-                $libm::hypot(self, other)
-            }
-
-            #[inline]
-            fn sin(self) -> Self {
-                $libm::sin(self)
-            }
-
-            #[inline]
-            fn cos(self) -> Self {
-                $libm::cos(self)
-            }
-
-            #[inline]
-            fn tan(self) -> Self {
-                $libm::tan(self)
-            }
-
-            #[inline]
-            fn asin(self) -> Self {
-                $libm::asin(self)
-            }
-
-            #[inline]
-            fn acos(self) -> Self {
-                $libm::acos(self)
-            }
-
-            #[inline]
-            fn atan(self) -> Self {
-                $libm::atan(self)
-            }
-
-            #[inline]
             fn atan2(self, other: Self) -> Self {
                 $libm::atan2(self, other)
-            }
-
-            #[inline]
-            fn sin_cos(self) -> (Self, Self) {
-                $libm::sin_cos(self)
-            }
-
-            #[inline]
-            fn exp_m1(self) -> Self {
-                $libm::exp_m1(self)
-            }
-
-            #[inline]
-            fn ln_1p(self) -> Self {
-                $libm::ln_1p(self)
-            }
-
-            #[inline]
-            fn sinh(self) -> Self {
-                $libm::sinh(self)
-            }
-
-            #[inline]
-            fn cosh(self) -> Self {
-                $libm::cosh(self)
-            }
-
-            #[inline]
-            fn tanh(self) -> Self {
-                $libm::tanh(self)
-            }
-
-            #[inline]
-            fn asinh(self) -> Self {
-                $libm::asinh(self)
-            }
-
-            #[inline]
-            fn acosh(self) -> Self {
-                $libm::acosh(self)
-            }
-
-            #[inline]
-            fn atanh(self) -> Self {
-                $libm::atanh(self)
             }
 
             /// Archimedes' constant.
@@ -430,10 +174,6 @@ macro_rules! impl_real(
             #[inline]
             fn ln_10() -> Self {
                 $M::consts::LN_10
-            }
-
-            fn is_finite(&self) -> bool {
-                $M::is_finite(*self)
             }
         }
     )*)

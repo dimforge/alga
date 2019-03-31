@@ -7,9 +7,9 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
-use general::AbstractMagma;
-use general::AbstractQuasigroup;
-use general::{TwoSidedInverse, Operator};
+use crate::general::AbstractMagma;
+use crate::general::AbstractQuasigroup;
+use crate::general::{TwoSidedInverse, Operator};
 
 /// Wrapper that allows to use operators on algebraic types.
 #[derive(Debug)]

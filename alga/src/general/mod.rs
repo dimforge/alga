@@ -14,7 +14,7 @@
 
 //! Fundamental algebraic structures.
 //!
-//! For most applications requiring an abstraction over the reals, `Real`
+//! For most applications requiring an abstraction over the reals, `RealField`
 //! should be sufficient.
 //!
 //! ## Algebraic properties
@@ -171,7 +171,8 @@ pub use self::specialized::{AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, A
                             MultiplicativeGroup, MultiplicativeGroupAbelian, MultiplicativeLoop,
                             MultiplicativeMagma, MultiplicativeMonoid, MultiplicativeQuasigroup,
                             MultiplicativeSemigroup, Ring, RingCommutative};
-pub use self::real::Real;
+pub use self::real::RealField;
+pub use self::complex::ComplexField;
 
 #[macro_use]
 mod one_operator;
@@ -180,8 +181,15 @@ mod module;
 mod identity;
 mod operator;
 mod real;
+mod complex;
 mod lattice;
 mod subset;
 mod specialized;
 #[doc(hidden)]
 pub mod wrapper;
+
+#[deprecated(note = "This has been renamed `RealField`.")]
+/// The field of reals. This has been renamed to `RealField`.
+pub trait Real: RealField {}
+
+impl<T: RealField> Real for T {}

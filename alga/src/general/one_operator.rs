@@ -6,7 +6,7 @@ use decimal::d128;
 
 use approx::RelativeEq;
 
-use general::{Additive, ClosedNeg, Identity, TwoSidedInverse, Multiplicative, Operator};
+use crate::general::{Additive, ClosedNeg, Identity, TwoSidedInverse, Multiplicative, Operator};
 
 /// A magma is an algebraic structure which consists of a set equipped with a binary operation, ∘,
 /// which must be closed.

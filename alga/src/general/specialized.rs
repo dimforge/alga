@@ -1,5 +1,5 @@
 use num::{One, Zero};
-use general::{AbstractField, AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
+use crate::general::{AbstractField, AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
               AbstractModule, AbstractMonoid, AbstractQuasigroup, AbstractRing,
               AbstractRingCommutative, AbstractSemigroup, Additive, ClosedAdd, ClosedDiv,
               ClosedMul, ClosedNeg, ClosedSub, Multiplicative};

@@ -4,8 +4,8 @@ use num_complex::Complex;
 #[cfg(feature = "decimal")]
 use decimal::d128;
 
-use general::wrapper::Wrapper as W;
-use general::{
+use crate::general::wrapper::Wrapper as W;
+use crate::general::{
     AbstractGroupAbelian, AbstractMonoid, Additive, ClosedNeg, Multiplicative, Operator,
 };
 

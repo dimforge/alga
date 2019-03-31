@@ -122,3 +122,24 @@ macro_rules! impl_lattice(
 impl_lattice!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
 #[cfg(feature = "decimal")]
 impl_lattice!(d128);
+
+
+impl<N: MeetSemilattice> MeetSemilattice for num_complex::Complex<N> {
+    #[inline]
+    fn meet(&self, other: &Self) -> Self {
+        Self {
+            re: self.re.meet(&other.re),
+            im: self.im.meet(&other.im)
+        }
+    }
+}
+
+impl<N: JoinSemilattice> JoinSemilattice for num_complex::Complex<N> {
+    #[inline]
+    fn join(&self, other: &Self) -> Self {
+        Self {
+            re: self.re.join(&other.re),
+            im: self.im.join(&other.im)
+        }
+    }
+}

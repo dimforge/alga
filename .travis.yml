@@ -11,6 +11,9 @@ env:
   - NO_STD=1
 
 matrix:
+  allow_failures:
+    - rust: nightly
+      env:
   exclude:
     - rust: beta
       env: NO_STD=1
