@@ -17,10 +17,10 @@ use num;
 
 #[allow(missing_docs)]
 
-/// Trait shared by all reals.
+/// Trait shared by all complex fields and its subfields (like real numbers).
 ///
-/// Reals are equipped with functions that are commonly used on reals. The results of those
-/// functions only have to be approximately equal to the actual theoretical values.
+/// Complex numbers are equipped with functions that are commonly used on complex numbers and reals.
+/// The results of those functions only have to be approximately equal to the actual theoretical values.
 // FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
 // allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
 // NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
@@ -37,14 +37,12 @@ pub trait ComplexField:
     + JoinSemilattice
 //    + RelativeEq<Epsilon = Self>
 //    + UlpsEq<Epsilon = Self>
-//    + Lattice
     + Send
     + Sync
     + Any
     + 'static
     + Debug
     + Display
-//    + Bounded
 {
     /// Type of the coefficients of a complex number.
     type RealField: RealField;
@@ -426,97 +424,6 @@ macro_rules! impl_complex(
             fn atanh(self) -> Self {
                 $libm::atanh(self)
             }
-
-//            /// Archimedes' constant.
-//            #[inline]
-//            fn pi() -> Self {
-//                $M::consts::PI
-//            }
-//
-//            /// 2.0 * pi.
-//            #[inline]
-//            fn two_pi() -> Self {
-//                $M::consts::PI + $M::consts::PI
-//            }
-//
-//            /// pi / 2.0.
-//            #[inline]
-//            fn frac_pi_2() -> Self {
-//                $M::consts::FRAC_PI_2
-//            }
-//
-//            /// pi / 3.0.
-//            #[inline]
-//            fn frac_pi_3() -> Self {
-//                $M::consts::FRAC_PI_3
-//            }
-//
-//            /// pi / 4.0.
-//            #[inline]
-//            fn frac_pi_4() -> Self {
-//                $M::consts::FRAC_PI_4
-//            }
-//
-//            /// pi / 6.0.
-//            #[inline]
-//            fn frac_pi_6() -> Self {
-//                $M::consts::FRAC_PI_6
-//            }
-//
-//            /// pi / 8.0.
-//            #[inline]
-//            fn frac_pi_8() -> Self {
-//                $M::consts::FRAC_PI_8
-//            }
-//
-//            /// 1.0 / pi.
-//            #[inline]
-//            fn frac_1_pi() -> Self {
-//                $M::consts::FRAC_1_PI
-//            }
-//
-//            /// 2.0 / pi.
-//            #[inline]
-//            fn frac_2_pi() -> Self {
-//                $M::consts::FRAC_2_PI
-//            }
-//
-//            /// 2.0 / sqrt(pi).
-//            #[inline]
-//            fn frac_2_sqrt_pi() -> Self {
-//                $M::consts::FRAC_2_SQRT_PI
-//            }
-//
-//
-//            /// Euler's number.
-//            #[inline]
-//            fn e() -> Self {
-//                $M::consts::E
-//            }
-//
-//            /// log2(e).
-//            #[inline]
-//            fn log2_e() -> Self {
-//                $M::consts::LOG2_E
-//            }
-//
-//            /// log10(e).
-//            #[inline]
-//            fn log10_e() -> Self {
-//                $M::consts::LOG10_E
-//            }
-//
-//            /// ln(2.0).
-//            #[inline]
-//            fn ln_2() -> Self {
-//                $M::consts::LN_2
-//            }
-//
-//            /// ln(10.0).
-//            #[inline]
-//            fn ln_10() -> Self {
-//                $M::consts::LN_10
-//            }
         }
     )*)
 );
