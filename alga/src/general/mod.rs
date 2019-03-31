@@ -187,3 +187,9 @@ mod subset;
 mod specialized;
 #[doc(hidden)]
 pub mod wrapper;
+
+#[deprecated(note = "This has been renamed `RealField`.")]
+/// The field of reals. This has been renamed to `RealField`.
+pub trait Real: RealField {}
+
+impl<T: RealField> Real for T {}
