@@ -131,6 +131,45 @@ pub trait ComplexField:
     fn acosh(self) -> Self;
     fn atanh(self) -> Self;
 
+    fn is_finite(&self) -> bool;
+
+    /// Cardinal sine
+    #[inline]
+    fn sinc(self) -> Self {
+        if self.is_zero() {
+            Self::one()
+        } else {
+            self.sin() / self
+        }
+    }
+
+    #[inline]
+    fn sinhc(self) -> Self {
+        if self.is_zero() {
+            Self::one()
+        } else {
+            self.sinh() / self
+        }
+    }
+
+    /// Cardinal cos
+    #[inline]
+    fn cosc(self) -> Self {
+        if self.is_zero() {
+            Self::one()
+        } else {
+            self.cos() / self
+        }
+    }
+
+    #[inline]
+    fn coshc(self) -> Self {
+        if self.is_zero() {
+            Self::one()
+        } else {
+            self.cosh() / self
+        }
+    }
 
     fn log(self, base: Self::RealField) -> Self;
     fn log2(self) -> Self;
@@ -424,6 +463,11 @@ macro_rules! impl_complex(
             fn atanh(self) -> Self {
                 $libm::atanh(self)
             }
+
+            #[inline]
+            fn is_finite(&self) -> bool {
+                $M::is_finite(*self)
+            }
         }
     )*)
 );
@@ -578,6 +622,11 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         // FIXME: is there a more accurate solution?
         let n = N::from_subset(&(n as f64));
         self.powf(n)
+    }
+
+    #[inline]
+    fn is_finite(&self) -> bool {
+        self.re.is_finite() && self.im.is_finite()
     }
 
     /*
