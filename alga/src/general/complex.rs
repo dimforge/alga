@@ -209,12 +209,12 @@ macro_rules! impl_complex(
 
             #[inline]
             fn norm1(self) -> Self::RealField {
-                self.abs()
+                $libm::abs(self)
             }
 
             #[inline]
             fn modulus(self) -> Self::RealField {
-                self.abs()
+                $libm::abs(self)
             }
 
             #[inline]
@@ -310,7 +310,7 @@ macro_rules! impl_complex(
             #[inline]
             fn powi(self, n: i32) -> Self {
                 // FIXME: is there a more accurate solution?
-                num::powf(self, n as $T)
+                $libm::powf(self, n as $T)
             }
 
             #[inline]
@@ -332,7 +332,7 @@ macro_rules! impl_complex(
             #[inline]
             fn try_sqrt(self) -> Option<Self> {
                 if self >= Self::zero() {
-                    Some(self.sqrt())
+                    Some($libm::sqrt(self))
                 } else {
                     None
                 }

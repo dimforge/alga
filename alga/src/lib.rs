@@ -26,13 +26,10 @@ extern crate approx;
 #[cfg(feature = "decimal")]
 #[macro_use]
 extern crate decimal;
-#[cfg(not(feature = "std"))]
-extern crate libm;
-extern crate num_complex;
 extern crate num_traits as num;
 
 #[cfg(not(feature = "std"))]
-use core as std;
+extern crate core as std;
 
 #[macro_use]
 mod macros;
