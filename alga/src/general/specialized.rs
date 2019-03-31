@@ -47,4 +47,8 @@ pub trait Module
     /// The underlying scalar field.
     type Ring: RingCommutative;
 }
+
 // FIXME: unfortunately, Module cannot be auto-impl-ed.
+impl<N: RingCommutative + num::NumAssign> Module for num_complex::Complex<N> {
+    type Ring = N;
+}

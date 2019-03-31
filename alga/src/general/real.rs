@@ -1,7 +1,7 @@
-use num::{Bounded, FromPrimitive, Num, Signed};
+use num::{Bounded, FromPrimitive, Num, NumAssign, Signed, Zero, One};
 use std::any::Any;
 use std::fmt::{Debug, Display};
-use std::ops::{AddAssign, DivAssign, MulAssign, Neg, SubAssign};
+use std::ops::Neg;
 use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
@@ -32,16 +32,12 @@ pub trait Real:
     + Field
     + Copy
     + Num
+    + NumAssign
     + FromPrimitive
     + Neg<Output = Self>
-    + AddAssign
-    + MulAssign
-    + SubAssign
-    + DivAssign
     + RelativeEq<Epsilon = Self>
     + UlpsEq<Epsilon = Self>
     + Lattice
-    + PartialEq
     + Signed
     + Send
     + Sync
@@ -111,6 +107,27 @@ pub trait Real:
     fn ln_10() -> Self;
 
     fn is_finite(&self) -> bool;
+
+    /// Cardinal sine
+    #[inline]
+    fn sinc(self) -> Self {
+        if self == Self::zero() {
+            Self::one()
+        }
+        else {
+            self.sin() / self
+        }
+    }
+
+    #[inline]
+    fn sinhc(self) -> Self {
+        if self == Self::zero() {
+            Self::one()
+        }
+        else {
+            self.sinh() / self
+        }
+    }
 }
 
 macro_rules! impl_real(

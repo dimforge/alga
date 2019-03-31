@@ -1,4 +1,6 @@
 use num;
+use num_complex::Complex;
+
 use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
@@ -40,7 +42,7 @@ pub trait NormedSpace: VectorSpace {
 /// A vector space equipped with an inner product.
 ///
 /// It must be a normed space as well and the norm must agree with the inner product.
-/// The inner product must be symmetric, linear in its first aguement, and positive definite.
+/// The inner product must be symmetric, linear in its first argument, and positive definite.
 pub trait InnerSpace: NormedSpace<Field = <Self as InnerSpace>::Real> {
     /// The result of inner product (same as the field used by this vector space).
     type Real: Real;
@@ -218,3 +220,68 @@ pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Co
         self.subtract(b).norm()
     }
 }
+
+
+impl<N: Field + num::NumAssign> VectorSpace for Complex<N> {
+    type Field = N;
+}
+
+
+impl<N: Real> NormedSpace for Complex<N> {
+    #[inline]
+    fn norm_squared(&self) -> Self::Field {
+        self.norm_sqr()
+    }
+
+    #[inline]
+    fn norm(&self) -> Self::Field {
+        self.norm_sqr().sqrt()
+    }
+
+    #[inline]
+    fn normalize(&self) -> Self {
+        *self / self.norm()
+    }
+
+    #[inline]
+    fn normalize_mut(&mut self) -> Self::Field {
+        let norm = self.norm();
+        *self /= norm;
+        norm
+    }
+
+    #[inline]
+    fn try_normalize(&self, eps: Self::Field) -> Option<Self> {
+        let norm = self.norm_sqr();
+        if norm > eps * eps {
+            Some(*self / norm.sqrt())
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    fn try_normalize_mut(&mut self, eps: Self::Field) -> Option<Self::Field> {
+        let sq_norm = self.norm_sqr();
+        if sq_norm > eps * eps {
+            let norm = sq_norm.sqrt();
+            *self /= norm;
+            Some(norm)
+        } else {
+            None
+        }
+    }
+}
+
+
+impl<N: Real> InnerSpace for Complex<N> {
+    type Real = N;
+
+    #[inline]
+    fn inner_product(&self, other: &Self) -> Self::Real {
+        self.re * other.re + self.im * other.im
+    }
+}
+
+// Note: we can't implement FiniteDimVectorSpace for Complex because
+// the `Complex` type does not implement Index.
