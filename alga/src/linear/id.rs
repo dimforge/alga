@@ -1,9 +1,11 @@
 use num;
 
 use crate::general::{Id, Identity};
-use crate::linear::{AffineTransformation, DirectIsometry, EuclideanSpace, InnerSpace, Isometry,
-             OrthogonalTransformation, ProjectiveTransformation, Rotation, Scaling, Similarity,
-             Transformation, Translation};
+use crate::linear::{
+    AffineTransformation, DirectIsometry, EuclideanSpace, InnerSpace, Isometry,
+    OrthogonalTransformation, ProjectiveTransformation, Rotation, Scaling, Similarity,
+    Transformation, Translation,
+};
 
 /*
  * Implementation of linear algebra structures for the ubiquitous identity element.
@@ -113,7 +115,11 @@ impl<E: EuclideanSpace> Rotation<E> for Id {
     }
 
     #[inline]
-    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, _: E::RealField) -> Option<Self> {
+    fn scaled_rotation_between(
+        a: &E::Coordinates,
+        b: &E::Coordinates,
+        _: E::RealField,
+    ) -> Option<Self> {
         Rotation::<E>::rotation_between(a, b)
     }
 }

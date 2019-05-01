@@ -1,10 +1,10 @@
-use num::{FromPrimitive, Num, NumAssign, Signed, Zero, One};
+use num::{FromPrimitive, Num, NumAssign, One, Signed, Zero};
 use std::any::Any;
 use std::fmt::{Debug, Display};
 use std::ops::Neg;
 use std::{f32, f64};
 
-use crate::general::{Field, SubsetOf, SupersetOf, RealField, MeetSemilattice, JoinSemilattice};
+use crate::general::{Field, JoinSemilattice, MeetSemilattice, RealField, SubsetOf, SupersetOf};
 
 #[cfg(not(feature = "std"))]
 use libm::F32Ext;
@@ -487,7 +487,6 @@ impl_complex!(
 //#[cfg(feature = "decimal")]
 //impl_real!(d128, d128, d128);
 
-
 impl<N: RealField> ComplexField for num_complex::Complex<N> {
     type RealField = N;
 
@@ -576,7 +575,6 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         self * a + b
     }
 
-
     #[inline]
     fn abs(self) -> Self::RealField {
         self.modulus()
@@ -587,7 +585,6 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         let _2 = N::one() + N::one();
         num_complex::Complex::new(_2, N::zero()).powc(self)
     }
-
 
     #[inline]
     fn exp_m1(self) -> Self {
@@ -725,7 +722,7 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
         )
     }
 
-/*
+    /*
     /// Raises a floating point number to the complex power `self`.
     #[inline]
     fn expf(&self, base: T) -> Self {
@@ -759,14 +756,8 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
     fn sin_cos(self) -> (Self, Self) {
         let (rsin, rcos) = self.re.sin_cos();
         let (isinh, icosh) = self.im.sinh_cosh();
-        let sin = Self::new(
-            rsin * icosh,
-            rcos * isinh,
-        );
-        let cos = Self::new(
-            rcos * icosh,
-            -rsin * isinh,
-        );
+        let sin = Self::new(rsin * icosh, rcos * isinh);
+        let cos = Self::new(rcos * icosh, -rsin * isinh);
 
         (sin, cos)
     }
@@ -857,14 +848,8 @@ impl<N: RealField> ComplexField for num_complex::Complex<N> {
     fn sinh_cosh(self) -> (Self, Self) {
         let (rsinh, rcosh) = self.re.sinh_cosh();
         let (isin, icos) = self.im.sin_cos();
-        let sin = Self::new(
-            rsinh * icos,
-            rcosh * isin,
-        );
-        let cos = Self::new(
-            rcosh * icos,
-            rsinh * isin,
-        );
+        let sin = Self::new(rsinh * icos, rcosh * isin);
+        let cos = Self::new(rcosh * icos, rsinh * isin);
 
         (sin, cos)
     }

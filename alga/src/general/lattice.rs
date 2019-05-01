@@ -1,6 +1,6 @@
-use std::cmp::{Ordering, PartialOrd};
 #[cfg(feature = "decimal")]
 use decimal::d128;
+use std::cmp::{Ordering, PartialOrd};
 
 /// A set where every two elements have an infimum (i.e. greatest lower bound).
 pub trait MeetSemilattice: Sized {
@@ -123,13 +123,12 @@ impl_lattice!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
 #[cfg(feature = "decimal")]
 impl_lattice!(d128);
 
-
 impl<N: MeetSemilattice> MeetSemilattice for num_complex::Complex<N> {
     #[inline]
     fn meet(&self, other: &Self) -> Self {
         Self {
             re: self.re.meet(&other.re),
-            im: self.im.meet(&other.im)
+            im: self.im.meet(&other.im),
         }
     }
 }
@@ -139,7 +138,7 @@ impl<N: JoinSemilattice> JoinSemilattice for num_complex::Complex<N> {
     fn join(&self, other: &Self) -> Self {
         Self {
             re: self.re.join(&other.re),
-            im: self.im.join(&other.im)
+            im: self.im.join(&other.im),
         }
     }
 }

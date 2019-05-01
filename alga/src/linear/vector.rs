@@ -5,12 +5,12 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, Field, Module, RealField, ComplexField};
+use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, ComplexField, Field, Module, RealField};
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
 /* +
-                       ClosedDiv<<Self as VectorSpace>::Field> */
+ClosedDiv<<Self as VectorSpace>::Field> */
 {
     /// The underlying scalar field.
     type Field: Field;
@@ -223,11 +223,9 @@ pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Co
     }
 }
 
-
 impl<N: Field + num::NumAssign> VectorSpace for Complex<N> {
     type Field = N;
 }
-
 
 impl<N: RealField> NormedSpace for Complex<N> {
     type RealField = N;

@@ -4,7 +4,7 @@ extern crate alga_derive;
 extern crate approx;
 extern crate quickcheck;
 
-use alga::general::{AbstractMagma, Additive, Identity, TwoSidedInverse, Multiplicative};
+use alga::general::{AbstractMagma, Additive, Identity, Multiplicative, TwoSidedInverse};
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 

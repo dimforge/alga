@@ -1,8 +1,10 @@
+use crate::general::{
+    AbstractField, AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
+    AbstractModule, AbstractMonoid, AbstractQuasigroup, AbstractRing, AbstractRingCommutative,
+    AbstractSemigroup, Additive, ClosedAdd, ClosedDiv, ClosedMul, ClosedNeg, ClosedSub,
+    Multiplicative,
+};
 use num::{One, Zero};
-use crate::general::{AbstractField, AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
-              AbstractModule, AbstractMonoid, AbstractQuasigroup, AbstractRing,
-              AbstractRingCommutative, AbstractSemigroup, Additive, ClosedAdd, ClosedDiv,
-              ClosedMul, ClosedNeg, ClosedSub, Multiplicative};
 
 macro_rules! specialize_structures(
     // **With type parameters** for the trait being implemented.
@@ -40,10 +42,11 @@ specialize_structures!(RingCommutative, AbstractRingCommutative: Ring);
 specialize_structures!(Field,           AbstractField:           RingCommutative MultiplicativeGroupAbelian);
 
 /// A module which overloads the `*` and `+` operators.
-pub trait Module
-    : AbstractModule<AbstractRing = <Self as Module>::Ring>
+pub trait Module:
+    AbstractModule<AbstractRing = <Self as Module>::Ring>
     + AdditiveGroupAbelian
-    + ClosedMul<<Self as Module>::Ring> {
+    + ClosedMul<<Self as Module>::Ring>
+{
     /// The underlying scalar field.
     type Ring: RingCommutative;
 }
