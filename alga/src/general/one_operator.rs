@@ -1,18 +1,18 @@
+#[cfg(feature = "decimal")]
+use decimal::d128;
 use num::Num;
 use num_complex::Complex;
 use std::ops::{Add, Mul};
-#[cfg(feature = "decimal")]
-use decimal::d128;
 
 use approx::RelativeEq;
 
-use crate::general::{Additive, ClosedNeg, Identity, TwoSidedInverse, Multiplicative, Operator};
+use crate::general::{Additive, ClosedNeg, Identity, Multiplicative, Operator, TwoSidedInverse};
 
 /// A magma is an algebraic structure which consists of a set equipped with a binary operation, ∘,
 /// which must be closed.
 ///
 /// # Closed binary operation
-/// 
+///
 /// ~~~notrust
 /// a, b ∈ Self ⇒ a ∘ b ∈ Self
 /// ~~~
@@ -31,24 +31,26 @@ pub trait AbstractMagma<O: Operator>: Sized + Clone {
 /// *A set with a closed binary operation with the divisibility property.*
 ///
 /// Divisibility is a weak form of right and left invertibility.
-/// 
+///
 /// # Divisibility or Latin square property
 ///
 /// ```notrust
 /// ∀ a, b ∈ Self, ∃! r, l ∈ Self such that l ∘ a = b and a ∘ r = b
 /// ```
-/// 
-/// The solution to these equations can be written as 
-/// 
+///
+/// The solution to these equations can be written as
+///
 /// ```notrust
 /// r = a \ b and l = b / a
 /// ```
-/// 
-/// where "\" and "/" are respectively the **left** and **right** division. 
-pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + TwoSidedInverse<O> {
+///
+/// where "\" and "/" are respectively the **left** and **right** division.
+pub trait AbstractQuasigroup<O: Operator>:
+    PartialEq + AbstractMagma<O> + TwoSidedInverse<O>
+{
     /// Returns `true` if latin squareness holds for the given arguments. Approximate
     /// equality is used for verifications.
-    /// 
+    ///
     /// ```notrust
     /// a ~= a / b ∘ b && a ~= a ∘ b / b
     /// ```
@@ -64,7 +66,7 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + TwoSid
     }
 
     /// Returns `true` if latin squareness holds for the given arguments.
-    /// 
+    ///
     /// ```notrust
     /// a == a / b * b && a == a * b / b
     /// ```
@@ -73,7 +75,8 @@ pub trait AbstractQuasigroup<O: Operator>: PartialEq + AbstractMagma<O> + TwoSid
         Self: Eq,
     {
         let (a, b) = args;
-        a == a.operate(&b.two_sided_inverse()).operate(&b) && a == a.operate(&b.operate(&b.two_sided_inverse()))
+        a == a.operate(&b.two_sided_inverse()).operate(&b)
+            && a == a.operate(&b.operate(&b.two_sided_inverse()))
 
         // TODO: pseudo inverse?
     }
@@ -111,11 +114,11 @@ macro_rules! impl_quasigroup(
 );
 
 /// A semigroup is a quasigroup that is **associative**.
-/// 
+///
 /// *A semigroup is a set equipped with a closed associative binary operation and that has the divisibility property.*
 ///
 /// # Associativity
-/// 
+///
 /// ~~~notrust
 /// ∀ a, b, c ∈ Self, (a ∘ b) ∘ c = a ∘ (b ∘ c)
 /// ~~~
@@ -166,20 +169,20 @@ macro_rules! impl_semigroup(
 );
 
 /// A loop is a quasigroup with an unique **identity element**, e.
-/// 
+///
 /// *A set equipped with a closed binary operation possessing the divisibility property
-/// and a unique identity element.* 
+/// and a unique identity element.*
 ///
 /// # Identity element
-/// 
+///
 /// ~~~notrust
 /// ∃! e ∈ Self, ∀ a ∈ Self, ∃ r, l ∈ Self such that l ∘ a = a ∘ r = e.
 /// ~~~
-/// 
+///
 /// The left inverse `r` and right inverse `l` are not required to be equal.
-/// 
+///
 /// This property follows from
-/// 
+///
 /// ~~~notrust
 /// ∀ a ∈ Self, ∃ e ∈ Self, such that e ∘ a = a ∘ e = a.
 /// ~~~
@@ -224,12 +227,12 @@ macro_rules! impl_loop(
 );
 
 /// A monoid is a semigroup equipped with an identity element, e.
-/// 
+///
 /// *A set equipped with a closed associative binary operation with the divisibility property and
 /// an identity element.*
 ///
 /// # Identity element
-/// 
+///
 /// ~~~notrust
 /// ∃ e ∈ Self, ∀ a ∈ Self, e ∘ a = a ∘ e = a
 /// ~~~
@@ -289,7 +292,7 @@ macro_rules! impl_monoid(
 );
 
 /// A group is a loop and a monoid  at the same time.
-/// 
+///
 /// *A groups is a set with a closed associative binary operation with the divisibility property and an identity element.*
 pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 
@@ -334,11 +337,11 @@ macro_rules! impl_group(
 );
 
 /// An Abelian group is a **commutative** group.
-/// 
+///
 /// *An commutative group is a set with a closed commutative and associative binary operation with the divisibility property and an identity element.*
 ///
 /// # Commutativity
-/// 
+///
 /// ```notrust
 /// ∀ a, b ∈ Self, a ∘ b = b ∘ a
 /// ```

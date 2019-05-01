@@ -92,8 +92,7 @@ pub trait SquareMatrix:
         Row = <Self as SquareMatrix>::Vector,
         Column = <Self as SquareMatrix>::Vector,
         Transpose = Self,
-    >
-    + MultiplicativeMonoid
+    > + MultiplicativeMonoid
 {
     /// The type of rows, column, and diagonal of this matrix.
     type Vector: FiniteDimVectorSpace<Field = Self::Field>;
