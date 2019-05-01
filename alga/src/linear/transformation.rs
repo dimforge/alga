@@ -1,5 +1,7 @@
-use crate::general::{ClosedDiv, ClosedMul, ClosedNeg, Id, TwoSidedInverse, MultiplicativeGroup,
-              MultiplicativeMonoid, RealField, SubsetOf, ComplexField};
+use crate::general::{
+    ClosedDiv, ClosedMul, ClosedNeg, ComplexField, Id, MultiplicativeGroup, MultiplicativeMonoid,
+    RealField, SubsetOf, TwoSidedInverse,
+};
 use crate::linear::{EuclideanSpace, NormedSpace};
 
 // NOTE: A subgroup trait inherit from its parent groups.
@@ -17,8 +19,9 @@ pub trait Transformation<E: EuclideanSpace>: MultiplicativeMonoid {
 }
 
 /// The most general form of invertible transformations on an euclidean space.
-pub trait ProjectiveTransformation<E: EuclideanSpace>
-    : MultiplicativeGroup + Transformation<E> {
+pub trait ProjectiveTransformation<E: EuclideanSpace>:
+    MultiplicativeGroup + Transformation<E>
+{
     /// Applies this group's two_sided_inverse action on a point from the euclidean space.
     fn inverse_transform_point(&self, pt: &E) -> E;
 
@@ -95,9 +98,9 @@ pub trait AffineTransformation<E: EuclideanSpace>: ProjectiveTransformation<E> {
 /// Subgroups of the similarity group `S(n)`, i.e., rotations, translations, and (signed) uniform scaling.
 ///
 /// Similarities map lines to lines and preserve angles.
-pub trait Similarity<E: EuclideanSpace>
-    : AffineTransformation<E, NonUniformScaling = <Self as Similarity<E>>::Scaling>
-    {
+pub trait Similarity<E: EuclideanSpace>:
+    AffineTransformation<E, NonUniformScaling = <Self as Similarity<E>>::Scaling>
+{
     /// The type of the pure (uniform) scaling part of this similarity transformation.
     type Scaling: Scaling<E>;
 
@@ -187,14 +190,13 @@ pub trait Isometry<E: EuclideanSpace>: Similarity<E, Scaling = Id> {}
 pub trait DirectIsometry<E: EuclideanSpace>: Isometry<E> {}
 
 /// Subgroups of the n-dimensional rotations and scaling `O(n)`.
-pub trait OrthogonalTransformation<E: EuclideanSpace>
-    : Isometry<E, Translation = Id> {
-}
+pub trait OrthogonalTransformation<E: EuclideanSpace>: Isometry<E, Translation = Id> {}
 
 /// Subgroups of the (signed) uniform scaling group.
-pub trait Scaling<E: EuclideanSpace>
-    : AffineTransformation<E, NonUniformScaling = Self, Translation = Id, Rotation = Id>
-    + SubsetOf<E::RealField> {
+pub trait Scaling<E: EuclideanSpace>:
+    AffineTransformation<E, NonUniformScaling = Self, Translation = Id, Rotation = Id>
+    + SubsetOf<E::RealField>
+{
     /// Converts this scaling factor to a real. Same as `self.to_superset()`.
     #[inline]
     fn to_real(&self) -> E::RealField {
@@ -224,8 +226,9 @@ pub trait Scaling<E: EuclideanSpace>
 }
 
 /// Subgroups of the n-dimensional translation group `T(n)`.
-pub trait Translation<E: EuclideanSpace>
-    : DirectIsometry<E, Translation = Self, Rotation = Id> /* + SubsetOf<E::Coordinates> */ {
+pub trait Translation<E: EuclideanSpace>:
+    DirectIsometry<E, Translation = Self, Rotation = Id> /* + SubsetOf<E::Coordinates> */
+{
     // NOTE: we must define those two conversions here (instead of just using SubsetOf) because the
     // structure of Self uses the multiplication for composition, while E::Coordinates uses addition.
     // Having a trait that says "remap this operator to this other one" does not seem to be
@@ -252,9 +255,9 @@ pub trait Translation<E: EuclideanSpace>
 }
 
 /// Subgroups of the n-dimensional rotation group `SO(n)`.
-pub trait Rotation<E: EuclideanSpace>
-    : OrthogonalTransformation<E, Rotation = Self> + DirectIsometry<E, Rotation = Self>
-    {
+pub trait Rotation<E: EuclideanSpace>:
+    OrthogonalTransformation<E, Rotation = Self> + DirectIsometry<E, Rotation = Self>
+{
     /// Raises this rotation to a power. If this is a simple rotation, the result must be
     /// equivalent to multiplying the rotation angle by `n`.
     fn powf(&self, n: E::RealField) -> Option<Self>;
@@ -270,7 +273,11 @@ pub trait Rotation<E: EuclideanSpace>
     /// This is equivalent to calling `self.rotation_between(a, b)` followed by `.powf(n)` but will
     /// usually be much more efficient.
     #[inline]
-    fn scaled_rotation_between(a: &E::Coordinates, b: &E::Coordinates, s: E::RealField) -> Option<Self>;
+    fn scaled_rotation_between(
+        a: &E::Coordinates,
+        b: &E::Coordinates,
+        s: E::RealField,
+    ) -> Option<Self>;
 
     // FIXME: add a function that computes the rotation with the axis orthogonal to Span(a, b) and
     // with angle equal to `n`?

@@ -1,7 +1,7 @@
 //! Operators traits and structures.
-pub use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
 #[cfg(feature = "decimal")]
 use decimal::d128;
+pub use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, Sub, SubAssign};
 
 use num::Num;
 use num_complex::Complex;
@@ -137,28 +137,8 @@ pub trait ClosedDiv<Right = Self>: Sized + Div<Right, Output = Self> + DivAssign
 /// [Alias] Trait alias for `Neg` with result of type `Self`.
 pub trait ClosedNeg: Sized + Neg<Output = Self> {}
 
-impl<T, Right> ClosedAdd<Right> for T
-where
-    T: Add<Right, Output = T> + AddAssign<Right>,
-{
-}
-impl<T, Right> ClosedSub<Right> for T
-where
-    T: Sub<Right, Output = T> + SubAssign<Right>,
-{
-}
-impl<T, Right> ClosedMul<Right> for T
-where
-    T: Mul<Right, Output = T> + MulAssign<Right>,
-{
-}
-impl<T, Right> ClosedDiv<Right> for T
-where
-    T: Div<Right, Output = T> + DivAssign<Right>,
-{
-}
-impl<T> ClosedNeg for T
-where
-    T: Neg<Output = T>,
-{
-}
+impl<T, Right> ClosedAdd<Right> for T where T: Add<Right, Output = T> + AddAssign<Right> {}
+impl<T, Right> ClosedSub<Right> for T where T: Sub<Right, Output = T> + SubAssign<Right> {}
+impl<T, Right> ClosedMul<Right> for T where T: Mul<Right, Output = T> + MulAssign<Right> {}
+impl<T, Right> ClosedDiv<Right> for T where T: Div<Right, Output = T> + DivAssign<Right> {}
+impl<T> ClosedNeg for T where T: Neg<Output = T> {}

@@ -1,7 +1,7 @@
-use num::Zero;
-use num_complex::Complex;
 #[cfg(feature = "decimal")]
 use decimal::d128;
+use num::Zero;
+use num_complex::Complex;
 
 /// Nested sets and conversions between them (using an injective mapping). Useful to work with
 /// substructures. In generic code, it is preferable to use `SupersetOf` as trait bound whenever

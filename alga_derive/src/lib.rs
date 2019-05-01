@@ -89,11 +89,12 @@ fn get_closest_trait(tra1t: &str) -> &str {
         "Ring",
         "RingCommutative",
         "Field",
-    ].iter()
-        .map(|t| (ed::edit_distance(t, tra1t), t))
-        .min()
-        .expect("Hardcoded array which we are iterating should never be empty. Programming error.")
-        .1
+    ]
+    .iter()
+    .map(|t| (ed::edit_distance(t, tra1t), t))
+    .min()
+    .expect("Hardcoded array which we are iterating should never be empty. Programming error.")
+    .1
 }
 
 fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
@@ -105,57 +106,64 @@ fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
         "Group" => vec!["Monoid", "Quasigroup", "Loop", "Semigroup"],
         "GroupAbelian" => vec!["Group", "Monoid", "Quasigroup", "Loop", "Semigroup"],
         _ => match tra1t {
-            "Ring" => if op == 0 {
-                vec![
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            } else {
-                vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
-            },
-            "RingCommutative" => if op == 0 {
-                vec![
-                    "Ring",
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            } else {
-                vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
-            },
-            "Field" => if op == 0 {
-                vec![
-                    "RingCommutative",
-                    "Ring",
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            } else {
-                vec![
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            },
+            "Ring" => {
+                if op == 0 {
+                    vec![
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                } else {
+                    vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
+                }
+            }
+            "RingCommutative" => {
+                if op == 0 {
+                    vec![
+                        "Ring",
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                } else {
+                    vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
+                }
+            }
+            "Field" => {
+                if op == 0 {
+                    vec![
+                        "RingCommutative",
+                        "Ring",
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                } else {
+                    vec![
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                }
+            }
             _ => panic!("Unknown Alga trait `{}`. Programming error.", tra1t),
         },
-    }.into_iter()
-        .map(String::from)
-        .collect()
+    }
+    .into_iter()
+    .map(String::from)
+    .collect()
 }
 
 fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
@@ -167,23 +175,24 @@ fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
         "Ring" => vec![("prop_mul_and_add_are_distributive", 3)],
         "RingCommutative" => vec![("prop_mul_is_commutative", 2)],
         _ => vec![],
-    }.into_iter()
-        .map(|(n, p)| {
-            (
-                Ident::new(format!("Abstract{}", tra1t)),
-                Ident::new(format!("{}_approx", n)),
-                p,
-            )
-        })
-        .collect()
+    }
+    .into_iter()
+    .map(|(n, p)| {
+        (
+            Ident::new(format!("Abstract{}", tra1t)),
+            Ident::new(format!("{}_approx", n)),
+            p,
+        )
+    })
+    .collect()
 }
 
 /// Implementation of the custom derive
 #[proc_macro_derive(Alga, attributes(alga_traits, alga_quickcheck))]
 pub fn derive_alga(input: TokenStream) -> TokenStream {
+    use syn::Lit::*;
     use syn::MetaItem::*;
     use syn::NestedMetaItem::*;
-    use syn::Lit::*;
 
     let item = syn::parse_derive_input(&input.to_string()).unwrap();
     let name = &item.ident;
@@ -328,7 +337,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     get_dependencies(name, 1)
                         .into_iter()
                         .map(|n| create_tuple(&n, 1)),
-                ).collect()
+                )
+                .collect()
             }
         })
         .unzip4();
@@ -348,7 +358,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         };
     );
 
-    if let Some((_, checked_generics)) = item.attrs
+    if let Some((_, checked_generics)) = item
+        .attrs
         .iter()
         .filter_map(|a| match a.value {
             Word(ref name) => Some((name, None)),

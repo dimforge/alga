@@ -156,35 +156,40 @@
 //! }
 //! ~~~
 
-pub use self::operator::{Additive, ClosedAdd, ClosedDiv, ClosedMul, ClosedNeg, ClosedSub, TwoSidedInverse,
-                         Multiplicative, Operator};
 pub use self::identity::{Id, Identity};
+pub use self::operator::{
+    Additive, ClosedAdd, ClosedDiv, ClosedMul, ClosedNeg, ClosedSub, Multiplicative, Operator,
+    TwoSidedInverse,
+};
 pub use self::subset::{SubsetOf, SupersetOf};
 
-pub use self::one_operator::{AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma,
-                             AbstractMonoid, AbstractQuasigroup, AbstractSemigroup};
-pub use self::two_operators::{AbstractField, AbstractRing, AbstractRingCommutative};
-pub use self::module::AbstractModule;
-pub use self::lattice::{JoinSemilattice, Lattice, MeetSemilattice};
-pub use self::specialized::{AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, AdditiveMagma,
-                            AdditiveMonoid, AdditiveQuasigroup, AdditiveSemigroup, Field, Module,
-                            MultiplicativeGroup, MultiplicativeGroupAbelian, MultiplicativeLoop,
-                            MultiplicativeMagma, MultiplicativeMonoid, MultiplicativeQuasigroup,
-                            MultiplicativeSemigroup, Ring, RingCommutative};
-pub use self::real::RealField;
 pub use self::complex::ComplexField;
+pub use self::lattice::{JoinSemilattice, Lattice, MeetSemilattice};
+pub use self::module::AbstractModule;
+pub use self::one_operator::{
+    AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
+    AbstractQuasigroup, AbstractSemigroup,
+};
+pub use self::real::RealField;
+pub use self::specialized::{
+    AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, AdditiveMagma, AdditiveMonoid,
+    AdditiveQuasigroup, AdditiveSemigroup, Field, Module, MultiplicativeGroup,
+    MultiplicativeGroupAbelian, MultiplicativeLoop, MultiplicativeMagma, MultiplicativeMonoid,
+    MultiplicativeQuasigroup, MultiplicativeSemigroup, Ring, RingCommutative,
+};
+pub use self::two_operators::{AbstractField, AbstractRing, AbstractRingCommutative};
 
 #[macro_use]
 mod one_operator;
-mod two_operators;
-mod module;
+mod complex;
 mod identity;
+mod lattice;
+mod module;
 mod operator;
 mod real;
-mod complex;
-mod lattice;
-mod subset;
 mod specialized;
+mod subset;
+mod two_operators;
 #[doc(hidden)]
 pub mod wrapper;
 

@@ -1,8 +1,8 @@
 use approx::RelativeEq;
-use num::Num;
-use num_complex::Complex;
 #[cfg(feature = "decimal")]
 use decimal::d128;
+use num::Num;
+use num_complex::Complex;
 
 use crate::general::wrapper::Wrapper as W;
 use crate::general::{
@@ -14,16 +14,16 @@ use crate::general::{
 /// A ring is equipped with:
 ///
 /// * An abstract operator (usually the addition, "+") that fulfills the constraints of an Abelian group.
-/// 
+///
 ///     *An Abelian group is a set with a closed commutative and associative addition with the divisibility property and an identity element.*
 /// * A second abstract operator (usually the multiplication, "×") that fulfills the constraints of a monoid.
-/// 
+///
 ///     *A set equipped with a closed associative multiplication with the divisibility property and an identity element.*
-/// 
+///
 /// The multiplication is distributive over the addition:
-/// 
+///
 /// # Distributivity
-/// 
+///
 /// ~~~notrust
 /// a, b, c ∈ Self, a × (b + c) = a × b + a × c.
 /// ~~~
@@ -117,12 +117,12 @@ macro_rules! impl_ring(
 );
 
 /// A ring with a commutative multiplication.
-/// 
+///
 /// *A **commutative ring** is a set with two binary operations: a closed commutative and associative with the divisibility property and an identity element,
 /// and another closed associative and **commutative** with the divisibility property and an identity element.*
 ///
 /// # Commutativity
-/// 
+///
 /// ```notrust
 /// ∀ a, b ∈ Self, a × b = b × a
 /// ```
@@ -206,7 +206,7 @@ macro_rules! impl_ring_commutative(
 );
 
 /// A field is a commutative ring, and an Abelian group under both operators.
-/// 
+///
 /// *A **field** is a set with two binary operations, an addition and a multiplication, which are both closed, commutative, associative
 /// possess the divisibility property and an identity element, noted 0 and 1 respectively. Furthermore the multiplication is distributive
 /// over the addition.*

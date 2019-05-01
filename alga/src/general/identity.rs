@@ -1,9 +1,9 @@
+#[cfg(feature = "decimal")]
+use decimal::d128;
 use std::cmp::{Ordering, PartialOrd};
 use std::fmt;
 use std::marker::PhantomData;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign};
-#[cfg(feature = "decimal")]
-use decimal::d128;
 
 use num::{Num, One, Zero};
 
@@ -13,8 +13,8 @@ use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use crate::general::{
     AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
-    AbstractQuasigroup, AbstractSemigroup, Additive, TwoSidedInverse, JoinSemilattice, Lattice,
-    MeetSemilattice, Multiplicative, Operator, SubsetOf,
+    AbstractQuasigroup, AbstractSemigroup, Additive, JoinSemilattice, Lattice, MeetSemilattice,
+    Multiplicative, Operator, SubsetOf, TwoSidedInverse,
 };
 
 /// A type that is equipped with identity.

@@ -1,4 +1,6 @@
-use crate::general::{AbstractGroupAbelian, AbstractRingCommutative, Additive, Multiplicative, Operator};
+use crate::general::{
+    AbstractGroupAbelian, AbstractRingCommutative, Additive, Multiplicative, Operator,
+};
 
 /// A module combines two sets: one with an Abelian group structure and another with a
 /// commutative ring structure.
@@ -21,7 +23,8 @@ pub trait AbstractModule<
     OpGroup: Operator = Additive,
     OpAdd: Operator = Additive,
     OpMul: Operator = Multiplicative,
->: AbstractGroupAbelian<OpGroup> {
+>: AbstractGroupAbelian<OpGroup>
+{
     /// The underlying scalar field.
     type AbstractRing: AbstractRingCommutative<OpAdd, OpMul>;
 
@@ -29,13 +32,14 @@ pub trait AbstractModule<
     fn multiply_by(&self, r: Self::AbstractRing) -> Self;
 }
 
-impl<N: AbstractRingCommutative<Additive, Multiplicative> + num::Num + crate::general::ClosedNeg>
-    AbstractModule<Additive, Additive, Multiplicative> for num_complex::Complex<N> {
+impl<
+        N: AbstractRingCommutative<Additive, Multiplicative> + num::Num + crate::general::ClosedNeg,
+    > AbstractModule<Additive, Additive, Multiplicative> for num_complex::Complex<N>
+{
     type AbstractRing = N;
 
     #[inline]
     fn multiply_by(&self, r: N) -> Self {
         self.clone() * r
     }
-
 }

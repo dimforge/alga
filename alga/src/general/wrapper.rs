@@ -9,7 +9,7 @@ use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use crate::general::AbstractMagma;
 use crate::general::AbstractQuasigroup;
-use crate::general::{TwoSidedInverse, Operator};
+use crate::general::{Operator, TwoSidedInverse};
 
 /// Wrapper that allows to use operators on algebraic types.
 #[derive(Debug)]
