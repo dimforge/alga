@@ -187,6 +187,7 @@ pub trait ComplexField:
     fn cbrt(self) -> Self;
 }
 
+#[macro_export]
 macro_rules! impl_complex(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
         impl ComplexField for $T {

@@ -79,6 +79,7 @@ pub trait Lattice: MeetSemilattice + JoinSemilattice + PartialOrd {
     }
 }
 
+#[macro_use]
 macro_rules! impl_lattice(
     ($($T:ident),*) => {$(
         impl MeetSemilattice for $T {

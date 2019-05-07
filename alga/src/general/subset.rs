@@ -106,6 +106,7 @@ impl<SS: SubsetOf<SP>, SP> SupersetOf<SS> for SP {
     }
 }
 
+#[macro_export]
 macro_rules! impl_subset(
     ($($subset: ty as $( $superset: ty),+ );* $(;)*) => {
         $($(
@@ -187,6 +188,7 @@ impl<N1, N2: SupersetOf<N1>> SubsetOf<Complex<N2>> for Complex<N1> {
     }
 }
 
+#[macro_export]
 macro_rules! impl_scalar_subset_of_complex(
     ($($t: ident),*) => {$(
         impl<N2: Zero + SupersetOf<$t>> SubsetOf<Complex<N2>> for $t {
