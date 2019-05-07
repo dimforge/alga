@@ -57,6 +57,7 @@ pub trait RealField:
     fn ln_10() -> Self;
 }
 
+#[macro_export]
 macro_rules! impl_real(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
         impl RealField for $T {

@@ -180,13 +180,9 @@ mod two_operators;
 mod module;
 mod identity;
 mod operator;
-#[macro_use]
 mod real;
-#[macro_use]
 mod complex;
-#[macro_use]
 mod lattice;
-#[macro_use]
 mod subset;
 mod specialized;
 #[doc(hidden)]
