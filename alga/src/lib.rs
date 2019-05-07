@@ -26,7 +26,7 @@ extern crate approx;
 #[cfg(feature = "decimal")]
 #[macro_use]
 extern crate decimal;
-extern crate num_traits as num;
+pub extern crate num_traits as num;
 
 #[cfg(not(feature = "std"))]
 extern crate core as std;
