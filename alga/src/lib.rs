@@ -33,5 +33,6 @@ extern crate core as std;
 
 #[macro_use]
 mod macros;
+#[macro_use]
 pub mod general;
 pub mod linear;
