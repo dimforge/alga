@@ -59,12 +59,15 @@
 #![recursion_limit = "1024"]
 extern crate edit_distance as ed;
 extern crate proc_macro;
+extern crate proc_macro2;
 #[macro_use]
 extern crate quote;
 extern crate syn;
 
 use proc_macro::TokenStream;
+use proc_macro2::{Span, TokenTree};
 use syn::{Generics, Ident};
+use quote::TokenStreamExt;
 
 use std::iter::once;
 
@@ -89,12 +92,11 @@ fn get_closest_trait(tra1t: &str) -> &str {
         "Ring",
         "RingCommutative",
         "Field",
-    ]
-    .iter()
-    .map(|t| (ed::edit_distance(t, tra1t), t))
-    .min()
-    .expect("Hardcoded array which we are iterating should never be empty. Programming error.")
-    .1
+    ].iter()
+        .map(|t| (ed::edit_distance(t, tra1t), t))
+        .min()
+        .expect("Hardcoded array which we are iterating should never be empty. Programming error.")
+        .1
 }
 
 fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
@@ -106,64 +108,57 @@ fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
         "Group" => vec!["Monoid", "Quasigroup", "Loop", "Semigroup"],
         "GroupAbelian" => vec!["Group", "Monoid", "Quasigroup", "Loop", "Semigroup"],
         _ => match tra1t {
-            "Ring" => {
-                if op == 0 {
-                    vec![
-                        "GroupAbelian",
-                        "Group",
-                        "Monoid",
-                        "Quasigroup",
-                        "Loop",
-                        "Semigroup",
-                    ]
-                } else {
-                    vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
-                }
-            }
-            "RingCommutative" => {
-                if op == 0 {
-                    vec![
-                        "Ring",
-                        "GroupAbelian",
-                        "Group",
-                        "Monoid",
-                        "Quasigroup",
-                        "Loop",
-                        "Semigroup",
-                    ]
-                } else {
-                    vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
-                }
-            }
-            "Field" => {
-                if op == 0 {
-                    vec![
-                        "RingCommutative",
-                        "Ring",
-                        "GroupAbelian",
-                        "Group",
-                        "Monoid",
-                        "Quasigroup",
-                        "Loop",
-                        "Semigroup",
-                    ]
-                } else {
-                    vec![
-                        "GroupAbelian",
-                        "Group",
-                        "Monoid",
-                        "Quasigroup",
-                        "Loop",
-                        "Semigroup",
-                    ]
-                }
-            }
+            "Ring" => if op == 0 {
+                vec![
+                    "GroupAbelian",
+                    "Group",
+                    "Monoid",
+                    "Quasigroup",
+                    "Loop",
+                    "Semigroup",
+                ]
+            } else {
+                vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
+            },
+            "RingCommutative" => if op == 0 {
+                vec![
+                    "Ring",
+                    "GroupAbelian",
+                    "Group",
+                    "Monoid",
+                    "Quasigroup",
+                    "Loop",
+                    "Semigroup",
+                ]
+            } else {
+                vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
+            },
+            "Field" => if op == 0 {
+                vec![
+                    "RingCommutative",
+                    "Ring",
+                    "GroupAbelian",
+                    "Group",
+                    "Monoid",
+                    "Quasigroup",
+                    "Loop",
+                    "Semigroup",
+                ]
+            } else {
+                vec![
+                    "GroupAbelian",
+                    "Group",
+                    "Monoid",
+                    "Quasigroup",
+                    "Loop",
+                    "Semigroup",
+                ]
+            },
             _ => panic!("Unknown Alga trait `{}`. Programming error.", tra1t),
         },
-    }
-    .into_iter()
-    .map(String::from)
-    .collect()
+    }.into_iter()
+        .map(String::from)
+        .collect()
 }
 
 fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
@@ -175,26 +170,23 @@ fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
         "Ring" => vec![("prop_mul_and_add_are_distributive", 3)],
         "RingCommutative" => vec![("prop_mul_is_commutative", 2)],
         _ => vec![],
-    }
-    .into_iter()
-    .map(|(n, p)| {
-        (
-            Ident::new(format!("Abstract{}", tra1t)),
-            Ident::new(format!("{}_approx", n)),
-            p,
-        )
-    })
-    .collect()
+    }.into_iter()
+        .map(|(n, p)| {
+            (
+                Ident::new(&format!("Abstract{}", tra1t), Span::call_site()),
+                Ident::new(&format!("{}_approx", n), Span::call_site()),
+                p,
+            )
+        })
+        .collect()
 }
 
 /// Implementation of the custom derive
 #[proc_macro_derive(Alga, attributes(alga_traits, alga_quickcheck))]
 pub fn derive_alga(input: TokenStream) -> TokenStream {
-    use syn::Lit::*;
-    use syn::MetaItem::*;
-    use syn::NestedMetaItem::*;
+    use syn::{parse_macro_input, DeriveInput, NestedMeta, Meta, Lit, TypeParam, GenericParam};
 
-    let item = syn::parse_derive_input(&input.to_string()).unwrap();
+    let item = parse_macro_input!(input as DeriveInput);
     let name = &item.ident;
     let (i, t, w) = item.generics.split_for_impl();
     let (impl_generics, ty_generics) = (once(&i).cycle(), once(&t).cycle());
@@ -202,25 +194,25 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
     let iter = item.attrs
         .iter()
         .filter_map(|a| {
-            if let List(ref ident, ref traits) = a.value {
-                Some((ident, traits))
+            if let Ok(Meta::List(ml)) = a.parse_meta() {
+                Some((ml.ident, ml.nested))
             } else {
                 None
             }
         })
-        .filter(|&(i, _)| i == "alga_traits")
+        .filter(|(i, _)| i == "alga_traits")
         .flat_map(|(_, v)| v)
-        .map(|t| match *t {
-            MetaItem(ref m) => match *m {
-                List(ref name, ref value) => (name.as_ref(), value.clone()),
-                NameValue(ref name, ref value) => {
-                    if name == "Where" {
-                        (name.as_ref(), vec![Literal(value.clone())])
+        .map(|t| match t {
+            NestedMeta::Meta(ref m) => match m {
+                Meta::List(ml) => (ml.ident.clone(), ml.nested.iter().cloned().collect()),
+                Meta::NameValue(mnv) => {
+                    if mnv.ident == "Where" {
+                        (mnv.ident.clone(), vec![NestedMeta::Literal(mnv.lit.clone())])
                     } else {
                         panic!("Where clause should be defined with `Where = \"TypeParameter: Trait\"`.");
                     }
                 }
-                Word(ref i) => {
+                Meta::Word(ref i) => {
                     let oper = match get_op_arity(&format!("{}", i)) {
                         1 => "Operator",
                         2 => "Operator1, Operator2",
@@ -236,6 +228,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                 panic!("Derived alga trait has to be provided via #[alga_traits(Trait(Operators))]")
             }
         });
+
     let mut traits: Vec<(_, _, Option<_>)> = vec![];
     let mut valid_clause_place = false;
     let mut first = true;
@@ -243,10 +236,12 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         if name == "Where" {
             if valid_clause_place {
                 let len = traits.len();
-                if let Literal(Str(ref clause, syn::StrStyle::Cooked)) = value[0] {
-                    let mut clause = syn::parse_where_clause(&format!("where {}", clause))
+                if let NestedMeta::Literal(Lit::Str(ref clause)) = value[0] {
+                    let mut clause = syn::parse_str::<syn::WhereClause>(&format!("where {}", clause.value()))
                         .expect("Where clauses bound was invalid.");
-                    clause.predicates.extend(w.predicates.clone());
+                    if let Some(w) = w {
+                        clause.predicates.extend(w.predicates.clone());
+                    }
                     traits[len - 1].2 = Some(clause);
                 } else {
                     panic!("Where clause should be a string literal.");
@@ -265,7 +260,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             let value: Vec<_> = value
                 .iter()
                 .map(|v| {
-                    if let MetaItem(Word(ref ident)) = *v {
+                    if let NestedMeta::Meta(Meta::Word(ref ident)) = *v {
                         ident.clone()
                     } else {
                         panic!(
@@ -274,9 +269,9 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                             value
                                 .iter()
                                 .map(|v| match *v {
-                                    MetaItem(ref i) => i.name(),
-                                    Literal(Str(ref i, _)) => i,
-                                    _ => "Operator",
+                                    NestedMeta::Meta(ref i) => i.name().to_string(),
+                                    NestedMeta::Literal(Lit::Str(ref i)) => i.value(),
+                                    _ => "Operator".to_string(),
                                 })
                                 .collect::<Vec<_>>()
                                 .join(", ")
@@ -287,10 +282,12 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             traits.push((name, value, None));
         }
     }
+
     let (tra1t, op, where_clause, checks) = traits
         .into_iter()
         .flat_map(|(name, value, clause)| {
-            let arity = get_op_arity(name);
+            let name = name.to_string();
+            let arity = get_op_arity(&name);
             let value = value.clone();
             if value.len() != arity {
                 match arity {
@@ -320,32 +317,31 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     value.clone()
                 };
                 (
-                    Ident::from(format!("Abstract{}", n)),
+                    Ident::new(&format!("Abstract{}", n), Span::call_site()),
                     value.clone(),
                     clause.clone(),
                     (value, mul, get_props(n)),
                 )
             };
             let create_tuple = &create_tuple;
-            let iter = once(name.into())
-                .chain(get_dependencies(name, 0))
+            let iter = once(name.clone())
+                .chain(get_dependencies(&name, 0))
                 .map(|n| create_tuple(&n, 0));
             if arity == 1 {
                 iter.collect::<Vec<_>>()
             } else {
                 iter.chain(
-                    get_dependencies(name, 1)
+                    get_dependencies(&name, 1)
                         .into_iter()
                         .map(|n| create_tuple(&n, 1)),
-                )
-                .collect()
+                ).collect()
             }
         })
         .unzip4();
     assert!(!tra1t.is_empty(),
     "Atleast one trait is required to be implemented.\n         Trait can be specified with `#[alga_traits(Trait(Operators))]` attribute.");
 
-    let dummy_const = Ident::new(format!("_ALGA_DERIVE_{}", name));
+    let dummy_const = Ident::new(&format!("_ALGA_DERIVE_{}", name), Span::call_site());
     let type_name = once(&name).cycle();
     let mut tks = quote!(
         #[allow(non_upper_case_globals, unused_attributes, unused_qualifications)]
@@ -358,15 +354,14 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         };
     );
 
-    if let Some((_, checked_generics)) = item
-        .attrs
+    if let Some((_, checked_generics)) = item.attrs
         .iter()
-        .filter_map(|a| match a.value {
-            Word(ref name) => Some((name, None)),
-            List(ref name, ref value) => Some((name, Some(value))),
+        .filter_map(|a| match a.parse_meta() {
+            Ok(Meta::Word(name)) => Some((name, None)),
+            Ok(Meta::List(list)) => Some((list.ident, Some(list.nested))),
             _ => None,
         })
-        .filter(|&(n, _)| n.as_ref() == "alga_quickcheck")
+        .filter(|&(ref n, _)| n == "alga_quickcheck")
         .next()
     {
         let checked_generics = checked_generics
@@ -375,17 +370,17 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                 checks
                     .iter()
                     .map(|ty_params| {
-                        if let MetaItem(List(ref indicator, ref tys)) = *ty_params {
-                            if indicator == "check" {
-                                tys.iter()
+                        if let NestedMeta::Meta(Meta::List(ref list)) = *ty_params {
+                            if list.ident == "check" {
+                                list.nested.iter()
                                     .map(|ty| {
-                                        if let MetaItem(Word(ref ident)) = *ty {
+                                        if let NestedMeta::Meta(Meta::Word(ref ident)) = *ty {
                                             ident.clone()
                                         } else {
-                                            panic!("Concrete types has to be provided via #[alga_quickcheck(check({}))].", tys.iter().map(|v| match *v {
-                                MetaItem(ref i) => i.name(),
-                                Literal(Str(ref i, _)) => i,
-                                _ => "Type",
+                                            panic!("Concrete types has to be provided via #[alga_quickcheck(check({}))].", list.nested.iter().map(|v| match *v {
+                                NestedMeta::Meta(ref i) => i.name().to_string(),
+                                NestedMeta::Literal(Lit::Str(ref i)) => i.value(),
+                                _ => "Type".to_string(),
                             }).collect::<Vec<_>>().join(", "));
                                         }
                                     })
@@ -400,13 +395,14 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     .collect()
             })
             .unwrap_or(vec![]);
+
         for (ops, add, check) in checks {
             let ops = &ops;
             for (tra1t, check, nparams) in check {
                 let mut add_test = |check_generics: &[Ident]| {
                     let params: &Vec<_> = &(0..nparams).map(|_| name).collect();
                     let nparams: &Vec<_> = &(0..nparams)
-                        .map(|n| Ident::new(format!("v{}", n)))
+                        .map(|n| Ident::new(&format!("v{}", n), Span::call_site()))
                         .collect();
                     let show_ops: String = ops.iter().map(|n| format!("_{}", n)).collect();
                     let mut name_gens = check_generics
@@ -417,12 +413,12 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     if !name_gens.is_empty() {
                         name_gens = format!("_{}", name_gens);
                     }
-                    let test_name = Ident::new(format!(
+                    let test_name = Ident::new(&format!(
                         "{}_for_{}{}_as_{}{}",
                         check, name, name_gens, tra1t, show_ops
-                    ));
+                    ), Span::call_site());
                     let check_generics = Generics {
-                        ty_params: check_generics.iter().cloned().map(Into::into).collect(),
+                        params: check_generics.iter().cloned().map(|ident| GenericParam::Type(TypeParam::from(ident))).collect(),
                         ..Default::default()
                     };
                     let generics1 = once(&check_generics).cycle();
@@ -442,7 +438,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     } else {
                         quote!()
                     };
-                    let parsed: String = quote!(
+                    let parsed = syn::parse2::<TokenTree>(quote!(
                         #[test]
                         #[allow(non_snake_case)]
                         fn #test_name() {
@@ -454,9 +450,9 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                             }
                             _quickcheck::quickcheck(prop as fn((#(#params #generics2,)*)) -> _quickcheck::TestResult);
                         }
-                    ).parse()
-                        .unwrap();
-                    tks.append(&parsed);
+                    ))
+                     .unwrap();
+                    tks.append(parsed);
                 };
                 if checked_generics.is_empty() {
                     add_test(&vec![][..]);
@@ -468,7 +464,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             }
         }
     }
-    tks.parse().unwrap()
+
+    tks.into()
 }
 
 trait Unzip4<A, B, C, D> {
