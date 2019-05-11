@@ -438,7 +438,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     } else {
                         quote!()
                     };
-                    let parsed = syn::parse2::<TokenTree>(quote!(
+                    let parsed = quote!(
                         #[test]
                         #[allow(non_snake_case)]
                         fn #test_name() {
@@ -450,9 +450,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                             }
                             _quickcheck::quickcheck(prop as fn((#(#params #generics2,)*)) -> _quickcheck::TestResult);
                         }
-                    ))
-                     .unwrap();
-                    tks.append(parsed);
+                    );
+                    tks.extend(parsed);
                 };
                 if checked_generics.is_empty() {
                     add_test(&vec![][..]);
