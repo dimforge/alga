@@ -4,16 +4,23 @@ extern crate alga_derive;
 extern crate approx;
 extern crate quickcheck;
 
-use alga::general::{AbstractMagma, Additive, Identity, Multiplicative, TwoSidedInverse};
+use alga::general::{AbstractMagma, Additive, Identity, Multiplicative, TwoSidedInverse, Field};
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 use quickcheck::{Arbitrary, Gen};
+use num_traits::{Zero, One};
+use std::ops::{Add, AddAssign, Sub, SubAssign, Neg, Mul, MulAssign, Div, DivAssign};
 
 #[derive(Alga, Clone, PartialEq, Debug)]
 #[alga_traits(Field(Additive, Multiplicative))]
 #[alga_quickcheck]
 struct W(f64);
+
+fn test_trait_impl() {
+    fn is_field<T: Field>() {}
+    is_field::<W>();
+}
 
 impl AbsDiffEq for W {
     type Epsilon = W;
@@ -87,5 +94,87 @@ impl Identity<Additive> for W {
 impl Identity<Multiplicative> for W {
     fn identity() -> Self {
         W(1.)
+    }
+}
+
+impl Add<W> for W {
+    type Output = W;
+
+    fn add(self, rhs: W) -> W {
+        W(self.0 + rhs.0)
+    }
+}
+
+impl Sub<W> for W {
+    type Output = W;
+
+    fn sub(self, rhs: W) -> W {
+        W(self.0 - rhs.0)
+    }
+}
+
+impl AddAssign<W> for W {
+    fn add_assign(&mut self, rhs: W) {
+        self.0 += rhs.0
+    }
+}
+
+impl SubAssign<W> for W {
+    fn sub_assign(&mut self, rhs: W) {
+        self.0 -= rhs.0
+    }
+}
+
+impl Neg for W {
+    type Output = W;
+
+    fn neg(self) -> W {
+        W(-self.0)
+    }
+}
+
+impl Zero for W {
+    fn zero() -> W {
+        W(0.0)
+    }
+
+    fn is_zero(&self) -> bool {
+        self.0.is_zero()
+    }
+}
+
+impl One for W {
+    fn one() -> W {
+        W(1.0)
+    }
+}
+
+impl Mul<W> for W {
+    type Output = W;
+
+    fn mul(self, rhs: W) -> W {
+        W(self.0 * rhs.0)
+    }
+}
+
+
+impl Div<W> for W {
+    type Output = W;
+
+    fn div(self, rhs: W) -> W {
+        W(self.0 / rhs.0)
+    }
+}
+
+impl MulAssign<W> for W {
+    fn mul_assign(&mut self, rhs: W) {
+        self.0 *= rhs.0
+    }
+}
+
+
+impl DivAssign<W> for W {
+    fn div_assign(&mut self, rhs: W) {
+        self.0 /= rhs.0
     }
 }
