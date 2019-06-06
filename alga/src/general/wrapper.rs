@@ -42,7 +42,7 @@ impl<T: PartialEq, A, M> PartialEq for Wrapper<T, A, M> {
 impl<T, A, M> Wrapper<T, A, M> {
     pub fn new(val: T) -> Self {
         Wrapper {
-            val: val,
+            val,
             _add: PhantomData,
             _mul: PhantomData,
         }
