@@ -57,7 +57,7 @@ impl Arbitrary for W {
     fn arbitrary<G: Gen>(g: &mut G) -> Self {
         W(f64::arbitrary(g))
     }
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         Box::new(self.0.shrink().map(W))
     }
 }

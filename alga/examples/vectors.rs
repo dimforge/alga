@@ -27,7 +27,7 @@ impl<Scalar: AbstractField + Arbitrary> Arbitrary for Vec2<Scalar> {
         Vec2::new(Scalar::arbitrary(g), Scalar::arbitrary(g))
     }
 
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         Box::new(
             self.x
                 .shrink()
@@ -205,7 +205,7 @@ impl Arbitrary for Rational {
         Rational::new(i64::arbitrary(g), div)
     }
 
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         RationalShrinker::new(self.clone())
     }
 }
@@ -216,7 +216,7 @@ struct RationalShrinker {
 }
 
 impl RationalShrinker {
-    pub fn new(x: Rational) -> Box<Iterator<Item = Rational>> {
+    pub fn new(x: Rational) -> Box<dyn Iterator<Item = Rational>> {
         if x.a == 0 {
             quickcheck::empty_shrinker()
         } else {
