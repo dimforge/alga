@@ -65,9 +65,8 @@ extern crate quote;
 extern crate syn;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenTree};
+use proc_macro2::Span;
 use syn::{Generics, Ident};
-use quote::TokenStreamExt;
 
 use std::iter::once;
 
