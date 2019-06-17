@@ -79,7 +79,7 @@ macro_rules! impl_additive_inverse(
     )*}
 );
 
-impl_additive_inverse!(i8, i16, i32, i64, isize, f32, f64);
+impl_additive_inverse!(i8, i16, i32, i64, i128, isize, f32, f64);
 #[cfg(feature = "decimal")]
 impl_additive_inverse!(d128);
 
