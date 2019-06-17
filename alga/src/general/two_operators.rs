@@ -279,7 +279,7 @@ macro_rules! impl_field(
  * Implementations.
  *
  */
-impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64; isize);
+impl_ring_commutative!(<Additive, Multiplicative> for i8; i16; i32; i64; i128; isize);
 impl_field!(<Additive, Multiplicative> for f32; f64);
 #[cfg(feature = "decimal")]
 impl_field!(<Additive, Multiplicative> for d128);

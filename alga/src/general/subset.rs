@@ -130,17 +130,19 @@ macro_rules! impl_subset(
 );
 
 impl_subset!(
-    u8    as u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64;
-    u16   as u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64;
-    u32   as u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64;
-    u64   as u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64;
-    usize as u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64;
+    u8    as u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64;
+    u16   as u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64;
+    u32   as u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64;
+    u64   as u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64;
+    u128  as u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64;
+    usize as u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64;
 
-    i8    as i8, i16, i32, i64, isize, f32, f64;
-    i16   as i8, i16, i32, i64, isize, f32, f64;
-    i32   as i8, i16, i32, i64, isize, f32, f64;
-    i64   as i8, i16, i32, i64, isize, f32, f64;
-    isize as i8, i16, i32, i64, isize, f32, f64;
+    i8    as i8, i16, i32, i64, i128, isize, f32, f64;
+    i16   as i8, i16, i32, i64, i128, isize, f32, f64;
+    i32   as i8, i16, i32, i64, i128, isize, f32, f64;
+    i64   as i8, i16, i32, i64, i128, isize, f32, f64;
+    i128  as i8, i16, i32, i64, i128, isize, f32, f64;
+    isize as i8, i16, i32, i64, i128, isize, f32, f64;
 
     f32 as f32, f64;
     f64 as f32, f64;
@@ -211,6 +213,6 @@ macro_rules! impl_scalar_subset_of_complex(
     )*}
 );
 
-impl_scalar_subset_of_complex!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
+impl_scalar_subset_of_complex!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64);
 #[cfg(feature = "decimal")]
 impl_scalar_subset_of_complex!(d128);

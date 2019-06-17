@@ -32,11 +32,11 @@ pub trait Identity<O: Operator> {
     }
 }
 
-impl_ident!(Additive; 0; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
+impl_ident!(Additive; 0; u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
 impl_ident!(Additive; 0.; f32, f64);
 #[cfg(feature = "decimal")]
 impl_ident!(Additive; d128!(0.); d128);
-impl_ident!(Multiplicative; 1; u8, u16, u32, u64, usize, i8, i16, i32, i64, isize);
+impl_ident!(Multiplicative; 1; u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
 impl_ident!(Multiplicative; 1.; f32, f64);
 #[cfg(feature = "decimal")]
 impl_ident!(Multiplicative; d128!(1.); d128);
