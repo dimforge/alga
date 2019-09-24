@@ -43,3 +43,19 @@ impl<
         self.clone() * r
     }
 }
+
+macro_rules! impl_abstract_module(
+    ($($T:ty),*) => {
+        $(impl AbstractModule for $T {
+            type AbstractRing = $T;
+
+            #[inline]
+            fn multiply_by(&self, r: $T) -> Self {
+                self.clone() * r
+            }
+        })*
+    }
+);
+
+impl_abstract_module!(i8, i16, i32, i64, isize, f32, f64);
+

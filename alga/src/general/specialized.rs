@@ -55,3 +55,13 @@ pub trait Module:
 impl<N: RingCommutative + num::NumAssign> Module for num_complex::Complex<N> {
     type Ring = N;
 }
+
+macro_rules! impl_module(
+    ($($T:ty),*) => {
+        $(impl Module for $T{
+            type Ring = $T;
+        })*
+    }
+);
+
+impl_module!(i8, i16, i32, i64, isize, f32, f64);
