@@ -193,33 +193,31 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
     let iter = item.attrs
         .iter()
         .filter_map(|a| {
-            if let Ok(Meta::List(ml)) = a.parse_meta() {
-                Some((ml.ident, ml.nested))
-            } else {
-                None
+            match a.parse_meta() {
+                Ok(Meta::List(ml)) if  ml.path.is_ident("alga_traits") => Some(ml.nested),
+                _ => None,
             }
         })
-        .filter(|(i, _)| i == "alga_traits")
-        .flat_map(|(_, v)| v)
+        .flatten()
         .map(|t| match t {
             NestedMeta::Meta(ref m) => match m {
-                Meta::List(ml) => (ml.ident.clone(), ml.nested.iter().cloned().collect()),
+                Meta::List(ml) => (ml.path.get_ident().unwrap_or_else(|| panic!("expected Alga trait, found path")).clone(), ml.nested.iter().cloned().collect()),
                 Meta::NameValue(mnv) => {
-                    if mnv.ident == "Where" {
-                        (mnv.ident.clone(), vec![NestedMeta::Literal(mnv.lit.clone())])
-                    } else {
-                        panic!("Where clause should be defined with `Where = \"TypeParameter: Trait\"`.");
+                    match mnv.path.get_ident() {
+                        Some(ident) if ident == &"Where" => (ident.clone(), vec![NestedMeta::Lit(mnv.lit.clone())]),
+                        _ => panic!("Where clause should be defined with `Where = \"TypeParameter: Trait\"`.")
                     }
                 }
-                Meta::Word(ref i) => {
-                    let oper = match get_op_arity(&format!("{}", i)) {
+                Meta::Path(ref path) => {
+                    let ident = path.get_ident().unwrap_or_else(|| panic!("expected Alga trait, found path"));
+                    let oper = match get_op_arity(&format!("{}", ident)) {
                         1 => "Operator",
                         2 => "Operator1, Operator2",
                         n => unreachable!("Trait `{}` with unknown arity {} encountered.", name, n),
                     };
                     panic!(
                         "Operator has to be provided via #[alga_traits({}({}))]",
-                        i, oper
+                        ident, oper
                     );
                 }
             },
@@ -232,10 +230,10 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
     let mut valid_clause_place = false;
     let mut first = true;
     for (name, value) in iter {
-        if name == "Where" {
+        if name == &"Where" {
             if valid_clause_place {
                 let len = traits.len();
-                if let NestedMeta::Literal(Lit::Str(ref clause)) = value[0] {
+                if let NestedMeta::Lit(Lit::Str(ref clause)) = value[0] {
                     let mut clause = syn::parse_str::<syn::WhereClause>(&format!("where {}", clause.value()))
                         .expect("Where clauses bound was invalid.");
                     if let Some(w) = w {
@@ -259,8 +257,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             let value: Vec<_> = value
                 .iter()
                 .map(|v| {
-                    if let NestedMeta::Meta(Meta::Word(ref ident)) = *v {
-                        ident.clone()
+                    if let NestedMeta::Meta(Meta::Path(ref path)) = *v {
+                        path.get_ident().unwrap_or_else(|| panic!("expected Alga trait, found path")).clone()
                     } else {
                         panic!(
                             "Operator has to be provided via #[alga_traits({}({}))].",
@@ -268,8 +266,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                             value
                                 .iter()
                                 .map(|v| match *v {
-                                    NestedMeta::Meta(ref i) => i.name().to_string(),
-                                    NestedMeta::Literal(Lit::Str(ref i)) => i.value(),
+                                    NestedMeta::Meta(ref i) => i.path().get_ident().map(|id| format!("{}", id)).unwrap_or_else(|| "Operator".to_string()),
+                                    NestedMeta::Lit(Lit::Str(ref i)) => i.value(),
                                     _ => "Operator".to_string(),
                                 })
                                 .collect::<Vec<_>>()
@@ -356,11 +354,11 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
     if let Some((_, checked_generics)) = item.attrs
         .iter()
         .filter_map(|a| match a.parse_meta() {
-            Ok(Meta::Word(name)) => Some((name, None)),
-            Ok(Meta::List(list)) => Some((list.ident, Some(list.nested))),
+            Ok(Meta::Path(path)) => Some((path, None)),
+            Ok(Meta::List(list)) => Some((list.path, Some(list.nested))),
             _ => None,
         })
-        .filter(|&(ref n, _)| n == "alga_quickcheck")
+        .filter_map(|(path, generics)| path.get_ident().filter(|id| id == &"alga_quickcheck").map(|ident| (ident.clone(), generics)))
         .next()
     {
         let checked_generics = checked_generics
@@ -370,17 +368,21 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     .iter()
                     .map(|ty_params| {
                         if let NestedMeta::Meta(Meta::List(ref list)) = *ty_params {
-                            if list.ident == "check" {
+                            if list.path.is_ident("check") {
                                 list.nested.iter()
                                     .map(|ty| {
-                                        if let NestedMeta::Meta(Meta::Word(ref ident)) = *ty {
-                                            ident.clone()
+                                        if let NestedMeta::Meta(Meta::Path(ref path)) = *ty {
+                                            path.get_ident().expect(err).clone()
                                         } else {
-                                            panic!("Concrete types has to be provided via #[alga_quickcheck(check({}))].", list.nested.iter().map(|v| match *v {
-                                NestedMeta::Meta(ref i) => i.name().to_string(),
-                                NestedMeta::Literal(Lit::Str(ref i)) => i.value(),
-                                _ => "Type".to_string(),
-                            }).collect::<Vec<_>>().join(", "));
+                                            panic!("Concrete types has to be provided via #[alga_quickcheck(check({}))].", 
+                                                list.nested.iter()
+                                                    .map(|v| match *v {
+                                                        NestedMeta::Meta(ref i) => i.path().get_ident().map(|ident| ident.to_string()).expect(err),
+                                                        NestedMeta::Lit(Lit::Str(ref i)) => i.value(),
+                                                        _ => "Type".to_string(),
+                                                    })
+                                                    .collect::<Vec<_>>().join(", ")
+                                            );
                                         }
                                     })
                                     .collect::<Vec<_>>()
