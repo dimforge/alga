@@ -1,6 +1,6 @@
 [package]
 name = "alga"
-version = "0.9.1"
+version = "0.9.2"
 authors = ["Brendan Zabarauskas", "Darin Morrison", "Sébastien Crozet", "Wadelma <delma@del.ma>"]
 description = "Abstract algebra for Rust"
 keywords = ["algebra", "monoids", "math"]
