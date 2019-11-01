@@ -71,7 +71,7 @@ pub trait ComplexField:
     /// Multiplies this complex number by `factor`.
     fn scale(self, factor: Self::RealField) -> Self;
 
-    /// Multiplies this complex number by `factor`.
+    /// Divides this complex number by `factor`.
     fn unscale(self, factor: Self::RealField) -> Self;
 
     /// The polar form of this complex number: (modulus, arg)
