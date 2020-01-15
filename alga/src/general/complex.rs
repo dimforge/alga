@@ -7,11 +7,7 @@ use std::{f32, f64};
 use crate::general::{Field, JoinSemilattice, MeetSemilattice, RealField, SubsetOf, SupersetOf};
 
 #[cfg(not(feature = "std"))]
-use libm::F32Ext;
-#[cfg(not(feature = "std"))]
-use libm::F64Ext;
-#[cfg(not(feature = "std"))]
-use num;
+use num::Float;
 //#[cfg(feature = "decimal")]
 //use decimal::d128;
 
@@ -474,8 +470,8 @@ macro_rules! impl_complex(
 
 #[cfg(not(feature = "std"))]
 impl_complex!(
-    f32, f32, F32Ext;
-    f64, f64, F64Ext
+    f32, f32, Float;
+    f64, f64, Float
 );
 
 #[cfg(feature = "std")]
