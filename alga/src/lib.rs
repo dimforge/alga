@@ -35,4 +35,3 @@ extern crate core as std;
 mod macros;
 pub mod general;
 pub mod linear;
-pub mod simd;

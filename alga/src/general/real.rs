@@ -3,8 +3,7 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use crate::general::{ComplexField, Lattice, SimdComplexField};
-use crate::simd::{SimdBool};
+use crate::general::{ComplexField, Lattice, SimdComplexField, SimdBool};
 
 #[cfg(not(feature = "std"))]
 use num::Float;

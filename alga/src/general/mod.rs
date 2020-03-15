@@ -178,6 +178,7 @@ pub use self::specialized::{
     MultiplicativeQuasigroup, MultiplicativeSemigroup, Ring, RingCommutative,
 };
 pub use self::two_operators::{AbstractField, AbstractRing, AbstractRingCommutative};
+pub use self::simd::{SimdBool, SimdValue, MultiLanesSimdValue};
 
 #[macro_use]
 mod one_operator;
@@ -192,6 +193,7 @@ mod subset;
 mod two_operators;
 #[doc(hidden)]
 pub mod wrapper;
+mod simd;
 
 #[deprecated(note = "This has been renamed `RealField`.")]
 /// The field of reals. This has been renamed to `RealField`.

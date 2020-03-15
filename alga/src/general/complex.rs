@@ -51,7 +51,7 @@ macro_rules! complex_trait_methods(
             fn [<$($prefix)* to_exp>](self) -> (Self::$RealField, Self) {
                 let m = self.[<$($prefix)* modulus>]();
 
-                if !m.is_zero() {
+                if !m.[<is_ $($prefix)* zero>]() {
                     (m, self.[<$($prefix)* unscale>](m))
                 } else {
                     (Self::$RealField::[<$($prefix)* zero>](), Self::[<$($prefix)* one>]())
@@ -102,7 +102,7 @@ macro_rules! complex_trait_methods(
             /// Cardinal sine
             #[inline]
             fn [<$($prefix)* sinc>](self) -> Self {
-                if self.is_zero() {
+                if self.[<is_ $($prefix)* zero>]() {
                     Self::[<$($prefix)* one>]()
                 } else {
                     self.[<$($prefix)* sin>]() / self
@@ -111,7 +111,7 @@ macro_rules! complex_trait_methods(
 
             #[inline]
             fn [<$($prefix)* sinhc>](self) -> Self {
-                if self.is_zero() {
+                if self.[<is_ $($prefix)* zero>]() {
                     Self::[<$($prefix)* one>]()
                 } else {
                     self.[<$($prefix)* sinh>]() / self
@@ -121,7 +121,7 @@ macro_rules! complex_trait_methods(
             /// Cardinal cos
             #[inline]
             fn [<$($prefix)* cosc>](self) -> Self {
-                if self.is_zero() {
+                if self.[<is_ $($prefix)* zero>]() {
                     Self::[<$($prefix)* one>]()
                 } else {
                     self.[<$($prefix)* cos>]() / self
@@ -130,7 +130,7 @@ macro_rules! complex_trait_methods(
 
             #[inline]
             fn [<$($prefix)* coshc>](self) -> Self {
-                if self.is_zero() {
+                if self.[<is_ $($prefix)* zero>]() {
                     Self::[<$($prefix)* one>]()
                 } else {
                     self.[<$($prefix)* cosh>]() / self
@@ -143,7 +143,6 @@ macro_rules! complex_trait_methods(
             fn [<$($prefix)* ln>](self) -> Self;
             fn [<$($prefix)* ln_1p>](self) -> Self;
             fn [<$($prefix)* sqrt>](self) -> Self;
-            fn [<$($prefix)* try_sqrt>](self) -> Option<Self>;
             fn [<$($prefix)* exp>](self) -> Self;
             fn [<$($prefix)* exp2>](self) -> Self;
             fn [<$($prefix)* exp_m1>](self) -> Self;
@@ -183,6 +182,7 @@ pub trait ComplexField:
     complex_trait_methods!(RealField);
 
     fn is_finite(&self) -> bool;
+    fn try_sqrt(self) -> Option<Self>;
 }
 
 
@@ -209,8 +209,11 @@ pub trait SimdComplexField:
     type SimdRealField: SimdRealField;
     complex_trait_methods!(SimdRealField, simd_);
 
-    /// Retruns the zero complex number.
+    /// Returns the zero complex number.
     fn simd_zero() -> Self;
+
+    /// Are all lanes of this SIMD number zero?
+    fn is_simd_zero(self) -> bool;
 
     /// Returns the complex number of 1.0 as its real part.
     fn simd_one() -> Self;
@@ -958,6 +961,11 @@ impl<T: ComplexField> SimdComplexField for T {
     }
 
     #[inline(always)]
+    fn is_simd_zero(self) -> bool {
+        self.is_zero()
+    }
+
+    #[inline(always)]
     fn simd_one() -> Self {
         Self::one()
     }
@@ -1152,10 +1160,6 @@ impl<T: ComplexField> SimdComplexField for T {
     #[inline(always)]
     fn simd_sqrt(self) -> Self {
         self.sqrt()
-    }
-    #[inline(always)]
-    fn simd_try_sqrt(self) -> Option<Self> {
-        self.try_sqrt()
     }
     #[inline(always)]
     fn simd_exp(self) -> Self {

@@ -105,7 +105,6 @@ pub trait SquareMatrix:
 
     // FIXME: add an epsilon value (as for try_normalize)?
     /// Attempts to two_sided_inverse `self`.
-    #[inline]
     fn try_inverse(&self) -> Option<Self>;
 
     /// The number of rows or column of this matrix.

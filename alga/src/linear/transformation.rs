@@ -272,7 +272,6 @@ pub trait Rotation<E: EuclideanSpace>:
     ///
     /// This is equivalent to calling `self.rotation_between(a, b)` followed by `.powf(n)` but will
     /// usually be much more efficient.
-    #[inline]
     fn scaled_rotation_between(
         a: &E::Coordinates,
         b: &E::Coordinates,
