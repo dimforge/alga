@@ -6,7 +6,6 @@ use std::ops::{
 };
 
 use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, ComplexField, Field, Module, RealField};
-use crate::simd::SimdBool;
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
@@ -41,7 +40,7 @@ pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::ComplexField> 
 
     /// Normalizes this vector in-place or does nothing if its norm is smaller or equal to `eps`.
     ///
-    /// If the normalization succeeded, returns the old normal of this vector.
+    /// If the normalization succeeded, returns the old norm of this vector.
     fn try_normalize_mut(&mut self, eps: Self::RealField) -> Option<Self::RealField>;
 }
 
@@ -313,7 +312,7 @@ impl<N: RealField> NormedSpace for Complex<N> {
     #[inline]
     fn try_normalize(&self, eps: Self::RealField) -> Option<Self> {
         let norm = self.norm_sqr();
-        if norm.gt(eps * eps).all() {
+        if norm > eps * eps {
             Some(*self / norm.sqrt())
         } else {
             None
@@ -323,7 +322,7 @@ impl<N: RealField> NormedSpace for Complex<N> {
     #[inline]
     fn try_normalize_mut(&mut self, eps: Self::RealField) -> Option<Self::RealField> {
         let sq_norm = self.norm_sqr();
-        if sq_norm.gt(eps * eps).all() {
+        if sq_norm > eps * eps {
             let norm = sq_norm.sqrt();
             *self /= norm;
             Some(norm)

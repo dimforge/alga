@@ -163,14 +163,14 @@ pub use self::operator::{
 };
 pub use self::subset::{SubsetOf, SupersetOf};
 
-pub use self::complex::{ComplexField, SimdFriendlyComplexField};
+pub use self::complex::{SimdComplexField, ComplexField};
 pub use self::lattice::{JoinSemilattice, Lattice, MeetSemilattice};
 pub use self::module::AbstractModule;
 pub use self::one_operator::{
     AbstractGroup, AbstractGroupAbelian, AbstractLoop, AbstractMagma, AbstractMonoid,
     AbstractQuasigroup, AbstractSemigroup,
 };
-pub use self::real::{RealField, SimdFriendlyRealField};
+pub use self::real::{RealField, SimdRealField};
 pub use self::specialized::{
     AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, AdditiveMagma, AdditiveMonoid,
     AdditiveQuasigroup, AdditiveSemigroup, Field, Module, MultiplicativeGroup,

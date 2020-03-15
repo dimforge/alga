@@ -8,7 +8,7 @@ pub trait MeetSemilattice: Sized {
     fn meet(&self, other: &Self) -> Self;
     /// Returns the infumum of two values. Same as `self.meet`.
     fn inf(&self, other: &Self) -> Self {
-        self.inf(other)
+        self.meet(other)
     }
 }
 

@@ -199,36 +199,36 @@ impl<N: SimdValue> SimdValue for Simd<N> {
 
 #[cfg(feature = "simd")]
 macro_rules! impl_simd_bool(
-    ($($t: ident),*) => {$(
+    ($($t: ident;)*) => {$(
         impl SimdBool for $t {
             #[inline(always)]
             fn and(self) -> bool {
-                self
+                self.and()
             }
 
             #[inline(always)]
             fn or(self) -> bool {
-                self
+                self.or()
             }
 
             #[inline(always)]
             fn xor(self) -> bool {
-                self
+                self.xor()
             }
 
             #[inline(always)]
             fn all(self) -> bool {
-                self
+                self.all()
             }
 
             #[inline(always)]
             fn any(self) -> bool {
-                self
+                self.any()
             }
 
             #[inline(always)]
             fn none(self) -> bool {
-                !self
+                self.none()
             }
         }
     )*}
@@ -606,7 +606,7 @@ macro_rules! impl_int_simd(
 
 #[cfg(feature = "simd")]
 macro_rules! impl_float_simd(
-    ($($t: ty, $elt: ty;)*) => ($(
+    ($($t: ty, $elt: ty, $bool: ty;)*) => ($(
         impl_int_simd!($t, $elt;);
 
         impl TwoSidedInverse<Multiplicative> for Simd<$t> {
@@ -622,225 +622,272 @@ macro_rules! impl_float_simd(
         impl AbstractGroupAbelian<Multiplicative> for Simd<$t> {}
         impl AbstractField<Additive, Multiplicative> for Simd<$t> {}
 
-        impl RealSimdField for Simd<$t> {
+        impl SimdRealField for Simd<$t> {
+            type SimdBool = $bool;
+
             #[inline(always)]
-            fn max(self, other: Self) -> Self {
+            fn simd_gt(self, other: Self) -> Self::SimdBool {
+                self.0.gt(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_lt(self, other: Self) -> Self::SimdBool {
+                self.0.lt(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_ge(self, other: Self) -> Self::SimdBool {
+                self.0.ge(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_le(self, other: Self) -> Self::SimdBool {
+                self.0.le(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_eq(self, other: Self) -> Self::SimdBool {
+                self.0.eq(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_ne(self, other: Self) -> Self::SimdBool {
+                self.0.ne(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_max(self, other: Self) -> Self {
                 Simd(self.0.max(other.0))
             }
             #[inline(always)]
-            fn min(self, other: Self) -> Self {
+            fn simd_min(self, other: Self) -> Self {
                 Simd(self.0.min(other.0))
             }
 
             #[inline(always)]
-            fn atan2(self, other: Self) -> Self {
+            fn simd_clamp(self, min: Self, max: Self) -> Self {
+                self.simd_max(min).simd_min(max)
+            }
+
+            #[inline(always)]
+            fn simd_atan2(self, other: Self) -> Self {
                 Simd(self.0.zip_map(other.0, |a, b| a.atan2(b)))
             }
 
             #[inline(always)]
-            fn pi() -> Self {
+            fn simd_pi() -> Self {
                 Simd(<$t>::PI)
             }
 
             #[inline(always)]
-            fn two_pi() -> Self {
+            fn simd_two_pi() -> Self {
                 Simd(<$t>::PI + <$t>::PI)
             }
 
             #[inline(always)]
-            fn frac_pi_2() -> Self {
+            fn simd_frac_pi_2() -> Self {
                 Simd(<$t>::FRAC_PI_2)
             }
 
             #[inline(always)]
-            fn frac_pi_3() -> Self {
+            fn simd_frac_pi_3() -> Self {
                 Simd(<$t>::FRAC_PI_3)
             }
 
             #[inline(always)]
-            fn frac_pi_4() -> Self {
+            fn simd_frac_pi_4() -> Self {
                 Simd(<$t>::FRAC_PI_4)
             }
 
             #[inline(always)]
-            fn frac_pi_6() -> Self {
+            fn simd_frac_pi_6() -> Self {
                 Simd(<$t>::FRAC_PI_6)
             }
 
             #[inline(always)]
-            fn frac_pi_8() -> Self {
+            fn simd_frac_pi_8() -> Self {
                 Simd(<$t>::FRAC_PI_8)
             }
 
             #[inline(always)]
-            fn frac_1_pi() -> Self {
+            fn simd_frac_1_pi() -> Self {
                 Simd(<$t>::FRAC_1_PI)
             }
 
             #[inline(always)]
-            fn frac_2_pi() -> Self {
+            fn simd_frac_2_pi() -> Self {
                 Simd(<$t>::FRAC_2_PI)
             }
 
             #[inline(always)]
-            fn frac_2_sqrt_pi() -> Self {
+            fn simd_frac_2_sqrt_pi() -> Self {
                 Simd(<$t>::FRAC_2_SQRT_PI)
             }
 
 
             #[inline(always)]
-            fn e() -> Self {
+            fn simd_e() -> Self {
                 Simd(<$t>::E)
             }
 
             #[inline(always)]
-            fn log2_e() -> Self {
+            fn simd_log2_e() -> Self {
                 Simd(<$t>::LOG2_E)
             }
 
             #[inline(always)]
-            fn log10_e() -> Self {
+            fn simd_log10_e() -> Self {
                 Simd(<$t>::LOG10_E)
             }
 
             #[inline(always)]
-            fn ln_2() -> Self {
+            fn simd_ln_2() -> Self {
                 Simd(<$t>::LN_2)
             }
 
             #[inline(always)]
-            fn ln_10() -> Self {
+            fn simd_ln_10() -> Self {
                 Simd(<$t>::LN_10)
             }
         }
 
-        impl ComplexField for Simd<$t> {
-            type RealField = Self;
+        impl SimdComplexField for Simd<$t> {
+            type SimdRealField = Self;
 
             #[inline(always)]
-            fn from_real(re: Self::RealField) -> Self {
-                re
-            }
-
-            #[inline(always)]
-            fn real(self) -> Self::RealField {
-                self
-            }
-
-            #[inline(always)]
-            fn imaginary(self) -> Self::RealField {
+            fn simd_zero() -> Self {
                 Self::zero()
             }
 
             #[inline(always)]
-            fn norm1(self) -> Self::RealField {
+            fn simd_one() -> Self {
+                Self::one()
+            }
+
+            #[inline(always)]
+            fn from_simd_real(re: Self::SimdRealField) -> Self {
+                re
+            }
+
+            #[inline(always)]
+            fn simd_real(self) -> Self::SimdRealField {
+                self
+            }
+
+            #[inline(always)]
+            fn simd_imaginary(self) -> Self::SimdRealField {
+                Self::zero()
+            }
+
+            #[inline(always)]
+            fn simd_norm1(self) -> Self::SimdRealField {
                 Simd(self.0.abs())
             }
 
             #[inline(always)]
-            fn modulus(self) -> Self::RealField {
+            fn simd_modulus(self) -> Self::SimdRealField {
                 Simd(self.0.abs())
             }
 
             #[inline(always)]
-            fn modulus_squared(self) -> Self::RealField {
+            fn simd_modulus_squared(self) -> Self::SimdRealField {
                 self * self
             }
 
             #[inline(always)]
-            fn argument(self) -> Self::RealField {
+            fn simd_argument(self) -> Self::SimdRealField {
                 Simd(self.0.map(|e| e.argument()))
             }
 
             #[inline(always)]
-            fn to_exp(self) -> (Self, Self) {
+            fn simd_to_exp(self) -> (Self, Self) {
                 let ge = self.0.ge(Self::one().0);
                 let exp = ge.select(Self::one().0, -Self::one().0);
                 (Simd(self.0 * exp), Simd(exp))
             }
 
             #[inline(always)]
-            fn recip(self) -> Self {
+            fn simd_recip(self) -> Self {
                 Self::one() / self
             }
 
             #[inline(always)]
-            fn conjugate(self) -> Self {
+            fn simd_conjugate(self) -> Self {
                 self
             }
 
             #[inline(always)]
-            fn scale(self, factor: Self::RealField) -> Self {
+            fn simd_scale(self, factor: Self::SimdRealField) -> Self {
                 self * factor
             }
 
             #[inline(always)]
-            fn unscale(self, factor: Self::RealField) -> Self {
+            fn simd_unscale(self, factor: Self::SimdRealField) -> Self {
                 self / factor
             }
 
             #[inline(always)]
-            fn floor(self) -> Self {
+            fn simd_floor(self) -> Self {
                 Simd(self.0.map(|e| e.floor()))
             }
 
             #[inline(always)]
-            fn ceil(self) -> Self {
+            fn simd_ceil(self) -> Self {
                 Simd(self.0.map(|e| e.ceil()))
             }
 
             #[inline(always)]
-            fn round(self) -> Self {
+            fn simd_round(self) -> Self {
                 Simd(self.0.map(|e| e.round()))
             }
 
             #[inline(always)]
-            fn trunc(self) -> Self {
+            fn simd_trunc(self) -> Self {
                 Simd(self.0.map(|e| e.trunc()))
             }
 
             #[inline(always)]
-            fn fract(self) -> Self {
+            fn simd_fract(self) -> Self {
                 Simd(self.0.map(|e| e.fract()))
             }
 
             #[inline(always)]
-            fn abs(self) -> Self {
+            fn simd_abs(self) -> Self {
                 Simd(self.0.abs())
             }
 
             #[inline(always)]
-            fn signum(self) -> Self {
+            fn simd_signum(self) -> Self {
                 Simd(self.0.map(|e| e.signum()))
             }
 
             #[inline(always)]
-            fn mul_add(self, a: Self, b: Self) -> Self {
+            fn simd_mul_add(self, a: Self, b: Self) -> Self {
                 Simd(self.0.mul_add(a.0, b.0))
             }
 
             #[inline(always)]
-            fn powi(self, n: i32) -> Self {
+            fn simd_powi(self, n: i32) -> Self {
                 Simd(self.0.powf(<$t>::splat(n as $elt)))
             }
 
             #[inline(always)]
-            fn powf(self, n: Self) -> Self {
+            fn simd_powf(self, n: Self) -> Self {
                 Simd(self.0.powf(n.0))
             }
 
             #[inline(always)]
-            fn powc(self, n: Self) -> Self {
+            fn simd_powc(self, n: Self) -> Self {
                 Simd(self.0.powf(n.0))
             }
 
             #[inline(always)]
-            fn sqrt(self) -> Self {
+            fn simd_sqrt(self) -> Self {
                 Simd(self.0.sqrt())
             }
 
             #[inline(always)]
-            fn try_sqrt(self) -> Option<Self> {
+            fn simd_try_sqrt(self) -> Option<Self> {
                 if self.0.lt(Self::zero().0).none() {
                     Some(Simd(self.0.sqrt()))
                 } else {
@@ -849,134 +896,129 @@ macro_rules! impl_float_simd(
             }
 
             #[inline(always)]
-            fn exp(self) -> Self {
+            fn simd_exp(self) -> Self {
                 Simd(self.0.exp())
             }
 
             #[inline(always)]
-            fn exp2(self) -> Self {
+            fn simd_exp2(self) -> Self {
                 Simd(self.0.map(|e| e.exp2()))
             }
 
 
             #[inline(always)]
-            fn exp_m1(self) -> Self {
+            fn simd_exp_m1(self) -> Self {
                 Simd(self.0.map(|e| e.exp_m1()))
             }
 
             #[inline(always)]
-            fn ln_1p(self) -> Self {
+            fn simd_ln_1p(self) -> Self {
                 Simd(self.0.map(|e| e.ln_1p()))
             }
 
             #[inline(always)]
-            fn ln(self) -> Self {
+            fn simd_ln(self) -> Self {
                 Simd(self.0.ln())
             }
 
             #[inline(always)]
-            fn log(self, base: Self) -> Self {
+            fn simd_log(self, base: Self) -> Self {
                 Simd(self.0.zip_map(base.0, |e, b| e.log(b)))
             }
 
             #[inline(always)]
-            fn log2(self) -> Self {
+            fn simd_log2(self) -> Self {
                 Simd(self.0.map(|e| e.log2()))
             }
 
             #[inline(always)]
-            fn log10(self) -> Self {
+            fn simd_log10(self) -> Self {
                 Simd(self.0.map(|e| e.log10()))
             }
 
             #[inline(always)]
-            fn cbrt(self) -> Self {
+            fn simd_cbrt(self) -> Self {
                 Simd(self.0.map(|e| e.cbrt()))
             }
 
             #[inline(always)]
-            fn hypot(self, other: Self) -> Self::RealField {
+            fn simd_hypot(self, other: Self) -> Self::SimdRealField {
                 Simd(self.0.zip_map(other.0, |e, o| e.hypot(o)))
             }
 
             #[inline(always)]
-            fn sin(self) -> Self {
+            fn simd_sin(self) -> Self {
                 Simd(self.0.sin())
             }
 
             #[inline(always)]
-            fn cos(self) -> Self {
+            fn simd_cos(self) -> Self {
                 Simd(self.0.cos())
             }
 
             #[inline(always)]
-            fn tan(self) -> Self {
+            fn simd_tan(self) -> Self {
                 Simd(self.0.map(|e| e.tan()))
             }
 
             #[inline(always)]
-            fn asin(self) -> Self {
+            fn simd_asin(self) -> Self {
                 Simd(self.0.map(|e| e.asin()))
             }
 
             #[inline(always)]
-            fn acos(self) -> Self {
+            fn simd_acos(self) -> Self {
                 Simd(self.0.map(|e| e.acos()))
             }
 
             #[inline(always)]
-            fn atan(self) -> Self {
+            fn simd_atan(self) -> Self {
                 Simd(self.0.map(|e| e.atan()))
             }
 
             #[inline(always)]
-            fn sin_cos(self) -> (Self, Self) {
-                (self.sin(), self.cos())
+            fn simd_sin_cos(self) -> (Self, Self) {
+                (self.simd_sin(), self.simd_cos())
             }
 
 //            #[inline(always]
-//            fn exp_m1(self) -> Self {
+//            fn simd_exp_m1(self) -> Self {
 //                $libm::exp_m1(self)
 //            }
 //
 //            #[inline(always]
-//            fn ln_1p(self) -> Self {
+//            fn simd_ln_1p(self) -> Self {
 //                $libm::ln_1p(self)
 //            }
 //
             #[inline(always)]
-            fn sinh(self) -> Self {
+            fn simd_sinh(self) -> Self {
                 Simd(self.0.map(|e| e.sinh()))
             }
 
             #[inline(always)]
-            fn cosh(self) -> Self {
+            fn simd_cosh(self) -> Self {
                 Simd(self.0.map(|e| e.cosh()))
             }
 
             #[inline(always)]
-            fn tanh(self) -> Self {
+            fn simd_tanh(self) -> Self {
                 Simd(self.0.map(|e| e.tanh()))
             }
 
             #[inline(always)]
-            fn asinh(self) -> Self {
+            fn simd_asinh(self) -> Self {
                 Simd(self.0.map(|e| e.asinh()))
             }
 
             #[inline(always)]
-            fn acosh(self) -> Self {
+            fn simd_acosh(self) -> Self {
                 Simd(self.0.map(|e| e.acosh()))
             }
 
             #[inline(always)]
-            fn atanh(self) -> Self {
+            fn simd_atanh(self) -> Self {
                 Simd(self.0.map(|e| e.atanh()))
-            }
-
-            #[inline(always)]
-            fn is_finite(&self) -> bool {
-                self.0.is_finite().all()
             }
         }
     )*)
@@ -984,13 +1026,13 @@ macro_rules! impl_float_simd(
 
 #[cfg(feature = "simd")]
 impl_float_simd!(
-    f32x2, f32;
-    f32x4, f32;
-    f32x8, f32;
-    f32x16, f32;
-    f64x2, f64;
-    f64x4, f64;
-    f64x8, f64;
+    f32x2, f32, m32x2;
+    f32x4, f32, m32x4;
+    f32x8, f32, m32x8;
+    f32x16, f32, m32x16;
+    f64x2, f64, m64x2;
+    f64x4, f64, m64x4;
+    f64x8, f64, m64x8;
 );
 
 #[cfg(feature = "simd")]
