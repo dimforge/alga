@@ -3,7 +3,8 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use crate::general::{ComplexField, Lattice};
+use crate::general::{ComplexField, Lattice, SimdFriendlyComplexField};
+use crate::simd::{SimdBool, SimdValue};
 
 #[cfg(not(feature = "std"))]
 use num::Float;
@@ -11,28 +12,21 @@ use num::Float;
 //use decimal::d128;
 
 #[allow(missing_docs)]
-
-/// Trait shared by all reals.
-///
-/// Reals are equipped with functions that are commonly used on reals. The results of those
-/// functions only have to be approximately equal to the actual theoretical values.
-// FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
-// allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
-// NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
-pub trait RealField:
-    ComplexField<RealField = Self>
-    + RelativeEq<Epsilon = Self>
-    + UlpsEq<Epsilon = Self>
-    + Lattice
-    + Signed
-    + Bounded
+pub trait SimdFriendlyRealField:
+    SimdValue + SimdFriendlyComplexField<SimdRealField = Self> + Bounded
 {
-    // NOTE: a real must be bounded because, no matter the chosen representation, being `Copy` implies that it occupies a statically-known size, meaning that it must have min/max values.
+    type Bool: SimdBool;
 
-    fn is_sign_positive(self) -> bool;
-    fn is_sign_negative(self) -> bool;
+    fn gt(self, other: Self) -> Self::Bool;
+    fn lt(self, other: Self) -> Self::Bool;
+    fn ge(self, other: Self) -> Self::Bool;
+    fn le(self, other: Self) -> Self::Bool;
+    fn eq(self, other: Self) -> Self::Bool;
+    fn neq(self, other: Self) -> Self::Bool;
+
     fn max(self, other: Self) -> Self;
     fn min(self, other: Self) -> Self;
+    fn clamp(self, min: Self, max: Self) -> Self;
     fn atan2(self, other: Self) -> Self;
 
     fn pi() -> Self;
@@ -53,6 +47,26 @@ pub trait RealField:
     fn ln_10() -> Self;
 }
 
+/// Trait shared by all reals.
+///
+/// Reals are equipped with functions that are commonly used on reals. The results of those
+/// functions only have to be approximately equal to the actual theoretical values.
+// FIXME: SubsetOf should be removed when specialization will be supported by rustc. This will
+// allow a blanket impl: impl<T: Clone> SubsetOf<T> for T { ... }
+// NOTE: make all types debuggable/'static/Any ? This seems essential for any kind of generic programming.
+pub trait RealField:
+    SimdFriendlyRealField<Bool = bool>
+    + RelativeEq<Epsilon = Self>
+    + Lattice
+    + UlpsEq<Epsilon = Self>
+    + Signed
+{
+    /// Is the sign of this real number positive?
+    fn is_sign_positive(self) -> bool;
+    /// Is the sign of this real number negative?
+    fn is_sign_negative(self) -> bool;
+}
+
 macro_rules! impl_real(
     ($($T:ty, $M:ident, $libm: ident);*) => ($(
         impl RealField for $T {
@@ -65,6 +79,40 @@ macro_rules! impl_real(
             fn is_sign_negative(self) -> bool {
                 $M::is_sign_negative(self)
             }
+        }
+
+        impl SimdFriendlyRealField for $T {
+            type Bool = bool;
+
+            #[inline]
+            fn gt(self, other: Self) -> Self::Bool {
+                self > other
+            }
+
+            #[inline]
+            fn lt(self, other: Self) -> Self::Bool {
+                self < other
+            }
+
+            #[inline]
+            fn ge(self, other: Self) -> Self::Bool {
+                self >= other
+            }
+
+            #[inline]
+            fn le(self, other: Self) -> Self::Bool {
+                self <= other
+            }
+
+            #[inline]
+            fn eq(self, other: Self) -> Self::Bool {
+                self == other
+            }
+
+            #[inline]
+            fn neq(self, other: Self) -> Self::Bool {
+                self != other
+            }
 
             #[inline]
             fn max(self, other: Self) -> Self {
@@ -74,6 +122,17 @@ macro_rules! impl_real(
             #[inline]
             fn min(self, other: Self) -> Self {
                 $M::min(self, other)
+            }
+
+            #[inline]
+            fn clamp(self, min: Self, max: Self) -> Self {
+                if self < min {
+                    min
+                } else if self > max {
+                    max
+                } else {
+                    self
+                }
             }
 
             #[inline]

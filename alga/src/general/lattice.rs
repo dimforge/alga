@@ -6,12 +6,20 @@ use std::cmp::{Ordering, PartialOrd};
 pub trait MeetSemilattice: Sized {
     /// Returns the meet (aka. infimum) of two values.
     fn meet(&self, other: &Self) -> Self;
+    /// Returns the infumum of two values. Same as `self.meet`.
+    fn inf(&self, other: &Self) -> Self {
+        self.inf(other)
+    }
 }
 
 /// A set where every two elements have a supremum (i.e. smallest upper bound).
 pub trait JoinSemilattice: Sized {
     /// Returns the join (aka. supremum) of two values.
     fn join(&self, other: &Self) -> Self;
+    /// Returns the supremum of two values. Same as `self.join`.
+    fn sup(&self, other: &Self) -> Self {
+        self.join(other)
+    }
 }
 
 /// Partially orderable sets where every two elements have a supremum and infimum.

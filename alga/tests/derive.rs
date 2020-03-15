@@ -4,13 +4,13 @@ extern crate alga_derive;
 extern crate approx;
 extern crate quickcheck;
 
-use alga::general::{AbstractMagma, Additive, Identity, Multiplicative, TwoSidedInverse, Field};
+use alga::general::{AbstractMagma, Additive, Field, Identity, Multiplicative, TwoSidedInverse};
 
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
+use num_traits::{One, Zero};
 use quickcheck::{Arbitrary, Gen};
-use num_traits::{Zero, One};
-use std::ops::{Add, AddAssign, Sub, SubAssign, Neg, Mul, MulAssign, Div, DivAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Alga, Clone, PartialEq, Debug)]
 #[alga_traits(Field(Additive, Multiplicative))]
@@ -157,7 +157,6 @@ impl Mul<W> for W {
     }
 }
 
-
 impl Div<W> for W {
     type Output = W;
 
@@ -171,7 +170,6 @@ impl MulAssign<W> for W {
         self.0 *= rhs.0
     }
 }
-
 
 impl DivAssign<W> for W {
     fn div_assign(&mut self, rhs: W) {

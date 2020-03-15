@@ -1,4 +1,4 @@
-use num;
+use num::{self, One, Zero};
 use num_complex::Complex;
 
 use std::ops::{
@@ -6,6 +6,7 @@ use std::ops::{
 };
 
 use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, ComplexField, Field, Module, RealField};
+use crate::simd::SimdBool;
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
@@ -59,18 +60,12 @@ pub trait InnerSpace: NormedSpace {
         let n1 = self.norm();
         let n2 = other.norm();
 
-        if n1 == num::zero() || n2 == num::zero() {
+        if n1.is_zero() || n2.is_zero() {
             num::zero()
         } else {
-            let cang = prod.real() * n1 * n2;
-
-            if cang > num::one() {
-                num::zero()
-            } else if cang < -num::one::<Self::RealField>() {
-                Self::RealField::pi()
-            } else {
-                cang.acos()
-            }
+            let cang =
+                (prod.real() * n1 * n2).clamp(-Self::RealField::one(), Self::RealField::one());
+            cang.acos()
         }
     }
 }
@@ -318,7 +313,7 @@ impl<N: RealField> NormedSpace for Complex<N> {
     #[inline]
     fn try_normalize(&self, eps: Self::RealField) -> Option<Self> {
         let norm = self.norm_sqr();
-        if norm > eps * eps {
+        if norm.gt(eps * eps).all() {
             Some(*self / norm.sqrt())
         } else {
             None
@@ -328,7 +323,7 @@ impl<N: RealField> NormedSpace for Complex<N> {
     #[inline]
     fn try_normalize_mut(&mut self, eps: Self::RealField) -> Option<Self::RealField> {
         let sq_norm = self.norm_sqr();
-        if sq_norm > eps * eps {
+        if sq_norm.gt(eps * eps).all() {
             let norm = sq_norm.sqrt();
             *self /= norm;
             Some(norm)

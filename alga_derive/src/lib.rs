@@ -91,11 +91,12 @@ fn get_closest_trait(tra1t: &str) -> &str {
         "Ring",
         "RingCommutative",
         "Field",
-    ].iter()
-        .map(|t| (ed::edit_distance(t, tra1t), t))
-        .min()
-        .expect("Hardcoded array which we are iterating should never be empty. Programming error.")
-        .1
+    ]
+    .iter()
+    .map(|t| (ed::edit_distance(t, tra1t), t))
+    .min()
+    .expect("Hardcoded array which we are iterating should never be empty. Programming error.")
+    .1
 }
 
 fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
@@ -107,57 +108,64 @@ fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
         "Group" => vec!["Monoid", "Quasigroup", "Loop", "Semigroup"],
         "GroupAbelian" => vec!["Group", "Monoid", "Quasigroup", "Loop", "Semigroup"],
         _ => match tra1t {
-            "Ring" => if op == 0 {
-                vec![
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            } else {
-                vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
-            },
-            "RingCommutative" => if op == 0 {
-                vec![
-                    "Ring",
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            } else {
-                vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
-            },
-            "Field" => if op == 0 {
-                vec![
-                    "RingCommutative",
-                    "Ring",
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            } else {
-                vec![
-                    "GroupAbelian",
-                    "Group",
-                    "Monoid",
-                    "Quasigroup",
-                    "Loop",
-                    "Semigroup",
-                ]
-            },
+            "Ring" => {
+                if op == 0 {
+                    vec![
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                } else {
+                    vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
+                }
+            }
+            "RingCommutative" => {
+                if op == 0 {
+                    vec![
+                        "Ring",
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                } else {
+                    vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
+                }
+            }
+            "Field" => {
+                if op == 0 {
+                    vec![
+                        "RingCommutative",
+                        "Ring",
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                } else {
+                    vec![
+                        "GroupAbelian",
+                        "Group",
+                        "Monoid",
+                        "Quasigroup",
+                        "Loop",
+                        "Semigroup",
+                    ]
+                }
+            }
             _ => panic!("Unknown Alga trait `{}`. Programming error.", tra1t),
         },
-    }.into_iter()
-        .map(String::from)
-        .collect()
+    }
+    .into_iter()
+    .map(String::from)
+    .collect()
 }
 
 fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
@@ -169,26 +177,31 @@ fn get_props(tra1t: &str) -> Vec<(Ident, Ident, usize)> {
         "Ring" => vec![("prop_mul_and_add_are_distributive", 3)],
         "RingCommutative" => vec![("prop_mul_is_commutative", 2)],
         _ => vec![],
-    }.into_iter()
-        .map(|(n, p)| {
-            (
-                Ident::new(&format!("Abstract{}", tra1t), Span::call_site()),
-                Ident::new(&format!("{}_approx", n), Span::call_site()),
-                p,
-            )
-        })
-        .collect()
+    }
+    .into_iter()
+    .map(|(n, p)| {
+        (
+            Ident::new(&format!("Abstract{}", tra1t), Span::call_site()),
+            Ident::new(&format!("{}_approx", n), Span::call_site()),
+            p,
+        )
+    })
+    .collect()
 }
 
 fn path_to_ident(p: &Path) -> &Ident {
-    p.get_ident()
-        .unwrap_or_else(|| panic!("Unable to determine trait from path: `{}`.", quote!(#p).to_string()))
+    p.get_ident().unwrap_or_else(|| {
+        panic!(
+            "Unable to determine trait from path: `{}`.",
+            quote!(#p).to_string()
+        )
+    })
 }
 
 /// Implementation of the custom derive
 #[proc_macro_derive(Alga, attributes(alga_traits, alga_quickcheck))]
 pub fn derive_alga(input: TokenStream) -> TokenStream {
-    use syn::{parse_macro_input, DeriveInput, NestedMeta, Meta, Lit, TypeParam, GenericParam};
+    use syn::{parse_macro_input, DeriveInput, GenericParam, Lit, Meta, NestedMeta, TypeParam};
 
     let item = parse_macro_input!(input as DeriveInput);
     let name = &item.ident;
@@ -246,8 +259,9 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
             if valid_clause_place {
                 let len = traits.len();
                 if let NestedMeta::Lit(Lit::Str(ref clause)) = value[0] {
-                    let mut clause = syn::parse_str::<syn::WhereClause>(&format!("where {}", clause.value()))
-                        .expect("Where clauses bound was invalid.");
+                    let mut clause =
+                        syn::parse_str::<syn::WhereClause>(&format!("where {}", clause.value()))
+                            .expect("Where clauses bound was invalid.");
                     if let Some(w) = w {
                         clause.predicates.extend(w.predicates.clone());
                     }
@@ -343,7 +357,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     get_dependencies(&name, 1)
                         .into_iter()
                         .map(|n| create_tuple(&n, 1)),
-                ).collect()
+                )
+                .collect()
             }
         })
         .unzip4();
@@ -363,7 +378,8 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         };
     );
 
-    if let Some((_, checked_generics)) = item.attrs
+    if let Some((_, checked_generics)) = item
+        .attrs
         .iter()
         .filter_map(|a| match a.parse_meta() {
             Ok(Meta::Path(name)) => Some((path_to_ident(&name).clone(), None)),
@@ -422,12 +438,19 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     if !name_gens.is_empty() {
                         name_gens = format!("_{}", name_gens);
                     }
-                    let test_name = Ident::new(&format!(
-                        "{}_for_{}{}_as_{}{}",
-                        check, name, name_gens, tra1t, show_ops
-                    ), Span::call_site());
+                    let test_name = Ident::new(
+                        &format!(
+                            "{}_for_{}{}_as_{}{}",
+                            check, name, name_gens, tra1t, show_ops
+                        ),
+                        Span::call_site(),
+                    );
                     let check_generics = Generics {
-                        params: check_generics.iter().cloned().map(|ident| GenericParam::Type(TypeParam::from(ident))).collect(),
+                        params: check_generics
+                            .iter()
+                            .cloned()
+                            .map(|ident| GenericParam::Type(TypeParam::from(ident)))
+                            .collect(),
                         ..Default::default()
                     };
                     let generics1 = once(&check_generics).cycle();
