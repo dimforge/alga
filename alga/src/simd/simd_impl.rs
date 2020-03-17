@@ -1,13 +1,14 @@
 #![allow(missing_docs)]
+#![allow(non_camel_case_types)] // For the simd type aliases.
 //! Traits for SIMD values.
 
-#[cfg(feature = "simd")]
 use crate::general::*;
+use crate::simd::{
+    SimdBool, SimdComplexField, SimdPartialOrd, SimdRealField, SimdSigned, SimdValue,
+};
 #[cfg(feature = "decimal")]
 use decimal::d128;
-#[cfg(feature = "simd")]
 use num::{FromPrimitive, Num, One, Zero};
-#[cfg(feature = "simd")]
 use std::{
     fmt,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Rem, RemAssign, Sub, SubAssign},
@@ -18,10 +19,8 @@ use std::{
 /// This is needed to overcome the orphan rules.
 #[repr(transparent)]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-#[cfg(feature = "simd")]
 pub struct Simd<N: SimdValue>(pub N);
 
-#[cfg(feature = "simd")]
 impl<N: SimdValue> fmt::Display for Simd<N>
 where
     N::Element: fmt::Display,
@@ -41,46 +40,6 @@ where
     }
 }
 
-/// Trait implemented by Simd types as well as scalar types (f32, u32, etc.).
-pub trait SimdValue: Copy {
-    /// The type of the elements of each lane of this SIMD value.
-    type Element: Copy;
-
-    fn lanes() -> usize;
-    fn splat(val: Self::Element) -> Self;
-    fn extract(self, i: usize) -> Self::Element;
-    unsafe fn extract_unchecked(self, i: usize) -> Self::Element;
-    fn replace(self, i: usize, val: Self::Element) -> Self;
-    unsafe fn replace_unchecked(self, i: usize, val: Self::Element) -> Self;
-
-    #[inline(always)]
-    fn map(self, f: impl Fn(Self::Element) -> Self::Element) -> Self {
-        let mut result = self;
-
-        for i in 0..Self::lanes() {
-            unsafe { result = result.replace_unchecked(i, f(self.extract_unchecked(i))) }
-        }
-
-        result
-    }
-
-    #[inline(always)]
-    fn zip_map(self, b: Self, f: impl Fn(Self::Element, Self::Element) -> Self::Element) -> Self {
-        let mut result = self;
-
-        for i in 0..Self::lanes() {
-            unsafe {
-                let a = self.extract_unchecked(i);
-                let b = b.extract_unchecked(i);
-                result = result.replace_unchecked(i, f(a, b))
-            }
-        }
-
-        result
-    }
-}
-
-#[cfg(feature = "simd")]
 impl<N: SimdValue> SimdValue for Simd<N> {
     type Element = N::Element;
 
@@ -112,47 +71,6 @@ impl<N: SimdValue> SimdValue for Simd<N> {
     #[inline(always)]
     unsafe fn replace_unchecked(self, i: usize, val: Self::Element) -> Self {
         Simd(self.0.replace_unchecked(i, val))
-    }
-}
-
-pub trait SimdBool: Copy {
-    fn and(self) -> bool;
-    fn or(self) -> bool;
-    fn xor(self) -> bool;
-    fn all(self) -> bool;
-    fn any(self) -> bool;
-    fn none(self) -> bool;
-}
-
-impl SimdBool for bool {
-    #[inline(always)]
-    fn and(self) -> bool {
-        self
-    }
-
-    #[inline(always)]
-    fn or(self) -> bool {
-        self
-    }
-
-    #[inline(always)]
-    fn xor(self) -> bool {
-        self
-    }
-
-    #[inline(always)]
-    fn all(self) -> bool {
-        self
-    }
-
-    #[inline(always)]
-    fn any(self) -> bool {
-        self
-    }
-
-    #[inline(always)]
-    fn none(self) -> bool {
-        !self
     }
 }
 
@@ -198,7 +116,6 @@ impl_simd_value_for_scalar!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, 
 #[cfg(feature = "decimal")]
 impl_simd_value_for_scalar!(d128);
 
-#[cfg(feature = "simd")]
 macro_rules! impl_simd_bool(
     ($($t: ty;)*) => {$(
         impl SimdBool for $t {
@@ -235,7 +152,6 @@ macro_rules! impl_simd_bool(
     )*}
 );
 
-#[cfg(feature = "simd")]
 macro_rules! impl_scalar_subset_of_simd(
     ($($t: ty),*) => {$(
         impl<N2: SimdValue> SubsetOf<Simd<N2>> for $t
@@ -260,9 +176,8 @@ macro_rules! impl_scalar_subset_of_simd(
     )*}
 );
 
-#[cfg(feature = "simd")]
 impl_scalar_subset_of_simd!(u8, u16, u32, u64, usize, i8, i16, i32, i64, isize, f32, f64);
-#[cfg(all(feature = "decimal", feature = "simd"))]
+#[cfg(feature = "decimal")]
 impl_scalar_subset_of_simd!(d128);
 
 macro_rules! impl_simd_value(
@@ -303,9 +218,8 @@ macro_rules! impl_simd_value(
     )*)
 );
 
-#[cfg(feature = "simd")]
 macro_rules! impl_uint_simd(
-    ($($t: ty, $elt: ty;)*) => ($(
+    ($($t: ty, $elt: ty, $bool: ty;)*) => ($(
         impl_simd_value!($t, $elt;);
 
         impl SubsetOf<Simd<$t>> for Simd<$t> {
@@ -501,6 +415,54 @@ macro_rules! impl_uint_simd(
             }
         }
 
+        impl SimdPartialOrd for Simd<$t> {
+            type SimdBool = $bool;
+
+            #[inline(always)]
+            fn simd_gt(self, other: Self) -> Self::SimdBool {
+                self.0.gt(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_lt(self, other: Self) -> Self::SimdBool {
+                self.0.lt(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_ge(self, other: Self) -> Self::SimdBool {
+                self.0.ge(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_le(self, other: Self) -> Self::SimdBool {
+                self.0.le(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_eq(self, other: Self) -> Self::SimdBool {
+                self.0.eq(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_ne(self, other: Self) -> Self::SimdBool {
+                self.0.ne(other.0)
+            }
+
+            #[inline(always)]
+            fn simd_max(self, other: Self) -> Self {
+                Simd(self.0.max(other.0))
+            }
+            #[inline(always)]
+            fn simd_min(self, other: Self) -> Self {
+                Simd(self.0.min(other.0))
+            }
+
+            #[inline(always)]
+            fn simd_clamp(self, min: Self, max: Self) -> Self {
+                self.simd_max(min).simd_min(max)
+            }
+        }
+
         impl MeetSemilattice for Simd<$t> {
             #[inline(always)]
             fn meet(&self, other: &Self) -> Self {
@@ -551,10 +513,9 @@ macro_rules! impl_uint_simd(
     )*)
 );
 
-#[cfg(feature = "simd")]
 macro_rules! impl_int_simd(
-    ($($t: ty, $elt: ty;)*) => ($(
-        impl_uint_simd!($t, $elt;);
+    ($($t: ty, $elt: ty, $bool: ty;)*) => ($(
+        impl_uint_simd!($t, $elt, $bool;);
 
         impl Neg for Simd<$t> {
             type Output = Self;
@@ -594,10 +555,46 @@ macro_rules! impl_int_simd(
     )*)
 );
 
-#[cfg(feature = "simd")]
 macro_rules! impl_float_simd(
     ($($t: ty, $elt: ty, $bool: ty;)*) => ($(
-        impl_int_simd!($t, $elt;);
+        impl_int_simd!($t, $elt, $bool;);
+
+        // FIXME: this should be part of impl_int_simd
+        // but those methods do not seem to be implemented
+        // by packed_simd for integers.
+        impl SimdSigned for Simd<$t> {
+            type SimdBool = $bool;
+
+            #[inline(always)]
+            fn simd_abs(&self) -> Self {
+                Simd(self.0.abs())
+            }
+
+            #[inline(always)]
+            fn simd_abs_sub(&self, other: &Self) -> Self {
+                Simd((self.0 - other.0).max(Self::zero().0))
+            }
+
+            #[inline(always)]
+            fn simd_signum(&self) -> Self {
+                // NOTE: is there a more efficient way of doing this?
+                let zero = Self::zero().0;
+                let one = Self::one().0;
+                let gt = self.0.gt(zero);
+                let lt = self.0.lt(zero);
+                Simd(lt.select(-one, gt.select(one, zero)))
+            }
+
+            #[inline(always)]
+            fn is_simd_positive(&self) -> Self::SimdBool {
+                self.simd_gt(Self::zero())
+            }
+
+            #[inline(always)]
+            fn is_simd_negative(&self) -> Self::SimdBool {
+                self.simd_lt(Self::zero())
+            }
+        }
 
         impl TwoSidedInverse<Multiplicative> for Simd<$t> {
             #[inline(always)]
@@ -613,52 +610,6 @@ macro_rules! impl_float_simd(
         impl AbstractField<Additive, Multiplicative> for Simd<$t> {}
 
         impl SimdRealField for Simd<$t> {
-            type SimdBool = $bool;
-
-            #[inline(always)]
-            fn simd_gt(self, other: Self) -> Self::SimdBool {
-                self.0.gt(other.0)
-            }
-
-            #[inline(always)]
-            fn simd_lt(self, other: Self) -> Self::SimdBool {
-                self.0.lt(other.0)
-            }
-
-            #[inline(always)]
-            fn simd_ge(self, other: Self) -> Self::SimdBool {
-                self.0.ge(other.0)
-            }
-
-            #[inline(always)]
-            fn simd_le(self, other: Self) -> Self::SimdBool {
-                self.0.le(other.0)
-            }
-
-            #[inline(always)]
-            fn simd_eq(self, other: Self) -> Self::SimdBool {
-                self.0.eq(other.0)
-            }
-
-            #[inline(always)]
-            fn simd_ne(self, other: Self) -> Self::SimdBool {
-                self.0.ne(other.0)
-            }
-
-            #[inline(always)]
-            fn simd_max(self, other: Self) -> Self {
-                Simd(self.0.max(other.0))
-            }
-            #[inline(always)]
-            fn simd_min(self, other: Self) -> Self {
-                Simd(self.0.min(other.0))
-            }
-
-            #[inline(always)]
-            fn simd_clamp(self, min: Self, max: Self) -> Self {
-                self.simd_max(min).simd_min(max)
-            }
-
             #[inline(always)]
             fn simd_atan2(self, other: Self) -> Self {
                 self.zip_map(other, |a, b| a.atan2(b))
@@ -745,21 +696,6 @@ macro_rules! impl_float_simd(
             type SimdRealField = Self;
 
             #[inline(always)]
-            fn simd_zero() -> Self {
-                Self::splat(<$elt>::zero())
-            }
-
-            #[inline(always)]
-            fn is_simd_zero(self) -> bool {
-                self == Self::simd_zero()
-            }
-
-            #[inline(always)]
-            fn simd_one() -> Self {
-                Self::splat(<$elt>::one())
-            }
-
-            #[inline(always)]
             fn from_simd_real(re: Self::SimdRealField) -> Self {
                 re
             }
@@ -771,7 +707,7 @@ macro_rules! impl_float_simd(
 
             #[inline(always)]
             fn simd_imaginary(self) -> Self::SimdRealField {
-                Self::simd_zero()
+                Self::zero()
             }
 
             #[inline(always)]
@@ -803,7 +739,7 @@ macro_rules! impl_float_simd(
 
             #[inline(always)]
             fn simd_recip(self) -> Self {
-                Self::simd_one() / self
+                Self::one() / self
             }
 
             #[inline(always)]
@@ -1010,7 +946,6 @@ macro_rules! impl_float_simd(
     )*)
 );
 
-#[cfg(feature = "simd")]
 impl_float_simd!(
     packed_simd::f32x2, f32, packed_simd::m32x2;
     packed_simd::f32x4, f32, packed_simd::m32x4;
@@ -1021,63 +956,60 @@ impl_float_simd!(
     packed_simd::f64x8, f64, packed_simd::m64x8;
 );
 
-#[cfg(feature = "simd")]
 impl_int_simd!(
-    packed_simd::i128x1, i128;
-    packed_simd::i128x2, i128;
-    packed_simd::i128x4, i128;
-    packed_simd::i16x2, i16;
-    packed_simd::i16x4, i16;
-    packed_simd::i16x8, i16;
-    packed_simd::i16x16, i16;
-    packed_simd::i16x32, i16;
-    packed_simd::i32x2, i32;
-    packed_simd::i32x4, i32;
-    packed_simd::i32x8, i32;
-    packed_simd::i32x16, i32;
-    packed_simd::i64x2, i64;
-    packed_simd::i64x4, i64;
-    packed_simd::i64x8, i64;
-    packed_simd::i8x2, i8;
-    packed_simd::i8x4, i8;
-    packed_simd::i8x8, i8;
-    packed_simd::i8x16, i8;
-    packed_simd::i8x32, i8;
-    packed_simd::i8x64, i8;
-    packed_simd::isizex2, isize;
-    packed_simd::isizex4, isize;
-    packed_simd::isizex8, isize;
+    packed_simd::i128x1, i128, m128x1;
+    packed_simd::i128x2, i128, m128x2;
+    packed_simd::i128x4, i128, m128x4;
+    packed_simd::i16x2, i16, m16x2;
+    packed_simd::i16x4, i16, m16x4;
+    packed_simd::i16x8, i16, m16x8;
+    packed_simd::i16x16, i16, m16x16;
+    packed_simd::i16x32, i16, m16x32;
+    packed_simd::i32x2, i32, m32x2;
+    packed_simd::i32x4, i32, m32x4;
+    packed_simd::i32x8, i32, m32x8;
+    packed_simd::i32x16, i32, m32x16;
+    packed_simd::i64x2, i64, m64x2;
+    packed_simd::i64x4, i64, m64x4;
+    packed_simd::i64x8, i64, m64x8;
+    packed_simd::i8x2, i8, m8x2;
+    packed_simd::i8x4, i8, m8x4;
+    packed_simd::i8x8, i8, m8x8;
+    packed_simd::i8x16, i8, m8x16;
+    packed_simd::i8x32, i8, m8x32;
+    packed_simd::i8x64, i8, m8x64;
+    packed_simd::isizex2, isize, msizex2;
+    packed_simd::isizex4, isize, msizex4;
+    packed_simd::isizex8, isize, msizex8;
 );
 
-#[cfg(feature = "simd")]
 impl_uint_simd!(
-    packed_simd::u128x1, u128;
-    packed_simd::u128x2, u128;
-    packed_simd::u128x4, u128;
-    packed_simd::u16x2, u16;
-    packed_simd::u16x4, u16;
-    packed_simd::u16x8, u16;
-    packed_simd::u16x16, u16;
-    packed_simd::u16x32, u16;
-    packed_simd::u32x2, u32;
-    packed_simd::u32x4, u32;
-    packed_simd::u32x8, u32;
-    packed_simd::u32x16, u32;
-    packed_simd::u64x2, u64;
-    packed_simd::u64x4, u64;
-    packed_simd::u64x8, u64;
-    packed_simd::u8x2, u8;
-    packed_simd::u8x4, u8;
-    packed_simd::u8x8, u8;
-    packed_simd::u8x16, u8;
-    packed_simd::u8x32, u8;
-    packed_simd::u8x64, u8;
-    packed_simd::usizex2, usize;
-    packed_simd::usizex4, usize;
-    packed_simd::usizex8, usize;
+    packed_simd::u128x1, u128, m128x1;
+    packed_simd::u128x2, u128, m128x2;
+    packed_simd::u128x4, u128, m128x4;
+    packed_simd::u16x2, u16, m16x2;
+    packed_simd::u16x4, u16, m16x4;
+    packed_simd::u16x8, u16, m16x8;
+    packed_simd::u16x16, u16, m16x16;
+    packed_simd::u16x32, u16, m16x32;
+    packed_simd::u32x2, u32, m32x2;
+    packed_simd::u32x4, u32, m32x4;
+    packed_simd::u32x8, u32, m32x8;
+    packed_simd::u32x16, u32, m32x16;
+    packed_simd::u64x2, u64, m64x2;
+    packed_simd::u64x4, u64, m64x4;
+    packed_simd::u64x8, u64, m64x8;
+    packed_simd::u8x2, u8, m8x2;
+    packed_simd::u8x4, u8, m8x4;
+    packed_simd::u8x8, u8, m8x8;
+    packed_simd::u8x16, u8, m8x16;
+    packed_simd::u8x32, u8, m8x32;
+    packed_simd::u8x64, u8, m8x64;
+    packed_simd::usizex2, usize, msizex2;
+    packed_simd::usizex4, usize, msizex4;
+    packed_simd::usizex8, usize, msizex8;
 );
 
-#[cfg(feature = "simd")]
 impl_simd_value!(
     packed_simd::m128x1, bool;
     packed_simd::m128x2, bool;
@@ -1105,7 +1037,6 @@ impl_simd_value!(
     packed_simd::msizex8, bool;
 );
 
-#[cfg(feature = "simd")]
 impl_simd_bool!(
     packed_simd::m128x1;
     packed_simd::m128x2;
@@ -1132,3 +1063,86 @@ impl_simd_bool!(
     packed_simd::msizex4;
     packed_simd::msizex8;
 );
+
+///////////////////////////////////
+
+pub type f32x2 = Simd<packed_simd::f32x2>;
+pub type f32x4 = Simd<packed_simd::f32x4>;
+pub type f32x8 = Simd<packed_simd::f32x8>;
+pub type f32x16 = Simd<packed_simd::f32x16>;
+pub type f64x2 = Simd<packed_simd::f64x2>;
+pub type f64x4 = Simd<packed_simd::f64x4>;
+pub type f64x8 = Simd<packed_simd::f64x8>;
+pub type i128x1 = Simd<packed_simd::i128x1>;
+pub type i128x2 = Simd<packed_simd::i128x2>;
+pub type i128x4 = Simd<packed_simd::i128x4>;
+pub type i16x2 = Simd<packed_simd::i16x2>;
+pub type i16x4 = Simd<packed_simd::i16x4>;
+pub type i16x8 = Simd<packed_simd::i16x8>;
+pub type i16x16 = Simd<packed_simd::i16x16>;
+pub type i16x32 = Simd<packed_simd::i16x32>;
+pub type i32x2 = Simd<packed_simd::i32x2>;
+pub type i32x4 = Simd<packed_simd::i32x4>;
+pub type i32x8 = Simd<packed_simd::i32x8>;
+pub type i32x16 = Simd<packed_simd::i32x16>;
+pub type i64x2 = Simd<packed_simd::i64x2>;
+pub type i64x4 = Simd<packed_simd::i64x4>;
+pub type i64x8 = Simd<packed_simd::i64x8>;
+pub type i8x2 = Simd<packed_simd::i8x2>;
+pub type i8x4 = Simd<packed_simd::i8x4>;
+pub type i8x8 = Simd<packed_simd::i8x8>;
+pub type i8x16 = Simd<packed_simd::i8x16>;
+pub type i8x32 = Simd<packed_simd::i8x32>;
+pub type i8x64 = Simd<packed_simd::i8x64>;
+pub type isizex2 = Simd<packed_simd::isizex2>;
+pub type isizex4 = Simd<packed_simd::isizex4>;
+pub type isizex8 = Simd<packed_simd::isizex8>;
+pub type u128x1 = Simd<packed_simd::u128x1>;
+pub type u128x2 = Simd<packed_simd::u128x2>;
+pub type u128x4 = Simd<packed_simd::u128x4>;
+pub type u16x2 = Simd<packed_simd::u16x2>;
+pub type u16x4 = Simd<packed_simd::u16x4>;
+pub type u16x8 = Simd<packed_simd::u16x8>;
+pub type u16x16 = Simd<packed_simd::u16x16>;
+pub type u16x32 = Simd<packed_simd::u16x32>;
+pub type u32x2 = Simd<packed_simd::u32x2>;
+pub type u32x4 = Simd<packed_simd::u32x4>;
+pub type u32x8 = Simd<packed_simd::u32x8>;
+pub type u32x16 = Simd<packed_simd::u32x16>;
+pub type u64x2 = Simd<packed_simd::u64x2>;
+pub type u64x4 = Simd<packed_simd::u64x4>;
+pub type u64x8 = Simd<packed_simd::u64x8>;
+pub type u8x2 = Simd<packed_simd::u8x2>;
+pub type u8x4 = Simd<packed_simd::u8x4>;
+pub type u8x8 = Simd<packed_simd::u8x8>;
+pub type u8x16 = Simd<packed_simd::u8x16>;
+pub type u8x32 = Simd<packed_simd::u8x32>;
+pub type u8x64 = Simd<packed_simd::u8x64>;
+pub type usizex2 = Simd<packed_simd::usizex2>;
+pub type usizex4 = Simd<packed_simd::usizex4>;
+pub type usizex8 = Simd<packed_simd::usizex8>;
+
+pub use packed_simd::m128x1;
+pub use packed_simd::m128x2;
+pub use packed_simd::m128x4;
+pub use packed_simd::m16x16;
+pub use packed_simd::m16x2;
+pub use packed_simd::m16x32;
+pub use packed_simd::m16x4;
+pub use packed_simd::m16x8;
+pub use packed_simd::m32x16;
+pub use packed_simd::m32x2;
+pub use packed_simd::m32x4;
+pub use packed_simd::m32x8;
+pub use packed_simd::m64x2;
+pub use packed_simd::m64x4;
+pub use packed_simd::m64x8;
+pub use packed_simd::m8x16;
+pub use packed_simd::m8x2;
+pub use packed_simd::m8x32;
+pub use packed_simd::m8x4;
+pub use packed_simd::m8x64;
+pub use packed_simd::m8x8;
+pub use packed_simd::msizex2;
+pub use packed_simd::msizex4;
+pub use packed_simd::msizex8;

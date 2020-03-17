@@ -3,49 +3,12 @@ use std::{f32, f64};
 
 use approx::{RelativeEq, UlpsEq};
 
-use crate::general::{ComplexField, Lattice, SimdComplexField, SimdBool};
+use crate::general::{ComplexField, Lattice};
 
 #[cfg(not(feature = "std"))]
 use num::Float;
 //#[cfg(feature = "decimal")]
 //use decimal::d128;
-
-/// Trait shared by all SIMD reals.
-#[allow(missing_docs)]
-pub trait SimdRealField:
-    SimdComplexField<SimdRealField = Self>
-{
-    type SimdBool: SimdBool;
-
-    fn simd_gt(self, other: Self) -> Self::SimdBool;
-    fn simd_lt(self, other: Self) -> Self::SimdBool;
-    fn simd_ge(self, other: Self) -> Self::SimdBool;
-    fn simd_le(self, other: Self) -> Self::SimdBool;
-    fn simd_eq(self, other: Self) -> Self::SimdBool;
-    fn simd_ne(self, other: Self) -> Self::SimdBool;
-
-    fn simd_max(self, other: Self) -> Self;
-    fn simd_min(self, other: Self) -> Self;
-    fn simd_clamp(self, min: Self, max: Self) -> Self;
-    fn simd_atan2(self, other: Self) -> Self;
-
-    fn simd_pi() -> Self;
-    fn simd_two_pi() -> Self;
-    fn simd_frac_pi_2() -> Self;
-    fn simd_frac_pi_3() -> Self;
-    fn simd_frac_pi_4() -> Self;
-    fn simd_frac_pi_6() -> Self;
-    fn simd_frac_pi_8() -> Self;
-    fn simd_frac_1_pi() -> Self;
-    fn simd_frac_2_pi() -> Self;
-    fn simd_frac_2_sqrt_pi() -> Self;
-
-    fn simd_e() -> Self;
-    fn simd_log2_e() -> Self;
-    fn simd_log10_e() -> Self;
-    fn simd_ln_2() -> Self;
-    fn simd_ln_10() -> Self;
-}
 
 /// Trait shared by all reals.
 #[allow(missing_docs)]
@@ -224,118 +187,3 @@ impl_real!(f32,f32,Float; f64,f64,Float);
 impl_real!(f32,f32,f32; f64,f64,f64);
 //#[cfg(feature = "decimal")]
 //impl_real!(d128, d128, d128);
-
-
-// Blanket impl RealField => SimdRealField
-impl<T: RealField> SimdRealField for T {
-    type SimdBool = bool;
-
-    #[inline(always)]
-    fn simd_gt(self, other: Self) -> Self::SimdBool {
-        self > other
-    }
-
-    #[inline(always)]
-    fn simd_lt(self, other: Self) -> Self::SimdBool {
-        self < other
-    }
-
-    #[inline(always)]
-    fn simd_ge(self, other: Self) -> Self::SimdBool {
-        self >= other
-    }
-
-    #[inline(always)]
-    fn simd_le(self, other: Self) -> Self::SimdBool {
-        self <= other
-    }
-
-    #[inline(always)]
-    fn simd_eq(self, other: Self) -> Self::SimdBool {
-        self == other
-    }
-
-    #[inline(always)]
-    fn simd_ne(self, other: Self) -> Self::SimdBool {
-        self != other
-    }
-
-    #[inline(always)]
-    fn simd_max(self, other: Self) -> Self {
-        self.max(other)
-    }
-    #[inline(always)]
-    fn simd_min(self, other: Self) -> Self {
-        self.min(other)
-    }
-    #[inline(always)]
-    fn simd_clamp(self, min: Self, max: Self) -> Self {
-        self.clamp(min, max)
-    }
-    #[inline(always)]
-    fn simd_atan2(self, other: Self) -> Self {
-        self.atan2(other)
-    }
-
-    #[inline(always)]
-    fn simd_pi() -> Self {
-        Self::pi()
-    }
-    #[inline(always)]
-    fn simd_two_pi() -> Self {
-        Self::two_pi()
-    }
-    #[inline(always)]
-    fn simd_frac_pi_2() -> Self {
-        Self::frac_pi_2()
-    }
-    #[inline(always)]
-    fn simd_frac_pi_3() -> Self {
-        Self::frac_pi_3()
-    }
-    #[inline(always)]
-    fn simd_frac_pi_4() -> Self {
-        Self::frac_pi_4()
-    }
-    #[inline(always)]
-    fn simd_frac_pi_6() -> Self {
-        Self::frac_pi_6()
-    }
-    #[inline(always)]
-    fn simd_frac_pi_8() -> Self {
-        Self::frac_pi_8()
-    }
-    #[inline(always)]
-    fn simd_frac_1_pi() -> Self {
-        Self::frac_1_pi()
-    }
-    #[inline(always)]
-    fn simd_frac_2_pi() -> Self {
-        Self::frac_2_pi()
-    }
-    #[inline(always)]
-    fn simd_frac_2_sqrt_pi() -> Self {
-        Self::frac_2_sqrt_pi()
-    }
-
-    #[inline(always)]
-    fn simd_e() -> Self {
-        Self::e()
-    }
-    #[inline(always)]
-    fn simd_log2_e() -> Self {
-        Self::log2_e()
-    }
-    #[inline(always)]
-    fn simd_log10_e() -> Self {
-        Self::log10_e()
-    }
-    #[inline(always)]
-    fn simd_ln_2() -> Self {
-        Self::ln_2()
-    }
-    #[inline(always)]
-    fn simd_ln_10() -> Self {
-        Self::ln_10()
-    }
-}

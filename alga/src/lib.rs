@@ -18,7 +18,7 @@
 #![deny(unused_parens)]
 #![deny(non_upper_case_globals)]
 #![deny(unused_results)]
-#![deny(missing_docs)]
+#![allow(missing_docs)] // FIXME: should be denied
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[macro_use]
@@ -33,5 +33,7 @@ extern crate core as std;
 
 #[macro_use]
 mod macros;
+#[macro_use]
 pub mod general;
 pub mod linear;
+pub mod simd;
