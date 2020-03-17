@@ -163,7 +163,7 @@ pub use self::operator::{
 };
 pub use self::subset::{SubsetOf, SupersetOf};
 
-pub use self::complex::{SimdComplexField, ComplexField};
+pub use self::complex::{ComplexField, SimdComplexField};
 pub use self::lattice::{JoinSemilattice, Lattice, MeetSemilattice};
 pub use self::module::AbstractModule;
 pub use self::one_operator::{
@@ -171,6 +171,7 @@ pub use self::one_operator::{
     AbstractQuasigroup, AbstractSemigroup,
 };
 pub use self::real::{RealField, SimdRealField};
+pub use self::simd::{SimdBool, SimdValue};
 pub use self::specialized::{
     AdditiveGroup, AdditiveGroupAbelian, AdditiveLoop, AdditiveMagma, AdditiveMonoid,
     AdditiveQuasigroup, AdditiveSemigroup, Field, Module, MultiplicativeGroup,
@@ -178,7 +179,6 @@ pub use self::specialized::{
     MultiplicativeQuasigroup, MultiplicativeSemigroup, Ring, RingCommutative,
 };
 pub use self::two_operators::{AbstractField, AbstractRing, AbstractRingCommutative};
-pub use self::simd::{SimdBool, SimdValue, MultiLanesSimdValue};
 
 #[macro_use]
 mod one_operator;
@@ -188,12 +188,12 @@ mod lattice;
 mod module;
 mod operator;
 mod real;
+mod simd;
 mod specialized;
 mod subset;
 mod two_operators;
 #[doc(hidden)]
 pub mod wrapper;
-mod simd;
 
 #[deprecated(note = "This has been renamed `RealField`.")]
 /// The field of reals. This has been renamed to `RealField`.
