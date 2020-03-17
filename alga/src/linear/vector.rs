@@ -6,6 +6,7 @@ use std::ops::{
 };
 
 use crate::general::{ClosedAdd, ClosedDiv, ClosedMul, ComplexField, Field, Module, RealField};
+use crate::simd::{SimdComplexField, SimdPartialOrd, SimdRealField};
 
 /// A vector space has a module structure over a field instead of a ring.
 pub trait VectorSpace: Module<Ring = <Self as VectorSpace>::Field>
@@ -19,9 +20,9 @@ ClosedDiv<<Self as VectorSpace>::Field> */
 /// A normed vector space.
 pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::ComplexField> {
     /// The result of the norm (not necessarily the same same as the field used by this vector space).
-    type RealField: RealField;
+    type RealField: SimdRealField;
     /// The field of this space must be this complex number.
-    type ComplexField: ComplexField<RealField = Self::RealField>;
+    type ComplexField: SimdComplexField<SimdRealField = Self::RealField>;
 
     /// The squared norm of this vector.
     fn norm_squared(&self) -> Self::RealField;
@@ -36,12 +37,16 @@ pub trait NormedSpace: VectorSpace<Field = <Self as NormedSpace>::ComplexField> 
     fn normalize_mut(&mut self) -> Self::RealField;
 
     /// Returns a normalized version of this vector unless its norm as smaller or equal to `eps`.
-    fn try_normalize(&self, eps: Self::RealField) -> Option<Self>;
+    fn try_normalize(&self, eps: Self::RealField) -> Option<Self>
+    where
+        Self::RealField: RealField;
 
     /// Normalizes this vector in-place or does nothing if its norm is smaller or equal to `eps`.
     ///
     /// If the normalization succeeded, returns the old norm of this vector.
-    fn try_normalize_mut(&mut self, eps: Self::RealField) -> Option<Self::RealField>;
+    fn try_normalize_mut(&mut self, eps: Self::RealField) -> Option<Self::RealField>
+    where
+        Self::RealField: RealField;
 }
 
 /// A vector space equipped with an inner product.
@@ -62,9 +67,9 @@ pub trait InnerSpace: NormedSpace {
         if n1.is_zero() || n2.is_zero() {
             num::zero()
         } else {
-            let cang =
-                (prod.real() * n1 * n2).clamp(-Self::RealField::one(), Self::RealField::one());
-            cang.acos()
+            let cang = (prod.simd_real() * n1 * n2)
+                .simd_clamp(-Self::RealField::one(), Self::RealField::one());
+            cang.simd_acos()
         }
     }
 }
@@ -110,13 +115,17 @@ pub trait FiniteDimInnerSpace:
     /// Orthonormalizes the given family of vectors. The largest free family of vectors is moved at
     /// the beginning of the array and its size is returned. Vectors at an indices larger or equal to
     /// this length can be modified to an arbitrary value.
-    fn orthonormalize(vs: &mut [Self]) -> usize;
+    fn orthonormalize(vs: &mut [Self]) -> usize
+    where
+        Self::ComplexField: ComplexField;
 
     /// Applies the given closure to each element of the orthonormal basis of the subspace
     /// orthogonal to free family of vectors `vs`. If `vs` is not a free family, the result is
     /// unspecified.
     // XXX: return an iterator instead when `-> impl Iterator` will be supported by Rust.
-    fn orthonormal_subspace_basis<F: FnMut(&Self) -> bool>(vs: &[Self], f: F);
+    fn orthonormal_subspace_basis<F: FnMut(&Self) -> bool>(vs: &[Self], f: F)
+    where
+        Self::ComplexField: ComplexField;
 }
 
 /// A set points associated with a vector space and a transitive and free additive group action
@@ -175,7 +184,7 @@ pub trait EuclideanSpace: AffineSpace<Translation = <Self as EuclideanSpace>::Co
     // Though it will work if only one bound is used… looks like a compiler bug.
 
     /// The underlying reals.
-    type RealField: RealField;
+    type RealField: SimdRealField;
 
     /// The preferred origin of this euclidean space.
     ///

@@ -1,8 +1,9 @@
 use crate::general::{
-    ClosedDiv, ClosedMul, ClosedNeg, ComplexField, Id, MultiplicativeGroup, MultiplicativeMonoid,
-    RealField, SubsetOf, TwoSidedInverse,
+    ClosedDiv, ClosedMul, ClosedNeg, Id, MultiplicativeGroup, MultiplicativeMonoid, SubsetOf,
+    TwoSidedInverse,
 };
 use crate::linear::{EuclideanSpace, NormedSpace};
+use crate::simd::{SimdComplexField, SimdRealField};
 
 // NOTE: A subgroup trait inherit from its parent groups.
 
@@ -214,7 +215,7 @@ pub trait Scaling<E: EuclideanSpace>:
     /// `self.to_superset().powf(n)`. Returns `None` if the result is not representable by `Self`.
     #[inline]
     fn powf(&self, n: E::RealField) -> Option<Self> {
-        Self::from_superset(&self.to_superset().powf(n))
+        Self::from_superset(&self.to_superset().simd_powf(n))
     }
 
     /// The scaling required to make `a` have the same norm as `b`, i.e., `|b| = |a| * norm_ratio(a,
@@ -290,7 +291,7 @@ pub trait Rotation<E: EuclideanSpace>:
 
 impl<R, E> Transformation<E> for R
 where
-    R: RealField,
+    R: SimdRealField,
     E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
@@ -307,7 +308,7 @@ where
 
 impl<R, E> ProjectiveTransformation<E> for R
 where
-    R: RealField,
+    R: SimdRealField,
     E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
@@ -326,7 +327,7 @@ where
 
 impl<R, E> AffineTransformation<E> for R
 where
-    R: RealField,
+    R: SimdRealField,
     E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
@@ -372,7 +373,7 @@ where
 
 impl<R, E> Scaling<E> for R
 where
-    R: RealField + SubsetOf<R>,
+    R: SimdRealField + SubsetOf<R>,
     E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
@@ -388,7 +389,7 @@ where
 
     #[inline]
     fn powf(&self, n: E::RealField) -> Option<Self> {
-        Some(n.powf(n))
+        Some(n.simd_powf(n))
     }
 
     #[inline]
@@ -399,7 +400,7 @@ where
 
 impl<R, E> Similarity<E> for R
 where
-    R: RealField + SubsetOf<R>,
+    R: SimdRealField + SubsetOf<R>,
     E: EuclideanSpace<RealField = R>,
     E::Coordinates: ClosedMul<R> + ClosedDiv<R> + ClosedNeg,
 {
