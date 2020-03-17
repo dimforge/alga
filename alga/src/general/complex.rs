@@ -1,4 +1,4 @@
-use num::{FromPrimitive, NumAssign, One, Signed, Zero, NumOps, NumAssignOps};
+use num::{FromPrimitive, NumAssign, NumAssignOps, NumOps, One, Signed, Zero};
 use std::any::Any;
 use std::fmt::{Debug, Display};
 use std::ops::Neg;
@@ -185,7 +185,6 @@ pub trait ComplexField:
     fn try_sqrt(self) -> Option<Self>;
 }
 
-
 /// Trait shared by all SIMD complex fields and its subfields (like real numbers).
 #[allow(missing_docs)]
 pub trait SimdComplexField:
@@ -204,6 +203,7 @@ pub trait SimdComplexField:
     + NumAssignOps
     + NumOps
     + PartialEq
+    + Display
 {
     /// Type of the coefficients of a complex number.
     type SimdRealField: SimdRealField;
@@ -1018,7 +1018,6 @@ impl<T: ComplexField> SimdComplexField for T {
     fn simd_signum(self) -> Self {
         self.signum()
     }
-
 
     #[inline(always)]
     fn simd_floor(self) -> Self {
