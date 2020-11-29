@@ -101,9 +101,9 @@ fn get_closest_trait(tra1t: &str) -> &str {
 fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
     match tra1t {
         "Quasigroup" => vec![],
-        "Monoid" => vec!["Quasigroup"],
+        "Monoid" => vec!["Semigroup"],
         "Semigroup" => vec![],
-        "Loop" => vec!["Semigroup"],
+        "Loop" => vec!["Quasigroup"],
         "Group" => vec!["Monoid", "Quasigroup", "Loop", "Semigroup"],
         "GroupAbelian" => vec!["Group", "Monoid", "Quasigroup", "Loop", "Semigroup"],
         _ => match tra1t {
@@ -117,7 +117,7 @@ fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
                     "Semigroup",
                 ]
             } else {
-                vec!["Monoid", "Quasigroup", "Loop", "Semigroup"]
+                vec!["Monoid", "Semigroup"]
             },
             "RingCommutative" => if op == 0 {
                 vec![
@@ -130,7 +130,7 @@ fn get_dependencies(tra1t: &str, op: usize) -> Vec<String> {
                     "Semigroup",
                 ]
             } else {
-                vec!["Ring", "Monoid", "Quasigroup", "Loop", "Semigroup"]
+                vec!["Monoid", "Semigroup"]
             },
             "Field" => if op == 0 {
                 vec![
