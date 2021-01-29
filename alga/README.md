@@ -12,6 +12,8 @@
     </strong>
 </p>
 
+⚠️**This crate is now passively-maintained. It is being superseded by the [Simba](https://simba.rs) project.**⚠️
+
 alga − abstract algebra for Rust
 ========
 
