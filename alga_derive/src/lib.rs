@@ -256,13 +256,11 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                     panic!("Where clause should be a string literal.");
                 }
                 valid_clause_place = false;
-            } else {
-                if first {
+            } else if first {
                     panic!("There is where clause before any traits to apply it to.");
                 } else {
                     panic!("There is multiple where clauses next to each other.");
                 }
-            }
         } else {
             first = false;
             valid_clause_place = true;
@@ -297,7 +295,7 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
         .flat_map(|(name, value, clause)| {
             let name = name.to_string();
             let arity = get_op_arity(&name);
-            let value = value.clone();
+            let value = value;
             if value.len() != arity {
                 match arity {
                     1 => {
@@ -395,10 +393,10 @@ pub fn derive_alga(input: TokenStream) -> TokenStream {
                                     })
                                     .collect::<Vec<_>>()
                             } else {
-                                panic!(err);
+                                panic!("{}", err);
                             }
                         } else {
-                            panic!(err);
+                            panic!("{}", err);
                         }
                     })
                     .collect()
@@ -485,7 +483,7 @@ where
     I: Iterator<Item = (A, B, C, D)>,
 {
     fn unzip4(self) -> (Vec<A>, Vec<B>, Vec<C>, Vec<D>) {
-        let hint = self.size_hint().1.unwrap_or(Vec::<A>::new().capacity());
+        let hint = self.size_hint().1.unwrap_or_else(|| Vec::<A>::new().capacity());
         let (mut va, mut vb, mut vc, mut vd) = (
             Vec::with_capacity(hint),
             Vec::with_capacity(hint),
