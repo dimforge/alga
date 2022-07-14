@@ -68,7 +68,7 @@ pub trait AbstractRing<A: Operator = Additive, M: Operator = Multiplicative>:
 /// Implements the ring trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractRing, Additive, Multiplicative, TwoSidedInverse, Identity};
@@ -158,7 +158,7 @@ pub trait AbstractRingCommutative<A: Operator = Additive, M: Operator = Multipli
 /// Implements the commutative ring trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractRingCommutative, Additive, Multiplicative, TwoSidedInverse, Identity};
@@ -218,7 +218,7 @@ pub trait AbstractField<A: Operator = Additive, M: Operator = Multiplicative>:
 /// Implements the field trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractField, Additive, Multiplicative, TwoSidedInverse, Identity};
