@@ -16,7 +16,7 @@
 /// Implements empty traits aka marker traits for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # fn main() {}
@@ -24,7 +24,7 @@
 /// struct Struct;
 /// impl_marker!(Marker; u32; Struct);
 /// ```
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use std::fmt::Debug;

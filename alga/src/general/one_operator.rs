@@ -85,7 +85,7 @@ pub trait AbstractQuasigroup<O: Operator>:
 /// Implements the quasigroup trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractQuasigroup, Additive, TwoSidedInverse};
@@ -146,7 +146,7 @@ pub trait AbstractSemigroup<O: Operator>: PartialEq + AbstractMagma<O> {
 /// Implements the semigroup trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractSemigroup, Additive};
@@ -191,7 +191,7 @@ pub trait AbstractLoop<O: Operator>: AbstractQuasigroup<O> + Identity<O> {}
 /// Implements the loop trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractLoop, Additive, TwoSidedInverse, Identity};
@@ -262,7 +262,7 @@ pub trait AbstractMonoid<O: Operator>: AbstractSemigroup<O> + Identity<O> {
 /// Implements the monoid trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractMonoid, Additive, Identity};
@@ -299,7 +299,7 @@ pub trait AbstractGroup<O: Operator>: AbstractLoop<O> + AbstractMonoid<O> {}
 /// Implements the group trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractGroup, Additive, TwoSidedInverse, Identity};
@@ -369,7 +369,7 @@ pub trait AbstractGroupAbelian<O: Operator>: AbstractGroup<O> {
 /// Implements the Abelian group trait for types provided.
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// # #[macro_use]
 /// # extern crate alga;
 /// # use alga::general::{AbstractMagma, AbstractGroupAbelian, Additive, TwoSidedInverse, Identity};
