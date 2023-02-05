@@ -12,7 +12,7 @@
     </strong>
 </p>
 
-⚠️**This crate is now passively-maintained. It is being superseded by the [Simba](https://simba.rs) project.**⚠️
+⚠️**This crate is now passively-maintained. It is being superseded by the [Simba](https://github.com/dimforge/simba) project.**⚠️
 
 alga − abstract algebra for Rust
 ========
